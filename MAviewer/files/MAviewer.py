@@ -5,6 +5,13 @@ Created on Mon Nov  5 09:26:48 2018
 
 @author: Martin F.M. de Rooij, PhD
 """
+###################################################################################################
+# Use MAviewer:
+# Open with the sh (Linux) or bat (Windows) file.
+# To add new screens: copy-paste the CRISPRScreenAnalysis.R output to the files/DataCRISPR03New folder. For one screen make one folder. If your screen is a synthetic lethal screen with 3 
+# comparisons, make 3 folders. Extent the index at line 459 , you can rename the screen experiment at line 508/595, and 600-611.
+# When you have more than 12 screens, you can add an extra page, like page 2 and 3, add also the new page to line 482.
+###################################################################################################
 #General
 import pandas as pd
 import numpy as np
@@ -449,7 +456,7 @@ def dataSet(cwd, dataset):
         order = [3,4,8,9,2,6,7,10,0,1,5]
         headDir = 'CRISPR02Phelan' 
     elif dataset==3:
-        order = [0,1,2,3,4,5,6,7,8,9,10,11]
+        order = [0]
         headDir = 'CRISPR03New'
         
     dirS = listdirs(cwd+"/files/Data"+headDir)
