@@ -1,4 +1,4 @@
-# CRISPRscreen analysis from fastq to robust statistics in Linux or Microsoft Windows.
+# CRISPR screen analysis from fastq to robust statistics in Linux or Microsoft Windows.
 With my scripts you can analyze your own CRISPR screen completely and in a robust way with little knowledge of R, Perl, and Python. 
 The scripts are compatible with linux as well as Microsoft Windows (with a small adjustment in the Perl script).
 Open the scripts (as text file) for information how to use them.
