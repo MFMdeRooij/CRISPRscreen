@@ -9,4 +9,4 @@ Open the scripts (as text file) for information how to use them.
 - To interactively view the MA plots, add the output from CRISPRScreenAnalysis.R to the files/DataCRISPR03New folder of MAviewer, and open MAviewer with the sh file (linux) or bat file (Windows), and discover your screen results (You can add a shortcut to these files for on your desktop. As an example I included the published screens of B cell lymphoma cell lines of Phelan et al, Nature 2018 (Python).
 - To make an high quality MA plot, use the MAplot_GeneOfInterest_v1.1.py script (Python).
 
-For more info, suggestions, or bugs: M.F.deRooij@amsterdamumc.nl
+For more info, suggestions, or bugs: m.f.derooij@amsterdamumc.nl
