@@ -9,5 +9,6 @@ If you don't like Perl, you can also use the Python script (FastqToCountTable.py
 - To get some information about the quality of the read mapping use in addition to FastqToCountTable.pl also Quality.pl and your fastq files, and subsequently Quality.R (Perl/R). 
 - To interactively view the MA plots, add the output from CRISPRScreenAnalysis.R to the files/DataCRISPR03New folder of MAviewer, and open MAviewer with the sh file (linux) or bat file (Windows), and discover your screen results (You can add a shortcut to these files for on your desktop. As an example I included the published screens of B cell lymphoma cell lines of Phelan et al, Nature 2018 (Python).
 - To make high quality MA and split-volcano plots, use the MAplot_GeneOfInterest.py and VolcanoSplit_GeneOfInterest.py scripts in Spyder (Python).
+- To look at gene expression of your CRISPR targets, you can download RNAseq data from most cell lines from the NCBI-SRA database, and analyze it with GeneExpressionRNAseqHisat2.R. Because this script uses various Linux apps, this does not work on Windows (R/Linux).
 
 For more information, suggestions, or bugs: m.f.derooij@amsterdamumc.nl
