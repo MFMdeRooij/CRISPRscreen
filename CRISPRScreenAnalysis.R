@@ -62,7 +62,7 @@ ControlsN <- 0
 # Control statistics (for lethality screens): 0 = With, 1 Without
 ConStat<- 0
 
-# Use shrinkage of flod changes noninformative guides: 0 = Yes, 1 = No
+# Use shrinkage of fold changes noninformative guides: 0 = Yes, 1 = No
 Shrinkage<- 0
 
 # Type of Screen: 0 = Drop out, 1 = Resistance (Just for ranking of the genes)
