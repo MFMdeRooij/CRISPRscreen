@@ -13,7 +13,7 @@ files = ['H:/BioWin/01 Namalwa PMAcsv20190301173828',
 '''
 ###
 
-files = ['H:/BioWin/01 Namalwa PMA/' , 'H:/BioWin/02 Namalwa IgM/' , 'H:/BioWin/03 Namalwa IgM-PMA/', 'H:/BioWin/04 Namalwa Lethality/']
+files = ['H:/BioWin/01 Namalwa PMA' , 'H:/BioWin/02 Namalwa IgM' , 'H:/BioWin/03 Namalwa IgM-PMA', 'H:/BioWin/04 Namalwa Lethality']
 
 # Which genes to highlight:
 gene = ['BTK', 'SYK', 'PIK3R1']
@@ -49,7 +49,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 for file in files: 
-    nameGene = glob.glob(file+'*genes.csv')[0]           
+    nameGene = glob.glob(file+'/*genes.csv')[0]           
     dfg = pd.read_csv(nameGene, sep=',')
     
     dfg['GeneSymbol'] = dfg['GeneSymbol'].str.upper()
