@@ -60,12 +60,12 @@ def viewGenes(headDir, dirs, gene, numberCor=10, MAorVul=1, scale=1, legend=1, g
                     dfneg = df[df['Type']=='n']
                     dfhit = df[df['GeneSymbol'] == gene]
             
-                    padjD = dfg[dfg['GeneSymbol'] == gene]['fdrDepleted']
+                    padjD = dfg[dfg['GeneSymbol'] == gene]['fdrDepleted'].min()
                     padjD1  = round(float(padjD),3)
                     padjD2 = str(padjD1)
                     if padjD1 < 0.001:
                         padjD2 = '<0.001'               
-                    padjE = dfg[dfg['GeneSymbol'] == gene]['fdrEnriched']
+                    padjE = dfg[dfg['GeneSymbol'] == gene]['fdrEnriched'].min()
                     padjE1  = round(float(padjE),3)
                     padjE2 = str(padjE1)
                     if padjE1 < 0.001:
