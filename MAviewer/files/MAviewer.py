@@ -659,9 +659,9 @@ class PageTwenty(tk.Frame):
 
         def searchGuideSequence(Tex, startselected, gene):
            if startselected==2:
-               library = pd.read_csv(cwd+'/files/Libraries/LibraryFullgenomeBrunelloLentiGuide.csv', sep=',')
+               library = pd.read_csv(cwd+'/files/Libraries/LibraryFullgenomeBrunelloLentiGuideHGNC.csv', sep=',')
            elif startselected==3:
-               library = pd.read_csv(cwd+'/files/Libraries/LibraryKinomeBrunelloLentiGuide.csv', sep=',')
+               library = pd.read_csv(cwd+'/files/Libraries/LibraryKinomeBrunelloLentiGuideHGNC.csv', sep=',')
            if startselected != 11:
                present = any(library['Gene']==gene)
                if present:               
