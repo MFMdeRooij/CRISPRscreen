@@ -641,7 +641,7 @@ class PageTwenty(tk.Frame):
         tk.Button(self, text="Search", font=('Times New Roman', '12'), fg='black', bg='yellow', command=lambda: searchGuideSequence(Tex=Tex, startselected=startselected.get(), gene=e1.get().upper())).pack() 
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=30)).pack()
         tk.Label(self, text="To order Gibson cloning oligos, copy-paste the right sequences in oligo-ordering", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack() 
-        Tex = tk.Text(self, height=9, width=120, bg='cornsilk') 
+        Tex = tk.Text(self, height=9, width=125, bg='cornsilk') 
         Tex.pack()         
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=30)).pack()
         tk.Label(self, text="To find genomic locations, copy-paste this in BLAT", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack() 
