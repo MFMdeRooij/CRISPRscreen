@@ -32,7 +32,7 @@ if lib == 2:
 
 # Barcodes (all of the same length)
 barcode = ("CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC", 
-	   "GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG")
+	       "GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG")
 
 # Number of allowed mismaches in barcodes, and max indels in constant part of the reads (PCR-primer mutations) (default = 1,3)
 BCmm,indel = 1,3
