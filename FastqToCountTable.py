@@ -13,7 +13,7 @@ import csv
 #                                            SETTINGS
 
 # Workdirectory
-os.chdir("H:/BIOWIN/SCREENS/")
+os.chdir("H:/BioWin/Screens/")
 
 # Screen files
 screens = ("TGACCA_Namalwa_Adhesion.fastq.gz",) 
