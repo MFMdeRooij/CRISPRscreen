@@ -5,17 +5,21 @@
 # Open in Spyder, adjust the settings, and run the script
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
+# Import python modules
+import os
+import gzip
+import csv
+#####################################################################################################
 #                                            SETTINGS
 
+# Workdirectory
+os.chdir("H:/BIOWIN/SCREENS/")
+
 # Screen files
-screens = ("H:/BioWin/fastq/5306_1_RB_01_19_02_CGATGT_S1_R1_001.fastq.gz",) 
+screens = ("TGACCA_Namalwa_Adhesion.fastq.gz",) 
 
-library = "H:/BioWin/fastq/LibraryKinomeBrunelloLentiGuide.csv"
-
-# Barcodes (all the same lentgh) and allowed barcode mismaches and max indels allowed in upstream region (primers)
-barcode = ("CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC", 
-		"GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG")
-BCmm,indel = 1,3
+# Library file
+library = "LibraryKinomeBrunelloLentiGuide.csv"
 
 # Library type: 1 = CRISPR, 2 = shRNA
 lib = 1
@@ -23,8 +27,16 @@ if lib == 1:
     # Location CRISPR seq-1, length CRISPR, and upstream nucleotides (lentiCRISPRv2/LentiGuide: 41, 20, "CACCG")
     loc,CRISPRsize,upseq  = 41,20,"CACCG"
 if lib == 2: 
-    # Location shRNA seq-1 and length shRNA,  and upstream nucleotides (pKLO.1 TRC1/1.5 and TRC2: 42, 21, "ACCGG")
+    # Location shRNA seq-1 and length shRNA, and upstream nucleotides (pKLO.1 TRC1/1.5 and TRC2: 42, 21, "ACCGG")
     loc,CRISPRsize,upseq = 42,21,"ACCGG"
+
+# Barcodes (all of the same length)
+barcode = ("CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC", 
+	   "GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG")
+
+# Number of allowed mismaches in barcodes, and max indels in constant part of the reads (PCR-primer mutations) (default = 1,3)
+BCmm,indel = 1,3
+
 ######################################################################################################
 # Make dictionary with barcode numbers
 BCnum = {}
@@ -62,7 +74,6 @@ for screen in screens:
     
     # Read Fastq file and write reads in the right barcode file
     screenData = screen
-    import gzip
     FASTQ = gzip.open(screenData, 'r')
     while True:
         name = FASTQ.readline()
@@ -106,7 +117,8 @@ for screen in screens:
                        preseq = seq[loc-upseqlength+i:loc-upseqlength+upseqlength+i]
                        if preseq == upseq:
                            seqtag = seq[loc+i:loc+CRISPRsize+i]
-                      
+                           break
+				
            # Make multidimensional array with read sequences
            readTable[BCnumber-1].append(seqtag)
     FASTQ.close() 
@@ -125,7 +137,6 @@ for screen in screens:
     transpose = [*zip(*countTable)]
     
     # Write count table to csv file
-    import csv
     cell = screen.split("/") [-1]
     myCsv = open("CountTable_"+cell+".csv", "w", newline='')
     csvWriter = csv.writer(myCsv, delimiter=',')
