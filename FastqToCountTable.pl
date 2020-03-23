@@ -10,9 +10,11 @@ use strict;
 #####################################################################################################
 #                                            SETTINGS
 
-# Barcodes (all the same lentgh) and allowed barcode mismaches and max indels allowed in upstream region (primers)
+# Barcodes (all of the same length)
 my @barcode = ("CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC", 
 		"GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG");
+		
+# Number of allowed mismaches in barcodes, and max indels in constant part of the reads (PCR-primer mutations) (default = 1,3)
 my ($BCmm, $indel) = (1, 3);
 
 # Location CRISPR seq-1, length CRISPR, and upstream nucleotides (lentiCRISPRv2/LentiGuide: 41, 20, "CACCG")
