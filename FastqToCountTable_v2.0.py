@@ -5,9 +5,21 @@ Created on Fri Mar 20 14:10:15 2020
 @author: Martin F.M. de Rooij, PhD
 """
 #####################################################################################################
+# We used the screen design of Jastrzebski et al Methods Mol Biol 2016
+# Open in Spyder, adjust the settings, and run the script
+# If you don't have Biopython installed, comment out line 19
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
+#####################################################################################################
+# Import python modules
+import os
+import numpy as np
+import pandas as pd
+import gzip
+import sys
+from Bio import pairwise2
+#####################################################################################################
 #                                            SETTINGS
 # Workdirectory
-import os
 os.chdir("H:/BioWin/Screens/")
 
 # Screen files
@@ -40,12 +52,6 @@ biopythonBarcode = 0
 biopythonGuide = 0 # Not recommanded (mutations could be inactivating the guide)
 
 ######################################################################################################
-import numpy as np
-import pandas as pd
-import gzip
-import sys
-if biopythonBarcode == 1 or biopythonGuide == 1:
-    from Bio import pairwise2
     
 # Make dictionary with barcode numbers
 BCnum = dict(zip(barcode, np.arange(12)+1))
