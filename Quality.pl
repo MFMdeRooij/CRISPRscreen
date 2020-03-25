@@ -10,9 +10,11 @@ use strict;
 #####################################################################################################
 #                                            SETTINGS
 
-# Barcodes (all the same lentgh) and allowed barcode mismaches and max indels allowed in upstream region (primers)
+# Barcodes (all of the same length)
 my @barcode = ("CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC", 
 		"GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG");
+		
+# Number of allowed mismaches in barcodes
 my $BCmm = 1;
 #####################################################################################################
 # Make hash with barcode numbers
