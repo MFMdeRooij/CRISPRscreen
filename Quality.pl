@@ -6,6 +6,7 @@ use strict;
 # Linux: run in command line: ./Quality.pl data1.fastq.gz data2.fastq.gz
 # Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 41) for 'type',
 # and run in command prompt: perl Quality.pl data1.fastq.gz data2.fastq.gz
+# After running this code (and FastqToCountTable.pl), go further with the R script (Quality.R)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 #                                            SETTINGS
@@ -14,7 +15,7 @@ use strict;
 my @barcode = ("CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC", 
 		"GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG");
 		
-# Number of allowed mismaches in barcodes
+# Number of allowed mismaches in barcodes (Use the same number as you used in FastqToCountTable.pl)
 my $BCmm = 1;
 #####################################################################################################
 # Make hash with barcode numbers
