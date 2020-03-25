@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Mar 20 14:10:15 2020
-
-@author: Martin F.M. de Rooij, PhD
-"""
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # Open in Spyder, adjust the settings, and run the script
