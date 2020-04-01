@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import glob
 
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
 # Folders of DESeq2 data:
 IgMinput = 'H:/BioWin/01 Namalwa PMA'
 PMAinput = 'H:/BioWin/01 Namalwa PMA'
