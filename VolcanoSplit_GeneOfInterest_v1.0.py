@@ -48,6 +48,10 @@ import glob
 import warnings
 warnings.filterwarnings('ignore')
 
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
 for file in files: 
     nameGene = glob.glob(file+'/*genes.csv')[0]           
     dfg = pd.read_csv(nameGene, sep=',')
