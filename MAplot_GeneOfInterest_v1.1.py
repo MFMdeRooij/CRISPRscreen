@@ -64,6 +64,10 @@ import glob
 import warnings
 warnings.filterwarnings('ignore')
 
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+
 for file in files:
     nameGuide = glob.glob(file+'/*Guides.csv')[0]  
     df = pd.read_csv(nameGuide, sep=',')
