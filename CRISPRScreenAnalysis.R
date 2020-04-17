@@ -16,7 +16,7 @@ library("RColorBrewer")
 #                                     SETTINGS
 
 # Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-Workdirectory <- "~/Data/Screen"
+Workdirectory <- "H:/BioWin/Screens/"
 
 # Count table files: 0 = custom, 1 = all count tables (csv files) in the workdirectory
 Data <- 0
