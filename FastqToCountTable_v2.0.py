@@ -41,7 +41,7 @@ barcode = ["CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC",
 BCmm,indel = 1,3
 
 # Print unidentified barcode and guide sequences: 0 = No, 1 = yes
-printUnID = 0
+printUnID = 1
 
 # Us biopython pairwise2 alignment of barcodes and guides: 0 = No, 1 = yes
 biopythonBarcode = 0
