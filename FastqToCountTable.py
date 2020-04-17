@@ -16,7 +16,7 @@ import csv
 os.chdir("H:/BioWin/Screens/")
 
 # Screen files
-screens = ("CountTable_test.fastq.gz",) 
+screens = ("test.fastq.gz",) 
 
 # Library file
 library = "LibraryKinomeBrunelloLentiGuide.csv"
