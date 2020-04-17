@@ -19,7 +19,7 @@ from Bio import pairwise2
 os.chdir("H:/BioWin/Screens/")
 
 # Screen files
-screens = ("TGACCA_Namalwa_Adhesion.fastq.gz",) 
+screens = ("CountTable_test.fastq.gz",) 
 
 # Library file
 library = "LibraryKinomeBrunelloLentiGuide.csv"
