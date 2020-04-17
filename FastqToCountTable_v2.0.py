@@ -3,7 +3,7 @@
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # Open in Spyder, adjust the settings, and run the script
-# If you don't have Biopython installed, comment out line 19
+# If you don't have Biopython installed, comment out line 15
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 # Import python modules
