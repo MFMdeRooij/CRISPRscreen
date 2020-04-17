@@ -156,17 +156,16 @@ for screen in screens:
     countTableToFillZero = np.zeros((len(Library), len(barcode)+1))
     # Read Fastq file and put counts in the count table
     screenData = screen
-    IN = gzip.open(screenData, 'r')
+    FASTQ = gzip.open(screenData, 'r')
     while True:
-        name = IN.readline()
-        if not name:
+        FASTQ.readline()
+        seq = FASTQ.readline().decode("utf-8")
+        if not seq:
             break
-        seq = IN.readline()
-        plusline = IN.readline()
-        qual = IN.readline()
-        seq = seq.decode("utf-8")
+        FASTQ.readline()
+        FASTQ.readline()
         countTableToFillZero[guideDetermination(seq),barcodeDetermination(seq)]+=1
-    IN.close()
+    FASTQ.close()
 
     #Write count table to file
     if printUnID == 1:
