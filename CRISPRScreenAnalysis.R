@@ -21,7 +21,7 @@ Workdirectory <- "~/Data/Screen"
 # Count table files: 0 = custom, 1 = all count tables (csv files) in the workdirectory
 Data <- 0
   # If custom, which count tables?
-  Filenames<- c("Namalwa.csv")
+  Filenames<- c("CountTable_test.fastq.gz.csv")
 
 # Data selection (T0/T1/T2 - replicate 1/2/3) (If a replicate is not present, fill in 
 # an existing one, and exclude it in the next option)
@@ -30,12 +30,12 @@ Guide <- "sgRNA"
 T0Rep1 <- "BC1"
 T0Rep2 <- "BC2"
 T0Rep3 <- "BC3"
-T1Rep1 <- "BC4"
-T1Rep2 <- "BC5"
-T1Rep3 <- "BC6"
-T2Rep1 <- "BC7"
-T2Rep2 <- "BC8"
-T2Rep3 <- "BC9"
+T1Rep1 <- "BC7"
+T1Rep2 <- "BC8"
+T1Rep3 <- "BC9"
+T2Rep1 <- "BC4"
+T2Rep2 <- "BC5"
+T2Rep3 <- "BC6"
 
 # Exclude replicates: 0 = Include, 1 = Exclude (you cannot exclude T0 or T1 completely -> change your design)
 T0_Rep1 <- 0
@@ -60,7 +60,7 @@ ControlsP <- 0
 ControlsN <- 0
 
 # Control statistics (for lethality screens): 0 = With, 1 Without
-ConStat<- 0
+ConStat<- 1
 
 # Use shrinkage of fold changes noninformative guides: 0 = Yes, 1 = No
 Shrinkage<- 0
