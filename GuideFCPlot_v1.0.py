@@ -4,24 +4,15 @@ Created on Tue Jan 14 13:41:02 2020
 
 @author: Martin F.M. de Rooij, PhD
 """
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import glob
-import matplotlib
-matplotlib.rcParams['pdf.fonttype'] = 42
-matplotlib.rcParams['ps.fonttype'] = 42
-
 ###############################################################################################################
 #                                                      SETTINGS
+
 # Folders of DESeq2 data:
 IgMinput = 'H:/BioWin/01 Namalwa IgM'
 PMAinput = 'H:/BioWin/02 Namalwa PMA'
 IgMPMA = 'H:/BioWin/03 Namalwa IgM-PMA'
 
-
-# Gene symbols (if there are subset, culster the subsets)
+# Gene symbols (if there are subset, cluster the subsets)
 genes = ['BTK', 'SYK', 'PIK3R1', 'CSK', 'PRKCE', 'PRKCB', 'ACTR2', 'GUK1', 'MAP2K1', 'MAP2K2', 'AKT1', 'AKT2', 'AKT3', 'LYN']
 # #Alternatively, take all significant genes:
 # dfhits = pd.read_csv('H:/BioWin/03 Namalwa IgM-PMA/DESeq2 T1vsT2 Genes.csv', sep=',')
@@ -42,8 +33,17 @@ xmin, xmax, xticks = -1.25, 1, 0.25
 # RRA score: 0=depletion, 1=enrichment
 rrascore = 0
 
-# To change graph titles, change them in the script (line 100-102-104)
+# To change graph titles, change them in line 100-102-104.
 ###################################################################################################################################
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import glob
+import matplotlib
+
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
 
 genenr = np.arange(len(genes))+1
 genedf = pd.DataFrame({'nr':genenr, 'GeneSymbol': genes})
