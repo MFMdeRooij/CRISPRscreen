@@ -34,7 +34,7 @@ xmin, xmax, xticks = -1.25, 1, 0.25
 # RRA score: 0=depletion, 1=enrichment
 rrascore = 0
 
-# To change graph titles, change them in line 100-102-104.
+# To change graph titles, change them in line 101-103-105
 ###################################################################################################################################
 import pandas as pd
 import numpy as np
