@@ -7,13 +7,16 @@ Created on Mon Apr 29 13:46:40 2019
 # Copy-paste the required folders from MA-viewer to your disk, Fill in the complete path (use / instead of \ ), 
 # and separate multiple folders by a comma, For example:
 '''
-files = ['H:/BioWin/01 Namalwa PMAcsv20190301173828', 
-         'H:/BioWin/02 Namalwa IgMcsv20190301173828 - Copy', 
-         'H:/BioWin/03 Namalwa IgM-PMAcsv20190301173828 - Copy (2)']
+files = ['H:/BioWin/01 Namalwa IgM', 
+         'H:/BioWin/02 Namalwa PMA', 
+         'H:/BioWin/03 Namalwa IgM-PMA']
 '''
-###
+##########################################################################################################
+#                                                 SETTINGS
 
-files = ['H:/BioWin/01 Namalwa PMA' , 'H:/BioWin/02 Namalwa IgM' , 'H:/BioWin/03 Namalwa IgM-PMA', 'H:/BioWin/04 Namalwa Lethality']
+files = ['H:/BioWin/01 Namalwa IgM', 
+         'H:/BioWin/02 Namalwa PMA', 
+         'H:/BioWin/03 Namalwa IgM-PMA']
 
 # Which genes to highlight:
 gene = ['BTK', 'SYK', 'PIK3R1']
@@ -27,7 +30,6 @@ genesignificant = 1
 # Title:
 maintitle = 'NAMALWA'
 xtitle = '$^{2}$log median fold change (t$_1$/t$_0$)'
-
 #0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
 #greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   ->include the upstream r for greek letters 
 
@@ -39,7 +41,6 @@ call = 'green'
 cpos = 'firebrick'
 cneg = 'blue'
 chit = 'black'
-
 ####################################################################################################
 import pandas as pd
 import numpy as np
