@@ -8,18 +8,19 @@ Created on Mon Nov  5 09:26:48 2018
 # Copy-paste the required folders from MA-viewer to your disk, Fill in the complete path (use / instead of \ ), 
 # and separate multiple folders by a comma, For example:
 '''
-files = ['H:/BioWin/01 Namalwa PMAcsv20190301173828', 
-         'H:/BioWin/02 Namalwa IgMcsv20190301173828 - Copy', 
-         'H:/BioWin/03 Namalwa IgM-PMAcsv20190301173828 - Copy (2)']
+files = ['H:/BioWin/01 Namalwa IgM', 
+         'H:/BioWin/02 Namalwa PMA', 
+         'H:/BioWin/03 Namalwa IgM-PMA']
 '''
-###
+##########################################################################################################
+#                                                 SETTINGS
 
-
-files = ['H:/BioWin/03 Namalwa IgM-PMAcsv20190301173828 - Copy (2)']
+files = ['H:/BioWin/01 Namalwa IgM', 
+         'H:/BioWin/02 Namalwa PMA', 
+         'H:/BioWin/03 Namalwa IgM-PMA']
 
 # Which gene:
 gene = 'BTK'
-
 
 # Save file as PDF (0=no, 1=yes)
 save = 1
@@ -27,15 +28,12 @@ save = 1
 # Show significant guides as triangles (0=no, 1=yes)
 guidesignificant = 1
 
-
 # Titles:
 maintitle = 'NAMALWA'
 xtitle = '$^{10}$log average read counts (input)'
 ytitle = '$^{2}$log fold change (CXCL12/input)'
-
 #0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
 #greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   ->include the upstream r for greek letters 
-
 
 # X- and Y-axis limits:
 xmin=0
@@ -54,7 +52,6 @@ call = 'green'
 cpos = 'firebrick'
 cneg = 'blue'
 chit = 'black'
-
 #####################################################################################################################
 import pandas as pd
 import numpy as np
