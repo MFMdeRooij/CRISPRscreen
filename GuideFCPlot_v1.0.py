@@ -4,6 +4,7 @@ Created on Tue Jan 14 13:41:02 2020
 
 @author: Martin F.M. de Rooij, PhD
 """
+# Copy-paste the required folders from MA-viewer to your disk, Fill in the complete path (use / instead of \ )
 ###############################################################################################################
 #                                                      SETTINGS
 
