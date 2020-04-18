@@ -9,14 +9,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import glob
-
 import matplotlib
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 
+###############################################################################################################
+#                                                      SETTINGS
 # Folders of DESeq2 data:
-IgMinput = 'H:/BioWin/01 Namalwa PMA'
-PMAinput = 'H:/BioWin/01 Namalwa PMA'
+IgMinput = 'H:/BioWin/01 Namalwa IgM'
+PMAinput = 'H:/BioWin/02 Namalwa PMA'
 IgMPMA = 'H:/BioWin/03 Namalwa IgM-PMA'
 
 
@@ -41,7 +42,7 @@ xmin, xmax, xticks = -1.25, 1, 0.25
 # RRA score: 0=depletion, 1=enrichment
 rrascore = 0
 
-# To change graph titles, them change in the script (line 95-97-99)
+# To change graph titles, change them in the script (line 100-102-104)
 ###################################################################################################################################
 
 genenr = np.arange(len(genes))+1
