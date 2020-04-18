@@ -11,6 +11,6 @@ If you don't like Perl, you can also use the Python script (FastqToCountTable.py
 - To make high quality MA plots, guide fold change plots, and split-volcano plots, use the MAplot_GeneOfInterest.py, guideFCPlot.py, and VolcanoSplit_GeneOfInterest.py scripts in Spyder (Python).
 - To look at gene expression of your CRISPR targets, you can download RNAseq data from most cell lines from the NCBI-SRA database, and analyze it with GeneExpressionRNAseqHisat2.R. Because this script uses various Linux apps, this does not work on Windows (R/Linux).
 - In the TestData folder is a test file available (test.fastq.gz), which contains the first 750k reads of the adhesion CRISPR screen. Barcode 1-3 corresponds to the preadhesion replicates, Barcode 7-9 to the PMA-induced adhesion replicates, and Barcode 4-6 to the anti-IgM-induced adhesion replicates (Note that this is the same design as a synthetic lethality screen (T0, Control, Treatment). The easiest way to analyze this, is to run the FastqToCountTable.py in Spyder to produce the count table (Know that the Perl script is much faster, so that is recommended for a complete FASTQ file), and subsequently the R script CRISPRScreenAnalysis.R in R studio to perform the statistics. For the TestData analysis you only have to adjust the workdirectories. You should get the same data as in the TestData/Output folder. This takes only a few minutes (Windows or Linux).
-- Good luck!, Martin de Rooij
+- Good luck!, Martin de Rooij, The Netherlands
 
 For more information, suggestions, or bugs: m.f.derooij@amsterdamumc.nl
