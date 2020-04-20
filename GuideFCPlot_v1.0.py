@@ -52,16 +52,16 @@ genedf = pd.DataFrame({'nr':genenr, 'GeneSymbol': genes})
 
 # Tables
 dfname = glob.glob(folder+'/*T0vsT1 Guides.csv')[0]  
-dfM = pd.read_csv(dfname, sep=',')
-dfM['l2fc']=np.log(dfM['FoldChange'])/np.log(2)
-dfname = glob.glob(folder+'/*T0vsT1 Genes.csv')[0]  
-dfMrra = pd.read_csv(dfname, sep=',')
-
-dfname = glob.glob(folder+'/*T0vsT2 Guides.csv')[0]  
 dfP = pd.read_csv(dfname, sep=',')
 dfP['l2fc']=np.log(dfP['FoldChange'])/np.log(2)
-dfname = glob.glob(folder+'/*T0vsT2 Genes.csv')[0] 
+dfname = glob.glob(folder+'/*T0vsT1 Genes.csv')[0]  
 dfPrra = pd.read_csv(dfname, sep=',')
+
+dfname = glob.glob(folder+'/*T0vsT2 Guides.csv')[0]  
+dfM = pd.read_csv(dfname, sep=',')
+dfM['l2fc']=np.log(dfM['FoldChange'])/np.log(2)
+dfname = glob.glob(folder+'/*T0vsT2 Genes.csv')[0] 
+dfMrra = pd.read_csv(dfname, sep=',')
 
 dfname = glob.glob(folder+'/*T1vsT2 Guides.csv')[0]  
 dfC = pd.read_csv(dfname, sep=',')
@@ -70,7 +70,7 @@ dfname = glob.glob(folder+'/*T1vsT2 Genes.csv')[0]
 dfCrra = pd.read_csv(dfname, sep=',')
 
 i=0
-for df,dfrra in [(dfM,dfMrra),(dfP,dfPrra),(dfC,dfCrra)]:  
+for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:  
     dfg=df[df['GeneSymbol'].isin(genes)].iloc[:,[0,8]]  
     dfg = pd.merge(dfg,genedf, on='GeneSymbol')  
     if geneSubsets==1:
