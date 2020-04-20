@@ -10,7 +10,7 @@ Created on Mon Nov  5 09:26:48 2018
 #                                                 SETTINGS
 
 # Copy-paste the required folder (use / instead of \ )
-folder = 'D:/NIEUW/PYTHON/Namalwa'
+folder = "H:/BioWin/Screens/Namalwa"
 
 # Which gene:
 gene = 'BTK'

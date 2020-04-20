@@ -4,19 +4,17 @@ Created on Tue Jan 14 13:41:02 2020
 
 @author: Martin F.M. de Rooij, PhD
 """
-# Copy-paste the required folders from MA-viewer to your disk, Fill in the complete path (use / instead of \ )
+# After performing the DESeq2 script sucessfully, you can produce publishing-grade GuideFC plots
 ###############################################################################################################
 #                                                      SETTINGS
 
-# Folders of DESeq2 data:
-IgMinput = 'H:/BioWin/01 Namalwa IgM'
-PMAinput = 'H:/BioWin/02 Namalwa PMA'
-IgMPMA = 'H:/BioWin/03 Namalwa IgM-PMA'
+# Copy-paste the required folder (use / instead of \ )
+folder = "H:/BioWin/Screens/Namalwa"
 
 # Gene symbols (if there are subset, cluster the subsets)
 genes = ['BTK', 'SYK', 'PIK3R1', 'CSK', 'PRKCE', 'PRKCB', 'ACTR2', 'GUK1', 'MAP2K1', 'MAP2K2', 'AKT1', 'AKT2', 'AKT3', 'LYN']
 # #Alternatively, take all significant genes:
-# dfhits = pd.read_csv('H:/BioWin/03 Namalwa IgM-PMA/DESeq2 T1vsT2 Genes.csv', sep=',')
+# dfhits = pd.read_csv('H:/BioWin/Screens/Namalwa"DESeq2 T1vsT2 Genes.csv', sep=',')
 # genes = dfhits[dfhits['fdrDepleted']<0.1]['GeneSymbol']
 
 # Are there subsets of genes: 0 = no, 1 = yes
@@ -28,13 +26,16 @@ if geneSubsets==1:
     subset2 = 3
     subset3 = 6 # For 2 subsets this should be 0
 
+# Titles:
+title1 = 'PMA/input'
+title2 = r'$\alpha$IgM/input'
+title3 = r'$\alpha$IgM/PMA'  
+
 # X-axis limits:
 xmin, xmax, xticks = -1.25, 1, 0.25
 
 # RRA score: 0=depletion, 1=enrichment
 rrascore = 0
-
-# To change graph titles, change them in line 101-103-105
 ###############################################################################################################
 import pandas as pd
 import numpy as np
@@ -50,22 +51,22 @@ genenr = np.arange(len(genes))+1
 genedf = pd.DataFrame({'nr':genenr, 'GeneSymbol': genes})
 
 # Tables
-dfname = glob.glob(IgMinput+'/*Guides.csv')[0]  
+dfname = glob.glob(folder+'/*T0vsT1 Guides.csv')[0]  
 dfM = pd.read_csv(dfname, sep=',')
 dfM['l2fc']=np.log(dfM['FoldChange'])/np.log(2)
-dfname = glob.glob(IgMinput+'/*Genes.csv')[0]  
+dfname = glob.glob(folder+'/*T0vsT1 Genes.csv')[0]  
 dfMrra = pd.read_csv(dfname, sep=',')
 
-dfname = glob.glob(PMAinput+'/*Guides.csv')[0]  
+dfname = glob.glob(folder+'/*T0vsT2 Guides.csv')[0]  
 dfP = pd.read_csv(dfname, sep=',')
 dfP['l2fc']=np.log(dfP['FoldChange'])/np.log(2)
-dfname = glob.glob(PMAinput+'/*Genes.csv')[0] 
+dfname = glob.glob(folder+'/*T0vsT2 Genes.csv')[0] 
 dfPrra = pd.read_csv(dfname, sep=',')
 
-dfname = glob.glob(IgMPMA+'/*Guides.csv')[0]  
+dfname = glob.glob(folder+'/*T1vsT2 Guides.csv')[0]  
 dfC = pd.read_csv(dfname, sep=',')
 dfC['l2fc']=np.log(dfC['FoldChange'])/np.log(2)
-dfname = glob.glob(IgMPMA+'/*Genes.csv')[0] 
+dfname = glob.glob(folder+'/*T1vsT2 Genes.csv')[0] 
 dfCrra = pd.read_csv(dfname, sep=',')
 
 i=0
@@ -98,11 +99,11 @@ for df,dfrra in [(dfM,dfMrra),(dfP,dfPrra),(dfC,dfCrra)]:
         sns.distplot(df[df['padj']<0.1]['l2fc'], hist=False, kde_kws = {'shade': False, 'linewidth': 2}, color='darkorchid', label=None)      
     plt.xlim(xmin,xmax)
     if i==0:
-        plt.title(r'$\alpha$IgM/input')  
+        plt.title(title1)  
     elif i==1:
-        plt.title('PMA/input') 
-    else: 
-        plt.title(r'$\alpha$IgM/PMA')    
+        plt.title(title2) 
+    elif i==2:
+        plt.title(title3)    
     plt.axis('off')   
     
     plt.subplot2grid((5,24), (1,i*8), colspan=6, rowspan=4)  
@@ -137,4 +138,4 @@ for df,dfrra in [(dfM,dfMrra),(dfP,dfPrra),(dfC,dfCrra)]:
 
 plt.subplots_adjust(hspace=0)
 plt.subplots_adjust(wspace=0)
-plt.savefig('H:/BioWin/GuideFCPlotTest.pdf', bbox_inches='tight', transparent=True)
+plt.savefig(folder+'/GuideFCPlotTest.pdf', bbox_inches='tight', transparent=True)

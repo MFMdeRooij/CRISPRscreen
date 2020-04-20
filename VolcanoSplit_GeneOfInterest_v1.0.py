@@ -10,7 +10,7 @@ Created on Mon Apr 29 13:46:40 2019
 #                                                 SETTINGS
 
 # Copy-paste the required folder (use / instead of \ )
-folder = 'D:/NIEUW/PYTHON/Namalwa'
+folder = "H:/BioWin/Screens/Namalwa"
 
 # Which genes to highlight:
 gene = ['BTK', 'SYK', 'PIK3R1']
@@ -21,14 +21,11 @@ save = 1
 # Show significant genes as triangles (0=no, 1=yes)
 genesignificant = 1
 
-# Title:
 # Titles:
 maintitle = 'NAMALWA'
 
 x1title = '$^{2}$log fold change (PMA/input)'
-
 x2title = r'$^{2}$log fold change ($\alpha$IgM/input)'
-
 x3title = r'$^{2}$log fold change ($\alpha$IgM/PMA)'
 
 #0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
