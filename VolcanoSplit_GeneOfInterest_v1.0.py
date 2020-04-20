@@ -4,24 +4,18 @@ Created on Mon Apr 29 13:46:40 2019
 
 @author: Martin F.M. de Rooij, PhD
 """
-# Copy-paste the required folders from MA-viewer to your disk, Fill in the complete path (use / instead of \ ), 
-# and separate multiple folders by a comma, For example:
-'''
-files = ['H:/BioWin/01 Namalwa IgM', 
-         'H:/BioWin/02 Namalwa PMA', 
-         'H:/BioWin/03 Namalwa IgM-PMA']
-'''
+
+# After performing the DESeq2 script sucessfully, you can produce publishing-grade Volcano plots 
 ##########################################################################################################
 #                                                 SETTINGS
 
-files = ['H:/BioWin/01 Namalwa IgM', 
-         'H:/BioWin/02 Namalwa PMA', 
-         'H:/BioWin/03 Namalwa IgM-PMA']
+# Copy-paste the required folder (use / instead of \ )
+folder = 'H:/BioWin/Namalwa'
 
 # Which genes to highlight:
 gene = ['BTK', 'SYK', 'PIK3R1']
 
-# Save file as PDF (0=no, 1=yes)
+# Save plots as PDF (0=no, 1=yes)
 save = 1
 
 # Show significant genes as triangles (0=no, 1=yes)
@@ -53,9 +47,9 @@ import matplotlib
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 
-for file in files: 
-    nameGene = glob.glob(file+'/*genes.csv')[0]           
-    dfg = pd.read_csv(nameGene, sep=',')
+files = glob.glob(folder+'/*Genes.csv')
+for file in files:
+    dfg = pd.read_csv(file, sep=',')
     
     dfg['GeneSymbol'] = dfg['GeneSymbol'].str.upper()
     dfg['l2mfc'] = np.log2(dfg['MedianFoldChange'])
@@ -127,7 +121,6 @@ for file in files:
             fontsize=fs
         )
 
-
     axs[1].yaxis.tick_right()
     axs[1].yaxis.set_label_position('right')
     axs[1].set_xlim(xmin,xmax)
@@ -173,5 +166,5 @@ for file in files:
     if save==0:
         plt.show()
     elif save == 1:    
-        plt.savefig(file+'/Volcano'+maintitle+'.pdf', bbox_inches='tight', transparent=True)
+        plt.savefig(file+'Volcano'+maintitle+'.pdf', bbox_inches='tight', transparent=True)
     plt.close()

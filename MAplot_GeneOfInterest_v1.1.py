@@ -5,24 +5,17 @@ Created on Mon Nov  5 09:26:48 2018
 @author: Martin F.M. de Rooij, PhD
 """
 
-# Copy-paste the required folders from MA-viewer to your disk, Fill in the complete path (use / instead of \ ), 
-# and separate multiple folders by a comma, For example:
-'''
-files = ['H:/BioWin/01 Namalwa IgM', 
-         'H:/BioWin/02 Namalwa PMA', 
-         'H:/BioWin/03 Namalwa IgM-PMA']
-'''
-#####################################################################################################################
+# After performing the DESeq2 script sucessfully, you can produce publishing-grade MA plots 
+##########################################################################################################
 #                                                 SETTINGS
 
-files = ['H:/BioWin/01 Namalwa IgM', 
-         'H:/BioWin/02 Namalwa PMA', 
-         'H:/BioWin/03 Namalwa IgM-PMA']
+# Copy-paste the required folder (use / instead of \ )
+folder = 'H:/BioWin/Namalwa'
 
 # Which gene:
 gene = 'BTK'
 
-# Save file as PDF (0=no, 1=yes)
+# Save plots as PDF (0=no, 1=yes)
 save = 1
 
 # Show significant guides as triangles (0=no, 1=yes)
@@ -52,7 +45,7 @@ call = 'green'
 cpos = 'firebrick'
 cneg = 'blue'
 chit = 'black'
-#####################################################################################################################
+##########################################################################################################
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -65,9 +58,9 @@ import matplotlib
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 
+files = glob.glob(folder+'/*Guides.csv')
 for file in files:
-    nameGuide = glob.glob(file+'/*Guides.csv')[0]  
-    df = pd.read_csv(nameGuide, sep=',')
+    df = pd.read_csv(file, sep=',')
 
     df['GeneSymbol'] = df['GeneSymbol'].str.upper()
     df['l10rc'] = np.log10(df['BaseMeanA']+1)
@@ -147,5 +140,5 @@ for file in files:
     if save==0:
         plt.show()
     elif save == 1:    
-        plt.savefig(file+'/MAplot'+gene+'.pdf', bbox_inches='tight', transparent=True)
+        plt.savefig(file+'MAplot'+gene+'.pdf', bbox_inches='tight', transparent=True)
     plt.close()
