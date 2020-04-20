@@ -10,7 +10,7 @@ Created on Mon Apr 29 13:46:40 2019
 #                                                 SETTINGS
 
 # Copy-paste the required folder (use / instead of \ )
-folder = 'H:/BioWin/Namalwa'
+folder = 'D:/NIEUW/PYTHON/Namalwa'
 
 # Which genes to highlight:
 gene = ['BTK', 'SYK', 'PIK3R1']
@@ -22,8 +22,15 @@ save = 1
 genesignificant = 1
 
 # Title:
+# Titles:
 maintitle = 'NAMALWA'
-xtitle = '$^{2}$log median fold change (t$_1$/t$_0$)'
+
+x1title = '$^{2}$log fold change (PMA/input)'
+
+x2title = r'$^{2}$log fold change ($\alpha$IgM/input)'
+
+x3title = r'$^{2}$log fold change ($\alpha$IgM/PMA)'
+
 #0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
 #greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   ->include the upstream r for greek letters 
 
@@ -47,8 +54,10 @@ import matplotlib
 matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 
+n = 0
 files = glob.glob(folder+'/*Genes.csv')
 for file in files:
+    n+=1
     dfg = pd.read_csv(file, sep=',')
     
     dfg['GeneSymbol'] = dfg['GeneSymbol'].str.upper()
@@ -69,7 +78,14 @@ for file in files:
     ymax=16
     xmin=min(dfg['l2mfc']-0.5)
     xmax=max(dfg['l2mfc']+0.5)
-                        
+    
+    if n==1:
+        xtitle = x1title
+    elif n==2:
+        xtitle = x2title
+    elif n==3:
+        xtitle= x3title
+                    
     axbig.set_xticks([])
     axbig.set_yticks([])
     axbig.spines['bottom'].set_linewidth(0)

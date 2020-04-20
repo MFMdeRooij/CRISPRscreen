@@ -10,7 +10,7 @@ Created on Mon Nov  5 09:26:48 2018
 #                                                 SETTINGS
 
 # Copy-paste the required folder (use / instead of \ )
-folder = 'H:/BioWin/Namalwa'
+folder = 'D:/NIEUW/PYTHON/Namalwa'
 
 # Which gene:
 gene = 'BTK'
@@ -23,10 +23,18 @@ guidesignificant = 1
 
 # Titles:
 maintitle = 'NAMALWA'
-xtitle = '$^{10}$log average read counts (input)'
-ytitle = '$^{2}$log fold change (CXCL12/input)'
+
+x1title = '$^{10}$log average read counts (input)'
+y1title = '$^{2}$log fold change (PMA/input)'
+
+x2title = '$^{10}$log average read counts (input)'
+y2title = r'$^{2}$log fold change ($\alpha$IgM/input)'
+
+x3title = '$^{10}$log average read counts (PMA)'
+y3title = r'$^{2}$log fold change ($\alpha$IgM/PMA)'
+
 #0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
-#greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   ->include the upstream r for greek letters 
+#greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 
 
 # X- and Y-axis limits:
 xmin=0
@@ -59,7 +67,9 @@ matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 
 files = glob.glob(folder+'/*Guides.csv')
+n=0
 for file in files:
+    n+=1
     df = pd.read_csv(file, sep=',')
 
     df['GeneSymbol'] = df['GeneSymbol'].str.upper()
@@ -102,8 +112,15 @@ for file in files:
     plt.xlim(xmin,xmax)
     plt.ylim(ymin,ymax)
     
+    if n==1:
+        xtitle, ytitle = x1title, y1title
+    elif n==2:
+        xtitle, ytitle = x2title, y2title
+    elif n==3:
+        xtitle, ytitle = x3title, y3title
+        
     plt.xlabel(xtitle, fontsize=fs)
-    plt.ylabel(ytitle, fontsize=fs)
+    plt.ylabel(ytitle, fontsize=fs)   
     plt.title(maintitle, fontsize=fs+10, y=1.05)
     
     ax.spines['bottom'].set_linewidth(1.5)
