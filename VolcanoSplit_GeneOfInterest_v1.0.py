@@ -32,7 +32,7 @@ x2title = r'$^{2}$log fold change ($\alpha$IgM/input)'
 x3title = r'$^{2}$log fold change ($\alpha$IgM/PMA)'
 
 #0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
-#greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   ->include the upstream r for greek letters 
+#greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 
 
 # Font size of X- and Y-axis titles (the main title is 10 bigger)
 fs = 15
