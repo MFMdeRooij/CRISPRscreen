@@ -52,7 +52,7 @@ T2_Rep3 <- 0
 Paired <- 0
 
 # Library: 0: In countTable (1st column = sgRNA, 2nd = Gene), 1 = Brunello-Kinome, 2 = Brunello-FullGenome, 3 = Avana-FullGenome, 4 = New (add to CRISPRScreenAnalysisLibraries.csv file)
-Library <- 0
+Library <- 1
 
 # Positive controls: 0 = Essential (Hart et al 2017 G3)
 ControlsP <- 0
