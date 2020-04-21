@@ -237,6 +237,7 @@ for (Filename in Filenames) {
         }
       }
     } 
+    
     # DESeq2 data table
     df_res <- as.data.frame(res)
     
