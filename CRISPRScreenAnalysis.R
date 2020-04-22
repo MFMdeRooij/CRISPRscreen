@@ -4,7 +4,7 @@
 # - Analyze the count tables with this script and the CRISPRScreenAnalysisLibraries.csv file
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 # A small part (aRRA) is adapted from Thomas Kuilman PhD, NKI Amsterdam, Peeper Lab (https://github.com/PeeperLab?tab=repositories)
-# The random seeds are diffent in Windows and Linux R versions, so the p-values on gene level can be different
+# The random seeds are different in Windows and Linux R versions, so the p-values on gene level can be different
 ######################################################################################
 ## Install DESeq2
 #install.packages("BiocManager")
@@ -93,7 +93,7 @@ if (MA_all_genes==3){
   )
 }
 
-# Correlation plots of all samples: 0 = Yes, 1 = No (Only recommended if the replicates are messed up) 
+# Correlation plots of all samples: 0 = Yes, 1 = No (Only recommended when the replicates are messed up) 
 pairs<- 1
 
 # MAGeCK: 0 = Yes, 1 = No (this does not work in Windows)
