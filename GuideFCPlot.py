@@ -133,7 +133,7 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
     elif rrascore==1:
         plt.text(0,0,'-$^{10}$log RRA$_{enr}$ score', fontsize=8)
     plt.axis('off') 
-    plt.text(dfrra['10lrra'].max(),len(genes)-0.5, 'red: FDR < 0.1', rotation=-90) 
+    plt.text(dfrra['10lrra'].max(),len(genes)+0.5, 'red: FDR < 0.1', rotation=-90) 
     i+=1
 
 plt.subplots_adjust(hspace=0)
