@@ -156,13 +156,13 @@ for screen in screens:
     screenData = screen
     with gzip.open(screenData, 'r') as FASTQ:
 	    while True:
-		FASTQ.readline()
-		seq = FASTQ.readline().decode("utf-8")
-		if not seq:
-		    break
-		FASTQ.readline()
-		FASTQ.readline()
-		countTableToFillZero[guideDetermination(seq),barcodeDetermination(seq)]+=1
+    		FASTQ.readline()
+    		seq = FASTQ.readline().decode("utf-8")
+    		if not seq:
+    		    break
+    		FASTQ.readline()
+    		FASTQ.readline()
+    		countTableToFillZero[guideDetermination(seq),barcodeDetermination(seq)]+=1
 
     #Write count table to file
     if printUnID == 1:
