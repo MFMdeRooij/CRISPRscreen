@@ -55,9 +55,7 @@ BCnum = dict(zip(barcode, np.arange(12)+1))
 # Make dictionary with barcode pieces 
 BCpieces = {}
 BCsize = len(barcode[0])
-index = 0
-for bc in barcode:
-  index+=1
+for index, bc in enumerate(barcode, start=1):
   for nt in range(BCsize):
     BCpieces[str(index)+"."+str(nt+1)] = bc[nt]
 
