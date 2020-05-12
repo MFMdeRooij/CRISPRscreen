@@ -136,12 +136,13 @@ def guideDetermination(seq):
                 alignments = pairwise2.align.localms(guidereads, guides, 5, -3, -5, -5, score_only=True)
                 guidearr=np.append(guidearr, int(alignments)) 
             if guidearr.max()>=75:    
-                guideNumber = 1+guidearr.argmax() 
+                guideNumber = guidearr.argmax() 
             else:
                 guideNumber = 0
         else:
             guideNumber = 0       
-        if printUnID == 1:
+    if printUnID == 1:
+        if guideNumber==0:     
             print(seq+"This guide cannot be identified: "+guide+"\n")
     return guideNumber
 
