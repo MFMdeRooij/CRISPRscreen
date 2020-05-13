@@ -97,7 +97,8 @@ def barcodeDetermination(seq):
                 bcarr=np.append(bcarr, int(alignments)) 
             if bcarr.max()>=15:    
                 BCnumber = 1+bcarr.argmax() 
-                print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1])) 
+                if printUnID == 1:
+                    print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1])) 
             else:
                 BCnumber = 0
     if printUnID == 1:
