@@ -3,7 +3,7 @@
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # Open in Spyder, adjust the settings, and run the script
-# If you don't have Biopython installed, comment out line 15
+# If you don't have Biopython installed comment out line 15, (or install biopython: command line/Windows Powershell: conda install biopython)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 # Import python modules
@@ -40,7 +40,7 @@ barcode = ["CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC",
 # Number of allowed mismaches in barcodes, and max indels in constant part of the reads (PCR-primer mutations) (default = 1,3)
 BCmm,indel = 1,3
 
-# Print unidentified barcode and guide sequences: 0 = No, 1 = yes
+# Print information about non-perfect barcode and guide sequences: 0 = No, 1 = yes
 printUnID = 1
 
 # Use biopython pairwise2 alignment of barcodes and guides: 0 = No, 1 = yes
@@ -86,6 +86,8 @@ def barcodeDetermination(seq):
                         m1+=1
                     if m1 >= BCsize-BCmm:
                         BCnumber = ibc+1
+                        if printUnID == 1:
+                            print("This barcode (%s --> %s) had %d mismatch" % (BCreads, barcode[BCnumber-1], BCsize-m1))  
                         break    
         elif biopythonBarcode == 1:
             BCreads = seq[0:BCsize+1]
@@ -94,12 +96,13 @@ def barcodeDetermination(seq):
                 alignments = pairwise2.align.localms(BCreads, bc, 5, -3, -5, -5, score_only=True)
                 bcarr=np.append(bcarr, int(alignments)) 
             if bcarr.max()>=15:    
-                BCnumber = 1+bcarr.argmax()             
+                BCnumber = 1+bcarr.argmax() 
+                print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1])) 
             else:
                 BCnumber = 0
     if printUnID == 1:
         if BCnumber == 0:
-            print(seq+"This barcode cannot be identified: "+BCreads+"\n")
+            print(seq+"This barcode cannot be identified: "+BCreads)
     return(BCnumber)
    
 def guideDetermination(seq):
@@ -109,7 +112,7 @@ def guideDetermination(seq):
         global indels
         global align
         total+=1
-        print("Total reads analyzed: %d" % (total))
+        print("\nTotal reads analyzed: %d" % (total))
     # When there is an indel in constant region, change CRISPR seq location 
     if indel > 0:
         upseqlength = len(upseq)
@@ -121,15 +124,13 @@ def guideDetermination(seq):
                     guide = seq[loc+i:loc+CRISPRsize+i]
                     if printUnID == 1:
                         indels+=1
+                        print("This read (%s) had %d indel" % (seq, i))
                         print("Reads with indels mapped: %d" % (indels))
                     break
                     
     guideNumber=np.where(LibrarySeq==guide)[0]    
     if guideNumber.size == 0: 
         if biopythonGuide == 1:
-            if printUnID == 1:
-                align+=1
-                print("Reads which are aligned by biopython: %d" % (align))  
             guidereads = seq[loc-3:]
             guidearr = np.array([])
             for guides in LibrarySeq:
@@ -137,13 +138,17 @@ def guideDetermination(seq):
                 guidearr=np.append(guidearr, int(alignments)) 
             if guidearr.max()>=75:    
                 guideNumber = guidearr.argmax() 
+                if printUnID == 1:
+                    print("Guide (%s --> %s) aligned by biopython" % (guidereads, LibrarySeq[guideNumber])) 
+                    align+=1
+                    print("Reads which are aligned by biopython: %d" % (align))  
             else:
                 guideNumber = 0
         else:
             guideNumber = 0       
     if printUnID == 1:
         if guideNumber==0:     
-            print(seq+"This guide cannot be identified: "+guide+"\n")
+            print(seq+"This guide cannot be identified: "+guide)
     return guideNumber
 
 # Count the reads
