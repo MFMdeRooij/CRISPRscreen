@@ -67,29 +67,35 @@ LibrarySeq = Library["Sequence"].to_numpy()
 def barcodeDetermination(seq):
     # Determine barcode
     BCreads = seq[0:BCsize]
+    if printUnID == 1:
+        global BCmismatch
+        global BCalign
     try:
         BCnumber = BCnum[BCreads]
     except KeyboardInterrupt:
         sys.exit()
     except:
-        if biopythonBarcode == 0:
-            BCnumber = 0
-            if BCmm > 0:
-                  BCread = {}
-                  for nt in range(BCsize):
-                      BCread["s"+str(nt+1)] = seq[nt]  
-            # Calculate similarities with barcode dictionary
-            for ibc in range(len(barcode)):
-                m1 = 0
-                for i in range(BCsize):
-                    if BCread["s"+str(i+1)] == BCpieces[str(ibc+1)+"."+str(i+1)]:
-                        m1+=1
-                    if m1 >= BCsize-BCmm:
-                        BCnumber = ibc+1
-                        if printUnID == 1:
-                            print("This barcode (%s --> %s) had %d mismatch" % (BCreads, barcode[BCnumber-1], BCsize-m1))  
-                        break    
-        elif biopythonBarcode == 1:
+        BCnumber = 0
+        if BCmm > 0:
+              BCread = {}
+              for nt in range(BCsize):
+                  BCread["s"+str(nt+1)] = seq[nt]  
+        # Calculate similarities with barcode dictionary
+        for ibc in range(len(barcode)):
+            m1 = 0
+            for i in range(BCsize):
+                if BCread["s"+str(i+1)] == BCpieces[str(ibc+1)+"."+str(i+1)]:
+                    m1+=1
+            if m1 >= BCsize-BCmm:
+                BCnumber = ibc+1
+                if printUnID == 1:
+                    print("This barcode (%s --> %s) had %d mismatch" % (BCreads, barcode[BCnumber-1], BCsize-m1)) 
+                    BCmismatch+=1
+                    print("Barcodes with mismatches mapped: %d" % (BCmismatch))
+                break  
+           
+    if BCnumber == 0:
+        if biopythonBarcode == 1:
             BCreads = seq[0:BCsize+1]
             bcarr = np.array([])
             for bc in barcode:
@@ -98,7 +104,9 @@ def barcodeDetermination(seq):
             if bcarr.max()>=15:    
                 BCnumber = 1+bcarr.argmax() 
                 if printUnID == 1:
-                    print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1])) 
+                    print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1]))
+                    BCalign+=1
+                    print("Barcodes which are aligned by biopython: %d" % (BCalign))
             else:
                 BCnumber = 0
     if printUnID == 1:
@@ -158,6 +166,8 @@ for screen in screens:
         total = 0
         indels = 0
         align = 0
+        BCmismatch = 0
+        BCalign = 0
     countTableToFillZero = np.zeros((len(Library), len(barcode)+1))
     # Read Fastq file and put counts in the count table
     screenData = screen
