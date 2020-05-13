@@ -6,7 +6,7 @@ use strict;
 # Linux: run in command line: ./FastqToCountTable.pl LibraryX.csv data1.fastq.gz data2.fastq.gz
 # For the TestData: ./FastqToCountTable.pl LibraryKinomeBrunelloLentiGuide.csv test.fastq.gz
 # Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 60) for 'type',
-# and run in command prompt: perl FastqToCountTable.pl LibraryX.csv data1.fastq.gz data2.fastq.gz
+# and run in command prompt: perl FastqToCountTable.pl LibraryX.csv data1.fastq data2.fastq
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 #                                            SETTINGS
