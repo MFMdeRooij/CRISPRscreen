@@ -133,7 +133,7 @@ def guideDetermination(seq):
                     guide = seq[loc+i:loc+CRISPRsize+i]
                     if printUnID == 1:
                         print("This read (%s) had %d indel" % (seq, i))
-			indels+=1
+			            indels+=1
                         print("Reads with indels mapped: %d" % (indels))
                     break
                     
