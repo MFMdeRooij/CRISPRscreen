@@ -5,7 +5,7 @@ use strict;
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # Linux: run in command line: ./Quality.pl data1.fastq.gz data2.fastq.gz
 # Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 45) for 'type',
-# and run in command prompt: perl Quality.pl data1.fastq.gz data2.fastq.gz
+# and run in command prompt: perl Quality.pl data1.fastq data2.fastq
 # After running this code (and FastqToCountTable.pl), go further with the R script (Quality.R)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
