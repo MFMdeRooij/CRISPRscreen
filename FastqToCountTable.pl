@@ -5,8 +5,9 @@ use strict;
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # Linux: run in command line: ./FastqToCountTable.pl LibraryX.csv data1.fastq.gz data2.fastq.gz
 # For the TestData: ./FastqToCountTable.pl LibraryKinomeBrunelloLentiGuide.csv test.fastq.gz
-# Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 60) for 'type',
-# and run in command prompt: perl FastqToCountTable.pl LibraryX.csv data1.fastq data2.fastq
+# Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 61) for 'type',
+# and run in command prompt: perl FastqToCountTable.pl LibraryX.csv data1.fastq data2.fastq (if you use tab to complete the filename
+# windows will add .\ before the filename (.\data1.fastq), this will give problems in naming the output file, so don't use that
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 #                                            SETTINGS
