@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
+# Apart from anaconda3, install Biopython: command line/Windows Powershell: conda install biopython
 # Open in Spyder, adjust the settings, and run the script
-# If you don't have Biopython installed comment out line 15, (or install biopython: command line/Windows Powershell: conda install biopython)
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
+# To produce a count table keep the variables after line 47 on 0, and for further analysis remove the unidentified counts (line 57)
+# To have a nice overview of the quality of your reads, run the script in Spyder for a few minutes,
+# and subsequently run the read quality overview lines (select line 283-301 and press F9)
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 # Import python modules
 import os
@@ -12,6 +15,7 @@ import numpy as np
 import pandas as pd
 import gzip
 import sys
+import re
 from Bio import pairwise2
 #####################################################################################################
 #                                            SETTINGS
@@ -38,15 +42,19 @@ barcode = ["CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC",
 		   "GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG"]
 
 # Number of allowed mismaches in barcodes, and max indels in constant part of the reads (PCR-primer mutations) (default = 1,3)
-BCmm,indel = 1,3
+BCmm,indel = 1,3 # for barcodes of 6 nucleotides do not use more than 1 mismatch (to see multiple matches comment out 'break' in line 105, and use printUnID = 1 in line 50)
 
-# Print information about non-perfect barcode and guide sequences: 0 = No, 1 = yes
+# FOR QUICK MAPPING KEEP NEXT VARIABLES ON 0
+
+# Print information about the barcode and guide sequences: 0 = No, 1 = yes
 printUnID = 1
 
-# Use biopython pairwise2 alignment of barcodes and guides: 0 = No, 1 = yes
-biopythonBarcode = 0
-biopythonGuide = 0 # Not recommanded (mutations could be inactivating the guide)
+# Use regex and Biopython's pairwise2 alignment for barcodes and guides identification: 0 = No, 1 = yes (for quality checks only)
+biopythonBarcode = 1
+biopythonGuide = 0 # (Keep in mind that mutations in the guide sequence could be non-functional or aspecific)
 
+# Remove unidentified counts from count table (recommended for further analysis) 0 = yes, 1 = no !!
+RemoveUnID = 1 
 ######################################################################################################
     
 # Make dictionary with barcode numbers
@@ -68,58 +76,93 @@ def barcodeDetermination(seq):
     # Determine barcode
     BCreads = seq[0:BCsize]
     if printUnID == 1:
-        global BCmismatch
-        global BCalign
+        global BCcorrect, BCmismatch, BCdel, BCins, BCalign
     try:
         BCnumber = BCnum[BCreads]
+        if printUnID == 1 and BCnumber.size != 0:         
+            BCcorrect+=1
+            print("Correct barcodes: %d" % (BCcorrect))  
     except KeyboardInterrupt:
         sys.exit()
     except:
         BCnumber = 0
         if BCmm > 0:
-              BCread = {}
-              for nt in range(BCsize):
-                  BCread["s"+str(nt+1)] = seq[nt]  
-        # Calculate similarities with barcode dictionary
-        for ibc in range(len(barcode)):
-            m1 = 0
-            for i in range(BCsize):
-                if BCread["s"+str(i+1)] == BCpieces[str(ibc+1)+"."+str(i+1)]:
-                    m1+=1
-            if m1 >= BCsize-BCmm:
-                BCnumber = ibc+1
-                if printUnID == 1:
-                    print("This barcode (%s --> %s) had %d mismatch" % (BCreads, barcode[BCnumber-1], BCsize-m1)) 
-                    BCmismatch+=1
-                    print("Barcodes with mismatches mapped: %d" % (BCmismatch))
-                break  
-           
-    if BCnumber == 0:
-        if biopythonBarcode == 1:
-            BCreads = seq[0:BCsize+1]
-            bcarr = np.array([])
-            for bc in barcode:
-                alignments = pairwise2.align.localms(BCreads, bc, 5, -3, -5, -5, score_only=True)
-                bcarr=np.append(bcarr, int(alignments)) 
-            if bcarr.max()>=15:    
-                BCnumber = 1+bcarr.argmax() 
-                if printUnID == 1:
-                    print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1]))
-                    BCalign+=1
-                    print("Barcodes which are aligned by biopython: %d" % (BCalign))
-            else:
-                BCnumber = 0
-    if printUnID == 1:
-        if BCnumber == 0:
-            print(seq+"This barcode cannot be identified: "+BCreads)
+            BCread = {}
+            for nt in range(BCsize):
+                BCread["s"+str(nt+1)] = seq[nt]  
+            # Calculate similarities with barcode dictionary
+            for ibc in range(len(barcode)):
+                m1 = 0
+                for i in range(BCsize):
+                    if BCread["s"+str(i+1)] == BCpieces[str(ibc+1)+"."+str(i+1)]:
+                        m1+=1
+                if m1 >= BCsize-BCmm:
+                    BCnumber = ibc+1
+                    if printUnID == 1:
+                        print("This barcode (%s --> %s) had %d mismatch" % (BCreads, barcode[BCnumber-1], BCsize-m1)) 
+                        BCmismatch+=1
+                        print("Barcodes identified with max %d mismatch: %d" % (BCmm,BCmismatch))
+                    break  
+                         
+            if biopythonBarcode == 1 and BCnumber == 0:
+                # Deletion
+                BCreads = seq[0:BCsize-1]
+                matchSeq = []
+                for i in range(len(BCreads)+1):
+                    pattern = re.compile(r''+str(BCreads[0:i])+'.'+str(BCreads[i:len(BCreads)]))
+                    for bc in barcode:   
+                        matches = pattern.findall(bc)
+                        for match in matches:
+                            matchSeq.append(bc)
+                if len(matchSeq) != 0:
+                    BCnumber = BCnum[max(set(matchSeq), key=matchSeq.count)]
+                    if printUnID == 1:
+                        print("This barcode (%s --> %s) is found by regex" % (BCreads, barcode[BCnumber-1]))          
+                        BCdel+=1
+                        print("Barcodes identified by regex (a deletion): %d" % (BCdel))  
+
+                if BCnumber == 0:
+                    # Insertion
+                    BCreads = seq[0:BCsize+1]
+                    matchSeq = []
+                    for i in range(len(BCreads)):
+                        pattern = re.compile(r''+str(BCreads[0:i])+str(BCreads[i+1:len(BCreads)]))
+                        for bc in barcode:   
+                            matches = pattern.findall(bc)
+                            for match in matches:
+                                matchSeq.append(bc)
+                    if len(matchSeq) != 0:
+                        BCnumber = BCnum[max(set(matchSeq), key=matchSeq.count)]
+                        if printUnID == 1:
+                            print("This barcode (%s --> %s) is found by regex" % (BCreads, barcode[BCnumber-1]))          
+                            BCins+=1
+                            print("Barcodes identified by regex (an insertion): %d" % (BCins))  
+        
+                if BCnumber == 0:
+                    # Alignment
+                    BCreads = seq[0:BCsize+1]
+                    bcarr = np.array([])
+                    for bc in barcode:
+                        alignments = pairwise2.align.localms(BCreads, bc, 5, -3, -5, -5, score_only=True)
+                        bcarr=np.append(bcarr, int(alignments)) 
+                    if bcarr.max()>=21:    
+                        BCnumber = 1+bcarr.argmax() 
+                        print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1]))
+                        if printUnID == 1:
+                            print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1]))
+                            BCalign+=1
+                            print("Barcodes identified by biopython aligment (more mutations): %d" % (BCalign))
+
+    if printUnID == 1 and BCnumber == 0:
+        print(seq+"This barcode cannot be identified: "+seq[0:BCsize])
     return(BCnumber)
    
 def guideDetermination(seq):
     guide = seq[loc:loc+CRISPRsize]
+    if biopythonGuide == 1:
+        guideForInsert = seq[loc:loc+CRISPRsize+1]
     if printUnID == 1:
-        global total
-        global indels
-        global align
+        global total, correct, indels, mismatch, deletion, insertion, align 
         total+=1
         print("\nTotal reads analyzed: %d" % (total))
     # When there is an indel in constant region, change CRISPR seq location 
@@ -131,43 +174,98 @@ def guideDetermination(seq):
                 preseq = seq[loc-upseqlength+i:loc-upseqlength+upseqlength+i]
                 if preseq == upseq:
                     guide = seq[loc+i:loc+CRISPRsize+i]
+                    if biopythonGuide == 1:
+                        guideForInsert = seq[loc+i:loc+CRISPRsize+i+1]
                     if printUnID == 1:
                         print("This read (%s) had %d indel" % (seq, i))
                         indels+=1
-                        print("Reads with indels mapped: %d" % (indels))
+                        print("Guides identified with indels of max %dnt in upstream region: %d" % (indel,indels))
                     break
                     
-    guideNumber=np.where(LibrarySeq==guide)[0]    
-    if guideNumber.size == 0: 
-        if biopythonGuide == 1:
-            guidereads = seq[loc-3:]
+    guideNumber=np.where(LibrarySeq==guide)[0]
+    if printUnID == 1 and guideNumber.size != 0:
+        correct+=1
+        print("Correct guides: %d" % (correct))  
+        
+    if biopythonGuide == 1 and guideNumber.size == 0: 
+        # Deletion
+        Guidereads = guide[0:CRISPRsize-1]
+        matchSeq = []
+        for i in range(len(Guidereads)+1):
+            pattern = re.compile(r''+str(Guidereads[0:i])+'.'+str(Guidereads[i:len(Guidereads)]))
+            for seqG in LibrarySeq:   
+                matches = pattern.findall(seqG)
+                for match in matches:
+                    matchSeq.append(seqG)
+        if len(matchSeq) != 0:
+            guideNumber=np.where(LibrarySeq==max(set(matchSeq), key=matchSeq.count))[0]  
+            if printUnID == 1:
+                print("This guide (%s --> %s) is found by regex" % (Guidereads, LibrarySeq[guideNumber]))          
+                deletion+=1
+                print("Guide identified by regex (a deletion): %d" % (deletion))  
+
+        if guideNumber.size == 0:         
+            # Mismatch
+            Guidereads = guide
+            matchSeq = []
+            for i in range(len(Guidereads)):
+                pattern = re.compile(r''+str(Guidereads[0:i])+'.'+str(Guidereads[i+1:len(Guidereads)]))
+                for seqG in LibrarySeq:   
+                    matches = pattern.findall(seqG)
+                    for match in matches:
+                        matchSeq.append(seqG)
+            if len(matchSeq) != 0:
+                guideNumber=np.where(LibrarySeq==max(set(matchSeq), key=matchSeq.count))[0]   
+                if printUnID == 1:
+                    print("This guide (%s --> %s) is found by regex" % (Guidereads, LibrarySeq[guideNumber]))          
+                    mismatch+=1
+                    print("Guide identified by regex (a mismatch): %d" % (mismatch))  
+                         
+        if guideNumber.size == 0: 
+            # Insertion
+            Guidereads = guideForInsert
+            matchSeq = []
+            for i in range(len(Guidereads)):
+                pattern = re.compile(r''+str(Guidereads[0:i])+str(Guidereads[i+1:len(Guidereads)]))
+                for seqG in LibrarySeq:   
+                    matches = pattern.findall(seqG)
+                    for match in matches:
+                        matchSeq.append(seqG)
+            if len(matchSeq) != 0:
+                guideNumber=np.where(LibrarySeq==max(set(matchSeq), key=matchSeq.count))[0]    
+                if printUnID == 1:
+                    print("This guide (%s --> %s) is found by regex" % (Guidereads, LibrarySeq[guideNumber]))          
+                    insertion+=1
+                    print("Guide identified by regex (an insertion): %d" % (deletion))  
+
+        if guideNumber.size == 0: 
+            # Alignment
+            Guidereads = seq[loc-3:]
             guidearr = np.array([])
             for guides in LibrarySeq:
-                alignments = pairwise2.align.localms(guidereads, guides, 5, -3, -5, -5, score_only=True)
+                alignments = pairwise2.align.localms(Guidereads, guides, 5, -3, -5, -5, score_only=True)
                 guidearr=np.append(guidearr, int(alignments)) 
-            if guidearr.max()>=75:    
+            if guidearr.max()>=76:    
                 guideNumber = guidearr.argmax() 
+                print("Guide (%s --> %s) aligned by biopython" % (Guidereads, LibrarySeq[guideNumber])) 
                 if printUnID == 1:
-                    print("Guide (%s --> %s) aligned by biopython" % (guidereads, LibrarySeq[guideNumber])) 
+                    print("Guide (%s --> %s) aligned by biopython" % (Guidereads, LibrarySeq[guideNumber])) 
                     align+=1
-                    print("Reads which are aligned by biopython: %d" % (align))  
-            else:
-                guideNumber = 0
-        else:
-            guideNumber = 0       
-    if printUnID == 1:
-        if guideNumber==0:     
+                    print("Non-perfect guides identified by biopython alignment (more indels and/or mismatches): %d" % (align))  
+
+    if guideNumber.size == 0:
+        guideNumber = 0       
+        if printUnID == 1:    
             print(seq+"This guide cannot be identified: "+guide)
+    
     return guideNumber
 
 # Count the reads
 for screen in screens:
     if printUnID == 1:
-        total = 0
-        indels = 0
-        align = 0
-        BCmismatch = 0
-        BCalign = 0
+        total=correct=indels=mismatch=deletion=insertion=align = 0
+        BCcorrect=BCmismatch=BCdel=BCins=BCalign = 0
+
     countTableToFillZero = np.zeros((len(Library), len(barcode)+1))
     # Read Fastq file and put counts in the count table
     screenData = screen
@@ -181,10 +279,29 @@ for screen in screens:
     		FASTQ.readline()
     		countTableToFillZero[guideDetermination(seq),barcodeDetermination(seq)]+=1
 
-    #Write count table to file
+    # Overview read quality
+    print("%s: %d reads were analyzed, in which %d (%d%%) were mapped" % (screen, int(countTableToFillZero.sum()), 
+        int(countTableToFillZero[1:,1:].sum()), int(countTableToFillZero[1:,1:].sum())/int(countTableToFillZero.sum())*100))
     if printUnID == 1:
-        print("%d reads were analyzed, in which %d (%d%%) were mapped" % (int(countTableToFillZero.sum()), 
-                                int(countTableToFillZero[1:,1:].sum()), int(countTableToFillZero[1:,1:].sum())/
-                                                                            int(countTableToFillZero.sum())*100))
+        print("Correct barcodes: %d" % (BCcorrect))  
+        if BCmm > 0:
+            print("Barcodes identified with max %d mismatch: %d" % (BCmm,BCmismatch))
+        if biopythonBarcode == 1:
+            print("Barcodes identified by regex (a deletion): %d" % (BCdel))
+            print("Barcodes identified by regex (an insertion): %d" % (BCins))
+            print("Barcodes identified by biopython aligment (more mutations): %d" % (BCalign))
+        if indel > 0:
+            print("Guides identified with indels of max %dnt in upstream region: %d" % (indel,indels))
+        print("Correct guides: %d" % (correct))  
+        if biopythonGuide == 1:
+            print("Guide identified by regex (a mismatch): %d" % (mismatch))
+            print("Guide identified by regex (a deletion): %d" % (deletion))  
+            print("Guide identified by regex (an insertion): %d" % (insertion))  
+            print("Non-perfect guides identified by biopython alignment (more indels and/or mismatches): %d" % (align)) 
+        print("Check also the 'countTableFilled' table in the next step, to see the (undeintified) counts per barcode/guide")
+            
+    # Write count table to file
     countTableFilled = pd.concat([Library, pd.DataFrame(countTableToFillZero, columns=["Unidentified"]+barcode)], axis=1)
+    if RemoveUnID == 0:
+       countTableFilled = countTableFilled.drop([0]).drop(["Unidentified"], axis=1)
     countTableFilled.to_csv("CountTable_"+screen+".csv", index=False)
