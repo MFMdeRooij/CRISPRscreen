@@ -249,7 +249,7 @@ def guideDetermination(seq):
                 if printUnID == 1:
                     print("Guide (%s --> %s) aligned by biopython" % (Guidereads, LibrarySeq[guideNumber])) 
                     align+=1
-                    print("Non-perfect guides identified by biopython alignment (more indels and/or mismatches): %d" % (align))  
+                    print("Guides identified by biopython alignment (more indels and/or mismatches): %d" % (align))  
 
     if guideNumber.size == 0:
         guideNumber = 0       
@@ -295,7 +295,7 @@ for screen in screens:
             print("Guide identified by regex (a mismatch): %d" % (mismatch))
             print("Guide identified by regex (a deletion): %d" % (deletion))  
             print("Guide identified by regex (an insertion): %d" % (insertion))  
-            print("Non-perfect guides identified by biopython alignment (more indels and/or mismatches): %d" % (align)) 
+            print("Guides identified by biopython alignment (more indels and/or mismatches): %d" % (align)) 
         print("Check also the 'countTableFilled' table in the next step, to see the distribution of unidentified counts per barcode/guide")
             
     # Write count table to file
