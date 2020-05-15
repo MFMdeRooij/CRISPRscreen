@@ -4,7 +4,7 @@
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # Apart from anaconda3, install Biopython: command line/Windows Powershell: conda install biopython
 # Open in Spyder, adjust the settings, and run the script
-# To produce a count table keep the variables after line 47 on 0, and for further analysis remove the unidentified counts (line 57)
+# To produce a count table keep the variables after line 47 on 0
 # To have a nice overview of the quality of your reads, run the script in Spyder for a few minutes,
 # and subsequently run the read quality overview lines (select line 283-301 and press F9)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
