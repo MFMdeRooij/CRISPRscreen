@@ -6,7 +6,7 @@
 # Open in Spyder, adjust the settings, and run the script
 # To produce a count table keep the variables after line 47 on 0
 # To have a nice overview of the quality of your reads, run the script in Spyder for a few minutes,
-# and subsequently run the read quality overview lines (select line 283-301 and press F9)
+# and subsequently run the read quality overview lines (select line 281-299 and press F9)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 # Import python modules
@@ -147,7 +147,6 @@ def barcodeDetermination(seq):
                         bcarr=np.append(bcarr, int(alignments)) 
                     if bcarr.max()>=21:    
                         BCnumber = 1+bcarr.argmax() 
-                        print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1]))
                         if printUnID == 1:
                             print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1]))
                             BCalign+=1
@@ -247,7 +246,6 @@ def guideDetermination(seq):
                 guidearr=np.append(guidearr, int(alignments)) 
             if guidearr.max()>=76:    
                 guideNumber = guidearr.argmax() 
-                print("Guide (%s --> %s) aligned by biopython" % (Guidereads, LibrarySeq[guideNumber])) 
                 if printUnID == 1:
                     print("Guide (%s --> %s) aligned by biopython" % (Guidereads, LibrarySeq[guideNumber])) 
                     align+=1
