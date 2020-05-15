@@ -145,7 +145,7 @@ def barcodeDetermination(seq):
                     for bc in barcode:
                         alignments = pairwise2.align.localms(BCreads, bc, 5, -3, -5, -5, score_only=True)
                         bcarr=np.append(bcarr, int(alignments)) 
-                    if bcarr.max() > BCsize*2/3*5+1:    
+                    if bcarr.max() > BCsize*2/3*5:    
                         BCnumber = 1+bcarr.argmax() 
                         if printUnID == 1:
                             print("This barcode (%s --> %s) is aligned by biopython" % (BCreads, barcode[BCnumber-1]))
