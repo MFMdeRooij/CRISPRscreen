@@ -201,7 +201,7 @@ def guideDetermination(seq):
             if printUnID == 1:
                 print("This guide (%s --> %s) is found by regex" % (Guidereads, LibrarySeq[guideNumber]))          
                 deletion+=1
-                print("Guide identified by regex (a deletion): %d" % (deletion))  
+                print("Guides identified by regex (a deletion): %d" % (deletion))  
 
         if guideNumber.size == 0:         
             # Mismatch
@@ -218,7 +218,7 @@ def guideDetermination(seq):
                 if printUnID == 1:
                     print("This guide (%s --> %s) is found by regex" % (Guidereads, LibrarySeq[guideNumber]))          
                     mismatch+=1
-                    print("Guide identified by regex (a mismatch): %d" % (mismatch))  
+                    print("Guides identified by regex (a mismatch): %d" % (mismatch))  
                          
         if guideNumber.size == 0: 
             # Insertion
@@ -235,7 +235,7 @@ def guideDetermination(seq):
                 if printUnID == 1:
                     print("This guide (%s --> %s) is found by regex" % (Guidereads, LibrarySeq[guideNumber]))          
                     insertion+=1
-                    print("Guide identified by regex (an insertion): %d" % (deletion))  
+                    print("Guides identified by regex (an insertion): %d" % (deletion))  
 
         if guideNumber.size == 0: 
             # Alignment
@@ -292,9 +292,9 @@ for screen in screens:
             print("Guides identified with indels of max %dnt in upstream region: %d" % (indel,indels))
         print("Correct guides: %d" % (correct))  
         if biopythonGuide == 1:
-            print("Guide identified by regex (a mismatch): %d" % (mismatch))
-            print("Guide identified by regex (a deletion): %d" % (deletion))  
-            print("Guide identified by regex (an insertion): %d" % (insertion))  
+            print("Guides identified by regex (a mismatch): %d" % (mismatch))
+            print("Guides identified by regex (a deletion): %d" % (deletion))  
+            print("Guides identified by regex (an insertion): %d" % (insertion))  
             print("Guides identified by biopython alignment (more indels and/or mismatches): %d" % (align)) 
         print("Check also the 'countTableFilled' table in the next step, to see the distribution of unidentified counts per barcode/guide")
             
