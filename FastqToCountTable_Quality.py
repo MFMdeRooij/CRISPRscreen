@@ -280,7 +280,7 @@ for screen in screens:
     		countTableToFillZero[guideDetermination(seq),barcodeDetermination(seq)]+=1
 
     # Overview read quality
-    print("%s: %d reads were analyzed, in which %d (%d%%) were mapped" % (screen, int(countTableToFillZero.sum()), 
+    print("\nSUMMARY (%s):\n%d reads were analyzed, in which %d (%d%%) were mapped" % (screen, int(countTableToFillZero.sum()), 
         int(countTableToFillZero[1:,1:].sum()), int(countTableToFillZero[1:,1:].sum())/int(countTableToFillZero.sum())*100))
     if printUnID == 1:
         print("Correct barcodes: %d" % (BCcorrect))  
@@ -298,7 +298,7 @@ for screen in screens:
             print("Guide identified by regex (a deletion): %d" % (deletion))  
             print("Guide identified by regex (an insertion): %d" % (insertion))  
             print("Non-perfect guides identified by biopython alignment (more indels and/or mismatches): %d" % (align)) 
-        print("Check also the 'countTableFilled' table in the next step, to see the unidentified counts per barcode/guide")
+        print("Check also the 'countTableFilled' table in the next step, to see the distribution of unidentified counts per barcode/guide")
             
     # Write count table to file
     countTableFilled = pd.concat([Library, pd.DataFrame(countTableToFillZero, columns=["Unidentified"]+barcode)], axis=1)
