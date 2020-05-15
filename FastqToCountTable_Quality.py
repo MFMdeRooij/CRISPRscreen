@@ -99,9 +99,9 @@ def barcodeDetermination(seq):
                 if m1 >= BCsize-BCmm:
                     BCnumber = ibc+1
                     if printUnID == 1:
-                        print("This barcode (%s --> %s) had %d mismatch" % (BCreads, barcode[BCnumber-1], BCsize-m1)) 
+                        print("This barcode (%s --> %s) has %d mismatch(es)" % (BCreads, barcode[BCnumber-1], BCsize-m1)) 
                         BCmismatch+=1
-                        print("Barcodes identified with max %d mismatch: %d" % (BCmm,BCmismatch))
+                        print("Barcodes identified with max %d mismatch(es): %d" % (BCmm,BCmismatch))
                     break  
                          
             if biopythonBarcode == 1 and BCnumber == 0:
@@ -145,10 +145,10 @@ def barcodeDetermination(seq):
                     for bc in barcode:
                         alignments = pairwise2.align.localms(BCreads, bc, 5, -3, -5, -5, score_only=True)
                         bcarr=np.append(bcarr, int(alignments)) 
-                    if bcarr.max()>=21:    
+                    if bcarr.max() > BCsize*2/3*5+1:    
                         BCnumber = 1+bcarr.argmax() 
                         if printUnID == 1:
-                            print("Barcode (%s --> %s) aligned by biopython" % (BCreads, barcode[BCnumber-1]))
+                            print("This barcode (%s --> %s) is aligned by biopython" % (BCreads, barcode[BCnumber-1]))
                             BCalign+=1
                             print("Barcodes identified by biopython aligment (more mutations): %d" % (BCalign))
 
@@ -176,9 +176,9 @@ def guideDetermination(seq):
                     if biopythonGuide == 1:
                         guideForInsert = seq[loc+i:loc+CRISPRsize+i+1]
                     if printUnID == 1:
-                        print("This read (%s) had %d indel" % (seq, i))
+                        print("This read (%s) has %d indel" % (seq, i))
                         indels+=1
-                        print("Guides identified with indels of max %dnt in upstream region: %d" % (indel,indels))
+                        print("Reads with indels of max %dnt in upstream region of the guide: %d" % (indel,indels))
                     break
                     
     guideNumber=np.where(LibrarySeq==guide)[0]
@@ -244,10 +244,10 @@ def guideDetermination(seq):
             for guides in LibrarySeq:
                 alignments = pairwise2.align.localms(Guidereads, guides, 5, -3, -5, -5, score_only=True)
                 guidearr=np.append(guidearr, int(alignments)) 
-            if guidearr.max()>=76:    
+            if guidearr.max() > CRISPRsize*2/3*5:    
                 guideNumber = guidearr.argmax() 
                 if printUnID == 1:
-                    print("Guide (%s --> %s) aligned by biopython" % (Guidereads, LibrarySeq[guideNumber])) 
+                    print("This guide (%s --> %s) is aligned by biopython" % (Guidereads, LibrarySeq[guideNumber])) 
                     align+=1
                     print("Guides identified by biopython alignment (more indels and/or mismatches): %d" % (align))  
 
@@ -283,13 +283,13 @@ for screen in screens:
     if printUnID == 1:
         print("Correct barcodes: %d" % (BCcorrect))  
         if BCmm > 0:
-            print("Barcodes identified with max %d mismatch: %d" % (BCmm,BCmismatch))
+            print("Barcodes identified with max %d mismatch(es): %d" % (BCmm,BCmismatch))
         if biopythonBarcode == 1:
             print("Barcodes identified by regex (a deletion): %d" % (BCdel))
             print("Barcodes identified by regex (an insertion): %d" % (BCins))
             print("Barcodes identified by biopython aligment (more mutations): %d" % (BCalign))
         if indel > 0:
-            print("Guides identified with indels of max %dnt in upstream region: %d" % (indel,indels))
+            print("Reads with indels of max %dnt in upstream region of the guide: %d" % (indel,indels))
         print("Correct guides: %d" % (correct))  
         if biopythonGuide == 1:
             print("Guides identified by regex (a mismatch): %d" % (mismatch))
