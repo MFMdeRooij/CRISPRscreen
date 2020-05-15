@@ -298,7 +298,7 @@ for screen in screens:
             print("Guide identified by regex (a deletion): %d" % (deletion))  
             print("Guide identified by regex (an insertion): %d" % (insertion))  
             print("Non-perfect guides identified by biopython alignment (more indels and/or mismatches): %d" % (align)) 
-        print("Check also the 'countTableFilled' table in the next step, to see the (undeintified) counts per barcode/guide")
+        print("Check also the 'countTableFilled' table in the next step, to see the unidentified counts per barcode/guide")
             
     # Write count table to file
     countTableFilled = pd.concat([Library, pd.DataFrame(countTableToFillZero, columns=["Unidentified"]+barcode)], axis=1)
