@@ -44,11 +44,11 @@ while (my $filename = shift) {
   my @countTable = ();
   # Read Fastq file and write reads in the right barcode file
   open FASTQ, "zcat $filename |" or die "Could not open sequence file $_";
-  while (my $name = <FASTQ>) { 
-    my $seq = <IN>; 
+  while (<FASTQ>) { 
+    my $seq = <FASTQ>; 
     chomp $seq;
-    my $plusline = <IN>;
-    my $qual = <IN>;
+    <FASTQ>;
+    <FASTQ>;
     
     # Determine barcode
     my $BCnumber = 0;
@@ -79,7 +79,7 @@ while (my $filename = shift) {
       push @{$readTable[$BCnumber]},substr($seq,$BCsize,(length $seq)-$BCsize);
       push @allSeqs,substr($seq,$BCsize,(length $seq)-$BCsize);
   }  
-  close IN; 
+  close FASTQ; 
 
   # Take unique reads 
   my @uniqueReads = "Read_without_barcode";
@@ -106,8 +106,9 @@ while (my $filename = shift) {
   }
   
   # Name barcoded samples
-  foreach my $i (0 .. scalar @barcode) {
-    $countTable[$i+1][0] = "BC".$i;
+  $countTable[1][0] = "Unidentified";
+  foreach my $i (1 .. scalar @barcode) {
+    $countTable[$i+1][0] = $barcode[$i-1];
   }
   # Replace undefined elements for 0 counts
   my $numberguides = @uniqueReads;
@@ -126,12 +127,12 @@ while (my $filename = shift) {
     }
   }
   # Write count table file
-  open FILE, ">ReadTable\_".$filename.".csv" or die "Could not open read table file $_";
+  open CT, ">ReadTable\_".$filename.".csv" or die "Could not open read table file $_";
   for my $new_row (@transposed) {
     for my $new_col (@{$new_row}) {
-        print FILE $new_col, ",";
+        print CT $new_col, ",";
     }
-    print FILE "\n";
+    print CT "\n";
   }
-  close FILE;
+  close CT;
 }
