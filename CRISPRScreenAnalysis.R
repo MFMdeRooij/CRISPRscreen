@@ -27,15 +27,15 @@ Filenames<- c("CountTable_test.fastq.gz.csv")
 # an existing one, and exclude it in the next option)
 # Fill in the column names of the count table
 Guide <- "sgRNA"
-T0Rep1 <- "BC1"
-T0Rep2 <- "BC2"
-T0Rep3 <- "BC3"
-T1Rep1 <- "BC7"
-T1Rep2 <- "BC8"
-T1Rep3 <- "BC9"
-T2Rep1 <- "BC4"
-T2Rep2 <- "BC5"
-T2Rep3 <- "BC6"
+T0Rep1 <- "CGTGAT"
+T0Rep2 <- "ACATCG"
+T0Rep3 <- "GCCTAA"
+T1Rep1 <- "GATCTG"
+T1Rep2 <- "TCAAGT"
+T1Rep3 <- "CTGATC"
+T2Rep1 <- "TGGTCA"
+T2Rep2 <- "CACTGT"
+T2Rep3 <- "ATTGGC"
 
 # Exclude replicates: 0 = Include, 1 = Exclude (you cannot exclude T0 or T1 completely -> change your design)
 T0_Rep1 <- 0
