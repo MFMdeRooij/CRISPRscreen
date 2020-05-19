@@ -4,19 +4,15 @@ use strict;
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # Linux: run in command line: ./FastqToCountTable.pl LibraryX.csv data1.fastq.gz data2.fastq.gz
-# For the TestData: ./FastqToCountTable.pl LibraryKinomeBrunelloLentiGuide.csv test.fastq.gz
-# Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 61) for 'type',
-# and run in command prompt: perl FastqToCountTable.pl LibraryX.csv data1.fastq data2.fastq (if you use tab to complete the filename
-# windows will add .\ before the filename (.\data1.fastq), this will give problems in naming the output file, so don't use that
+# Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 66) for 'type',
+# and run in command prompt: perl FastqToCountTable.pl LibraryX.csv data1.fastq.gz data2.fastq.gz
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 #                                            SETTINGS
 
-# Barcodes (all of the same length)
+# Barcodes (all the same lentgh) and allowed barcode mismaches and max indels allowed in upstream region (primers)
 my @barcode = ("CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC", 
-		"GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG");
-		
-# Number of allowed mismaches in barcodes, and max indels in constant part of the reads (PCR-primer mutations) (default = 1,3)
+                "GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG");
 my ($BCmm, $indel) = (1, 3);
 
 # Location CRISPR seq-1, length CRISPR, and upstream nucleotides (lentiCRISPRv2/LentiGuide: 41, 20, "CACCG")
@@ -41,15 +37,15 @@ foreach my $bc (@barcode) {
 # Load library and make count table precursor
 my $library = shift;
 my (@libraryGuides, @libraryGenes, @librarySeqs);
-open (my $guides, '<', $library) or die "Could not open library file $_";
-while (my $line = <$guides>) {
+open (my $lib, '<', $library) or die "Could not open library file $_";
+while (my $line = <$lib>) {
   chomp $line;
   my @fields = split ",", $line;
   push @libraryGuides, $fields[0];
   push @libraryGenes, $fields[1];
   push @librarySeqs, $fields[2];
 }
-close $guides;
+close $lib;
 # Array of arrays (multidimensional array)
 my @countTablePre = ([@libraryGuides], [@libraryGenes], [@librarySeqs]);
 
@@ -59,13 +55,13 @@ while (my $filename = shift) {
   
   # Read Fastq file and write reads in the right barcode file
   open FASTQ, "zcat $filename |" or die "Could not open sequence file $_";
-  while (my $name = <FASTQ>) { 
+  while (<FASTQ>) { 
     my $seq = <FASTQ>; 
     chomp $seq;
-    my $plusline = <FASTQ>;
-    my $qual = <FASTQ>;
+    <FASTQ>;
+    <FASTQ>;
     
-    # Determine barcode
+    # Identify barcode
     my $BCnumber = 0;
     my $BCreads = substr($seq,0,$BCsize);
     if (grep(/^$BCreads$/, @barcode)) {
@@ -89,21 +85,21 @@ while (my $filename = shift) {
             }
       }
     
-    # Determine CRISPR sequence
+    # Identify CRISPR sequence
     if ($BCnumber > 0) {
-      my $seqtag = substr($seq,$loc,$CRISPRsize);
+      my $guide = substr($seq,$loc,$CRISPRsize);
       # When there is an indel in constant region, change CRISPR seq location 
       my $upseqlength = length $upseq;
       my $seqcheck = substr($seq,$loc-$upseqlength,$upseqlength);
       if ($upseq ne $seqcheck && $indel > 0) {
         foreach my $i (-$indel .. $indel) {
-           my $preseq = substr($seq,$loc-$upseqlength+$i,$upseqlength);
-           if ($preseq eq $upseq) {$seqtag = substr($seq,$loc+$i,$CRISPRsize)};
-           last if ($preseq eq $upseq);
+           my $seqcheck = substr($seq,$loc-$upseqlength+$i,$upseqlength);
+           if ($upseq eq $seqcheck) {$guide = substr($seq,$loc+$i,$CRISPRsize)};
+           last if ($upseq eq $seqcheck);
          }
        }
       # Make multidimensional array with read sequences     
-      push @{$readTable[$BCnumber-1]},$seqtag;
+      push @{$readTable[$BCnumber-1]},$guide;
     }
     
   }
@@ -126,7 +122,7 @@ while (my $filename = shift) {
   
   # Name barcoded samples
   foreach my $i (1 .. scalar @barcode) {
-    $countTable[$i+2][0] = "BC".$i;
+    $countTable[$i+2][0] = $barcode[$i-1];
   }
   # Replace undefined elements for 0 counts
   my $numberguides = @librarySeqs;
