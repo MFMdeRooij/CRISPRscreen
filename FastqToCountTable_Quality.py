@@ -180,7 +180,7 @@ def guideDetermination(seq):
         upseqlength = len(upseq)
         seqcheck = seq[loc-upseqlength:loc]   
         if upseq != seqcheck: 
-            for i in range(-indel,indel):
+            for i in range(-indel,indel+1):
                 preseq = seq[loc-upseqlength+i:loc-upseqlength+upseqlength+i]
                 if preseq == upseq:
                     guide = seq[loc+i:loc+CRISPRsize+i]
