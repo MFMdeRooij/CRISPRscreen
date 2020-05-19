@@ -4,13 +4,14 @@ use strict;
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # Linux: run in command line: ./FastqToCountTable.pl LibraryX.csv data1.fastq.gz data2.fastq.gz
-# Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 66) for 'type',
+# Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 58) for 'type',
 # and run in command prompt: perl FastqToCountTable.pl LibraryX.csv data1.fastq.gz data2.fastq.gz
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 #                                            SETTINGS
 
 # Barcodes (all the same lentgh) and allowed barcode mismaches and max indels allowed in upstream region (primers)
+# If a barcode is not present in your FASTQ file it could give an error
 my @barcode = ("CGTGAT", "ACATCG", "GCCTAA", "TGGTCA", "CACTGT", "ATTGGC", 
                 "GATCTG", "TCAAGT", "CTGATC", "AAGCTA", "GTAGCC", "TACAAG");
 my ($BCmm, $indel) = (1, 3);
