@@ -4,7 +4,7 @@ The scripts are compatible with Linux as well as Microsoft Windows (with a small
 Open the scripts (as text file) for information how to use them.
 - Install Perl, R, R studio, and Anaconda3 (during installation of Anaconda3, add Python to your path (check the box)).
 - From fastq to count table use FastqToCountTable.pl with a library file and your fastq files (Perl). 
-- If you don't like Perl, you can also use the Python script (FastqToCountTable_Quality.py) in Spyder, but this one is much slower than the Perl script (Python).
+- If you don't like Perl, you can also use the Python script (FastqToCountTable_.py) in Spyder, but this one is much slower than the Perl script (Python).
 - From count table to robust statistics use CRISPRScreenAnalysis.R with CRISPRScreenAnalysisLibraries.csv and your count tables (R).
 - To get some information about the quality of the read mapping use in addition to FastqToCountTable.pl also Quality.pl (temporary in repair) and your fastq files, and subsequently Quality.R (Perl/R). With FastqToCountTable_Quality.py you can get even more insights in the non-perfect and unmappable reads (Python).
 - To interactively view the MA plots, add the output from CRISPRScreenAnalysis.R to the files/DataCRISPR03New folder of MAviewer, and open MAviewer with the sh file (linux) or bat file (Windows), and discover your screen results (You can add a shortcut to these files for on your desktop. As an example I included the published screens of B cell lymphoma cell lines of Phelan et al, Nature 2018 (Python).
