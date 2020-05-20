@@ -6,7 +6,7 @@ Open the scripts (as text file) for information how to use them.
 
 CRISPRScreenAnalysis:
 - From fastq to count table use FastqToCountTable.pl with a library file and your fastq files (Perl). 
-- If you don't like Perl, you can also use the Python script (FastqToCountTable_.py) in Spyder, but this one is much slower than the Perl script (Python).
+- If you don't like Perl, you can also use the Python script (FastqToCountTable.py) in Spyder, but this one is much slower than the Perl script (Python).
 - From count table to robust statistics use CRISPRScreenAnalysis.R with CRISPRScreenAnalysisLibraries.csv and your count tables (R).
 - To get information about the quality of the reads (e.g. mutations in barcodes/guides, contaminations, primerdimers, etc), use FastqToCountTable.py (Python).
 
