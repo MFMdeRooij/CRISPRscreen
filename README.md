@@ -8,7 +8,7 @@ CRISPRScreenAnalysis:
 - From fastq to count table use FastqToCountTable.pl with a library file and your fastq files (Perl). 
 - If you don't like Perl, you can also use the Python script (FastqToCountTable.py) in Spyder, but this one is much slower than the Perl script (Python).
 - From count table to robust statistics use CRISPRScreenAnalysis.R with CRISPRScreenAnalysisLibraries.csv and your count tables (R).
-- To get information about the quality of the reads (e.g. mutations in barcodes/guides, contaminations, primerdimers, etc), use FastqToCountTable.py (Python).
+- To get information about the quality of the reads (e.g. how much reads map to the library, contaminations, primerdimers), use Quality.pl + Quality.R (Perl/R). To obtain more information (e.g. mutations in barcodes/guides) use FastqToCountTable.py (Python).
 
 MAviewer:
 - To interactively view the MA plots, add the output from CRISPRScreenAnalysis.R to the files/DataCRISPR03New folder of MAviewer, and open MAviewer with the sh file (Linux) or bat file (Windows), and discover your screen results (You can add a shortcut to these files for on your desktop. As an example I included the published screens of B cell lymphoma cell lines of Phelan et al, Nature 2018 (Python).
