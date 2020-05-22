@@ -272,7 +272,7 @@ def guideDetermination(seq):
                 dimer+=1
                 print("Primerdimers: %d" % (dimer)) 
             else:
-                pattern = re.compile(r''+upseq+'(\w{'+str(CRISPRsize)+'})'+str(downseq))
+                pattern = re.compile(r''+upseq+'(\w{'+str(CRISPRsize-2)+","+str(CRISPRsize+1)+'})'+str(downseq))
                 match = pattern.search(Guidereads)
                 if match != None:
                     print("This guide (%s --> %s) is found by regex, but cannot be found in the library" % (Guidereads, match.group(1)))          
