@@ -27,7 +27,7 @@ import warnings
 warnings.filterwarnings('ignore')
 ###############################################################################
 #Option1
-def viewGenes(headDir, dirs, gene, numberCor=10, MAorVul=1, scale=1, legend=1, guideID=1, save=1, correlategene=1, log=1):
+def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1, legend=1, guideID=1, save=1, correlategene=1, log=1):
     gene = gene.replace(" ", "")
     #View genes in all MA plots
     if re.match('CRISPR', headDir):
@@ -265,6 +265,164 @@ def viewGenes(headDir, dirs, gene, numberCor=10, MAorVul=1, scale=1, legend=1, g
                 plt.close()
         else:
             messagebox.showwarning("Warning", "This gene annotation is not present in the used CRISPR library.\nCheck your spelling, or check for official HGNC gene symbols.")    
+
+
+    elif re.match('RNAseq', headDir):
+        nameGene = glob.glob(cwd+'/files/Data'+headDir+'/'+dirs[0]+'/*NorTPM.csv')[0]           
+        dfgenes = pd.read_csv(nameGene, sep=',')
+        dfgenes = dfgenes.drop_duplicates()
+        dfgenes.loc[dfgenes['hgnc_symbol'].isnull(), 'hgnc_symbol'] = dfgenes.loc[dfgenes['hgnc_symbol'].isnull(), 'ensembl_gene_id']  
+        dfgenes['hgnc_symbol'] = dfgenes['hgnc_symbol'].str.upper()
+        dfgenes['hgnc_symbol'][dfgenes['hgnc_symbol'].duplicated()] = dfgenes['hgnc_symbol'][dfgenes['hgnc_symbol'].duplicated()] + "_2"
+
+        # Tumor colors
+        dftype = pd.DataFrame({'cell':dfgenes.columns[2:len(dfgenes.columns)], 'type': tumortype}) 
+        my_color=["black", "blue"]*100
+        my_palette = dict(zip(dftype['type'].unique(), my_color[0:len(dftype['type'].unique())]))    
+        tumor_colors = dftype['type'][0:len(dftype['type'])].map(my_palette)  
+
+        genes = gene.split(",")
+        numberofgenes = len(genes)
+        
+        if numberofgenes==1:
+            present = any(dfgenes.hgnc_symbol==gene)          
+            if present:
+                if correlategene==0:
+                    ax=plt.gca()
+                    plt.barh(np.arange(len(dfgenes.columns)-2), dfgenes[dfgenes['hgnc_symbol']==gene].iloc[0,2:len(dfgenes.columns)], align='center')
+                    plt.yticks(np.arange(len(dfgenes.columns)-2), dfgenes.columns[2:len(dfgenes.columns)])
+                    plt.gca().invert_yaxis()
+                    plt.ylabel('Cell line', fontsize=10)    
+                    plt.xlabel('Gene expression (normalized TPM)', fontsize=10) 
+                    plt.title(gene)   
+                   
+                    # Tumor colors
+                    for ytick, color in zip(ax.get_yticklabels(), tumor_colors):
+                        ytick.set_color(color) 
+                    plt.show()
+
+                elif correlategene==1:
+                    dfexpr = dfgenes
+                    dfexpr.index = dfexpr['hgnc_symbol']
+                    dfexpr = dfexpr.drop(["ensembl_gene_id",'hgnc_symbol'], axis=1) 
+
+                    if log==0:
+                        dfexpr = np.log(dfexpr+0.1)
+                        
+                    corr = dfexpr.loc[gene,]
+                    rowmeans=dfexpr.mean(axis=1)
+                    if log==0:
+                        rowmeansSel = rowmeans.loc[rowmeans>-2]
+                    else: rowmeansSel = rowmeans.loc[rowmeans>1]
+                    dfexpr = dfexpr.reindex(rowmeansSel.index)
+                    
+                    corrSer = dfexpr.corrwith(corr, axis=1)
+                    corrSer = corrSer.sort_values(ascending = False) 
+                    dfexprCorr = dfexpr.reindex(corrSer.index)
+                    genes1 = list(dfexprCorr.index[0:numberCor+1])
+                    genes2 = list(dfexprCorr.index[len(dfexprCorr)-numberCor:len(dfexprCorr)])
+                    genes = (genes1+genes2)
+                    numberofgenes = len(genes)
+                      
+            else:
+                messagebox.showwarning("Warning", "This gene annotation is not present in the human genome (hg38).\nCheck your spelling, or check for official HGNC gene symbols.")   
+
+        if numberofgenes>1:
+            dfexpr = dfgenes[dfgenes['hgnc_symbol'].isin(genes)]
+            dfexpr.index = dfexpr['hgnc_symbol']
+            dfexpr = dfexpr.reindex(genes)
+            dfexpr = dfexpr.drop(["ensembl_gene_id",'hgnc_symbol'], axis=1)           
+    
+            fig, ax = plt.subplots()
+            ax = plt.gca()       
+            # Plot the heatmap
+            rowmeans=dfexpr.mean(axis=1)
+            rowsd=dfexpr.std(axis=1)
+            data=dfexpr.subtract(rowmeans, axis=0)
+            data=data.divide(rowsd, axis=0)
+            im = ax.imshow(data, cmap="coolwarm")     
+            # Create colorbar
+            cbar = ax.figure.colorbar(im, ax=ax)
+            cbar.ax.set_ylabel("Gene expression (Color scale:Z score per gene, values: normalized TPM)", rotation=-90, va="bottom")       
+            # We want to show all ticks...
+            ax.set_xticks(np.arange(data.shape[1]))
+            ax.set_yticks(np.arange(data.shape[0]))
+            # ... and label them with the respective list entries.
+            fs = 4 if numberofgenes>25 else 6 if numberofgenes>15 else 10
+            ax.set_xticklabels(list(dfexpr.columns.values), fontsize=fs)
+            ax.set_yticklabels(list(dfexpr.index.values), fontsize=fs)       
+            # Let the horizontal axes labeling appear on top.
+            ax.tick_params(top=True, bottom=False,
+                           labeltop=True, labelbottom=False)       
+            # Rotate the tick labels and set their alignment.
+            plt.setp(ax.get_xticklabels(), rotation=-30, ha="right",
+                     rotation_mode="anchor")       
+            # Turn spines off and create white grid.
+            for edge, spine in ax.spines.items():
+                spine.set_visible(False)       
+            ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
+            ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
+            lw= 1 if numberofgenes>25 else 2 if numberofgenes>15 else 3
+            ax.grid(which="minor", color="w", linestyle='-', linewidth=lw)
+            ax.tick_params(which="minor", bottom=False, left=False)               
+    
+            data = dfexpr.values
+            # Set default alignment to center, but allow it to be
+            # overwritten by textkw.
+            kw = dict(horizontalalignment="center",verticalalignment="center")
+            #kw.update(textkw)
+            # Get the formatter in case a string is supplied
+            import matplotlib
+            valfmt="{x:.1f}"
+            valfmt = matplotlib.ticker.StrMethodFormatter(valfmt)
+            # Loop over the data and create a `Text` for each "pixel".
+            # Change the text's color depending on the data.
+            texts = []
+            fs = 0 if numberofgenes>25 else 5 if numberofgenes>15 else 7
+            for i in range(data.shape[0]):
+                for j in range(data.shape[1]):
+                    kw.update(color="black", fontsize = fs)
+                    text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
+                    texts.append(text)       
+
+            plt.ylabel('Gene', fontsize=10)
+            ax.xaxis.set_label_position('top')
+            plt.xlabel('Cell line', fontsize=10) 
+
+            # Tumor colors
+            for xtick, color in zip(ax.get_xticklabels(), tumor_colors):
+                xtick.set_color(color) 
+
+            try:
+                # Prepare a vector of color mapped to the correlations 
+                listCor1 = list(corrSer.values[0:numberCor+1])
+                listCor2 = list(corrSer.values[len(dfexprCorr)-numberCor:len(dfexprCorr)])
+                listCor = (listCor1+listCor2)  
+                listCor = [round(float(elem), 2) for elem in listCor]
+                dfexpr['r'] = listCor
+            
+                def rgb(minimum, maximum, value):
+                    minimum, maximum = float(minimum), float(maximum)
+                    ratio = 2 * (value-minimum) / (maximum - minimum)
+                    r = (int(max(0, 255*(1 - ratio))))/255
+                    g = (int(max(0, 255*(ratio - 1))))/255
+                    b = 0 #(255 - r - g)/255
+                    a = 1
+                    return r, g, b, a
+            
+                calcol = lambda x: rgb(-1,1,x)
+                corr_colors=dfexpr['r'].map(calcol)            
+
+                for ytick, color in zip(ax.get_yticklabels(), corr_colors):
+                    ytick.set_color(color)
+
+            except NameError:
+                pass
+
+            fig.tight_layout()
+            plt.show()
+
+
     return
 ###############################################################################
 #Option2
@@ -373,7 +531,7 @@ def viewGuides(headDir, dirs, rep):
     return
 ###############################################################################
 #Option2A
-def viewHits(headDir, dirs, rep, number=25, direction=1, rhoFC=1):   
+def viewHits(headDir, dirs, rep, tumortype=0, number=25, direction=1, rhoFC=1, screenOrRnaseq=1):   
     #View gene top hits
     nameGene = glob.glob(cwd+'/files/Data'+headDir+'/'+dirs[rep-1]+'/*Genes.csv')[0]  
     dfg = pd.read_csv(nameGene, sep=',')    
@@ -384,6 +542,11 @@ def viewHits(headDir, dirs, rep, number=25, direction=1, rhoFC=1):
         dfg['col']='black' 
         dfg.loc[dfg['Type']=='p', 'col'] = 'red'
         dfg.loc[dfg['Type']=='n', 'col'] = 'blue' 
+    if re.match('Microarray', headDir):
+        dfg['ml2fc']=dfg['log2MedianFC']
+        dfg['ml2fc'].fillna(0, inplace=True)
+        dfg['ml2fc'].replace([np.inf, -np.inf], 0, inplace=True)  
+        dfg['col']='black'    
     dfg.fillna(1, inplace=True)  
     if rhoFC==1:
         if direction==1:
@@ -391,43 +554,49 @@ def viewHits(headDir, dirs, rep, number=25, direction=1, rhoFC=1):
         elif direction==0:
             dfg['logrho']=np.log10(dfg['rhoEnriched'])
         dfg=dfg.sort_values(by=['logrho'])  
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        plt.barh(np.arange(number), dfg['logrho'][0:number], align='center')
-        plt.yticks(np.arange(number), dfg['GeneSymbol'][0:number])
-        if re.match('CRISPR', headDir):
-            for ytick, color in zip(ax.get_yticklabels(), dfg['col'][0:number]):
-                ytick.set_color(color)     
-        plt.gca().invert_yaxis()
-        plt.ylabel('Gene Symbol', fontsize=10)    
-        if direction==1:
-            plt.xlabel(r'$^{10}$log $\rho$ ($\alpha$RRA$_{dep}$)', fontsize=10)
-            rhocutoff = dfg[dfg['fdrDepleted']>=0.1]['rhoDepleted']
-            plt.text(np.log10(min(rhocutoff)), number/2, r'$\itP$$_{adj}$ < 0.1 ($\alpha$RRA$_{dep}$)', rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
-        elif direction==0:
-            plt.xlabel(r'$^{10}$log $\rho$ ($\alpha$RRA$_{enr}$)', fontsize=10)
-            rhocutoff = dfg[dfg['fdrEnriched']>=0.1]['rhoEnriched']
-            plt.text(np.log10(min(rhocutoff)), number/2, r'$\itP$$_{adj}$ < 0.1 ($\alpha$RRA$_{enr}$)',rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
-        plt.axvline(np.log10(min(rhocutoff)), color='red', linewidth=1) 
-        plt.title('Gene Top '+str(number)+' ('+dirs[rep-1].split( "csv")[0]+')')   
-        plt.show()
+        if screenOrRnaseq==1:
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            plt.barh(np.arange(number), dfg['logrho'][0:number], align='center')
+            plt.yticks(np.arange(number), dfg['GeneSymbol'][0:number])
+            if re.match('CRISPR', headDir):
+                for ytick, color in zip(ax.get_yticklabels(), dfg['col'][0:number]):
+                    ytick.set_color(color)     
+            plt.gca().invert_yaxis()
+            plt.ylabel('Gene Symbol', fontsize=10)    
+            if direction==1:
+                plt.xlabel(r'$^{10}$log $\rho$ ($\alpha$RRA$_{dep}$)', fontsize=10)
+                rhocutoff = dfg[dfg['fdrDepleted']>=0.1]['rhoDepleted']
+                plt.text(np.log10(min(rhocutoff)), number/2, r'$\itP$$_{adj}$ < 0.1 ($\alpha$RRA$_{dep}$)', rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
+            elif direction==0:
+                plt.xlabel(r'$^{10}$log $\rho$ ($\alpha$RRA$_{enr}$)', fontsize=10)
+                rhocutoff = dfg[dfg['fdrEnriched']>=0.1]['rhoEnriched']
+                plt.text(np.log10(min(rhocutoff)), number/2, r'$\itP$$_{adj}$ < 0.1 ($\alpha$RRA$_{enr}$)',rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
+            plt.axvline(np.log10(min(rhocutoff)), color='red', linewidth=1) 
+            plt.title('Gene Top '+str(number)+' ('+dirs[rep-1].split( "csv")[0]+')')   
+            plt.show()
     if rhoFC==0:    
         if direction==1:
             dfg=dfg.sort_values(by=['ml2fc'])  
         elif direction==0:
-            dfg=dfg.sort_values(by=['ml2fc'], ascending=False)     
-        fig = plt.figure()
-        ax = fig.add_subplot(111) 
-        plt.barh(np.arange(number), dfg['ml2fc'][0:number], align='center')
-        plt.yticks(np.arange(number), dfg['GeneSymbol'][0:number])
-        if re.match('CRISPR', headDir):
-            for ytick, color in zip(ax.get_yticklabels(), dfg['col'][0:number]):
-                ytick.set_color(color)
-        plt.gca().invert_yaxis()
-        plt.ylabel('Gene Symbol', fontsize=10)
-        plt.xlabel(r'$^{2}$log Median Fold Change', fontsize=10)
-        plt.title('Gene Top '+str(number)+' ('+dirs[rep-1].split( "csv")[0]+')') 
-        plt.show()     
+            dfg=dfg.sort_values(by=['ml2fc'], ascending=False)   
+        if screenOrRnaseq==1:    
+            fig = plt.figure()
+            ax = fig.add_subplot(111) 
+            plt.barh(np.arange(number), dfg['ml2fc'][0:number], align='center')
+            plt.yticks(np.arange(number), dfg['GeneSymbol'][0:number])
+            if re.match('CRISPR', headDir):
+                for ytick, color in zip(ax.get_yticklabels(), dfg['col'][0:number]):
+                    ytick.set_color(color)
+            plt.gca().invert_yaxis()
+            plt.ylabel('Gene Symbol', fontsize=10)
+            plt.xlabel(r'$^{2}$log Median Fold Change', fontsize=10)
+            plt.title('Gene Top '+str(number)+' ('+dirs[rep-1].split( "csv")[0]+')') 
+            plt.show()
+    if screenOrRnaseq==0:
+        gene=str(dfg['GeneSymbol'][0:number].to_csv(header=None, index=False).strip('\n').split('\n')).replace("'","").replace("[","").replace("]","").replace("\\r","")
+        viewGenes(headDir='RNAseq', dirs=['01_CellLines'], tumortype=tumortype, gene=gene, correlategene=0, log=0) 
+      
     return
 ###############################################################################
 #Option2B
@@ -450,6 +619,10 @@ def dataSet(cwd, dataset):
              return []
     global dirs
     global headDir
+
+    # RNAseq tumortypes
+    global tumortype
+    tumortype=[1,1,1,1,2,3,3,3,3,3,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,7,7,7,7,7]
       
     # CRISPR Screens
     if dataset==2: 
@@ -458,6 +631,11 @@ def dataSet(cwd, dataset):
     elif dataset==3:
         order = [0]
         headDir = 'CRISPR03New'
+
+    # RNAseq
+    elif dataset==100:
+        order = [0]
+        headDir = 'RNAseq'  
         
     dirS = listdirs(cwd+"/files/Data"+headDir)
     dirS.sort()
@@ -479,7 +657,7 @@ class SampleApp(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         self.frames = {}
-        for F in (StartPage, PageOne, PageTwo, PageThree, PageTwenty):
+        for F in (StartPage, PageOne, PageTwo, PageThree, PageTwenty, PageOneHundred):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -506,6 +684,15 @@ class StartPage(tk.Frame):
         tk.Label(self, text='CRISPR screens:', bg=colbg, font = tkfont.Font(family='Times New Roman', size=15)).pack(anchor = 'w')
         tk.Radiobutton(self,text='Phelan et al Nature 2018 - Staudt (Brunello - DLBCL)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=2, variable=startselected).pack(anchor = 'w')
         tk.Radiobutton(self,text='New Screens', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=3, variable=startselected).pack(anchor = 'w')      
+        
+        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()      
+        tk.Label(self, text='RNAseq:', bg=colbg, font = tkfont.Font(family='Times New Roman', size=15)).pack(anchor = 'w')
+        tk.Radiobutton(self,text='Panel of B cell lines (https://www.ncbi.nlm.nih.gov/sra)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=100, variable=startselected).pack(anchor = 'w')
+        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
+
+        
+        
+        
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
         tk.Label(self, text="What do you want to visualize?", bg=colbg, font = tkfont.Font(family='Times New Roman', size=15)).pack()
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
@@ -520,6 +707,9 @@ class StartPage(tk.Frame):
                controller.show_frame("PageTwo")
            elif startselected==3:
                controller.show_frame("PageThree")
+           elif startselected==100:
+               messagebox.showwarning("Warning", "You have to choose Genes.\n(Guides are normally not expressed in cell lines, crazy bitch!)")
+
 
 #MA or Volcano plots whole datasets               
 class PageOne(tk.Frame):
@@ -569,11 +759,11 @@ class PageTwo(tk.Frame):
         tk.Radiobutton(self,text='WSUDLCL2 (GC-DLBCL)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=8, variable=selected).pack(anchor = 'w')
         tk.Radiobutton(self,text='ARP1C (MM)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=9, variable=selected).pack(anchor = 'w')
         tk.Radiobutton(self,text='DEL (ALCL)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=10, variable=selected).pack(anchor = 'w')
-        tk.Radiobutton(self,text='KMS11 (MM)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=11, variable=selected).pack(anchor = 'w')    
+        tk.Radiobutton(self,text='KMS11 (MM)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=11, variable=selected).pack(anchor = 'w')
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack() 
         tk.Button(self, text="Explore MA plot", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewGuides(headDir=headDir, dirs=dirs, rep=selected.get())).pack() 
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=30)).pack() 
-        tk.Button(self, text="View Gene Top:", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewHits(headDir=headDir, dirs=dirs, rep=selected.get(), number=int(number.get()), direction=direction.get(), rhoFC=rhoFC.get())).pack() 
+        tk.Button(self, text="View Gene Top:", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewHits(headDir=headDir, dirs=dirs, rep=selected.get(), tumortype=tumortype, number=int(number.get()), direction=direction.get(), rhoFC=rhoFC.get(), screenOrRnaseq=screenOrRnaseq.get())).pack() 
         number = Scale(self, from_=1, to=100, bg='white')
         number.set(25)
         number.pack(anchor=CENTER)
@@ -581,13 +771,15 @@ class PageTwo(tk.Frame):
         tk.Checkbutton(self, text = "Depletion (on) / Enrichment (off)                        ", font=('Times New Roman', '12'), bg=colbg, onvalue=1, offvalue=0, variable=direction, height=1, width = 35).pack()
         rhoFC=tk.IntVar(value=1)
         tk.Checkbutton(self, text = u"\u03B1RRA (on) / Median Fold Change (off)             ", font=('Times New Roman', '12'), bg=colbg, onvalue=1, offvalue=0, variable=rhoFC, height=1, width = 35).pack()
+        screenOrRnaseq=tk.IntVar(value=1)
+        tk.Checkbutton(self, text = "Screen Results (on) / RNAseq B Cell Panel (off)", font=('Times New Roman', '12'), bg=colbg, onvalue=1, offvalue=0, variable=screenOrRnaseq, height=1, width = 35).pack()
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=30)).pack()       
         tk.Button(self, text="View Screen Details", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewScreendetails(headDir=headDir, dirs=dirs, rep=selected.get())).pack() 
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()       
         tk.Button(self, text="Search Guide Sequence", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: controller.show_frame("PageTwenty")).pack() 
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
-        tk.Button(self, text="Main Menu", font=('Times New Roman', '15'), fg='white', bg="red", command=lambda: controller.show_frame("StartPage")).pack(side='bottom')
-
+        tk.Button(self, text="Main Menu", font=('Times New Roman', '15'), fg='white', bg="red", command=lambda: controller.show_frame("StartPage")).pack(side='bottom')    
+    
 class PageThree(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -612,7 +804,7 @@ class PageThree(tk.Frame):
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack() 
         tk.Button(self, text="Explore MA plot", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewGuides(headDir=headDir, dirs=dirs, rep=selected.get())).pack() 
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=30)).pack() 
-        tk.Button(self, text="View Gene Top:", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewHits(headDir=headDir, dirs=dirs, rep=selected.get(), number=int(number.get()), direction=direction.get(), rhoFC=rhoFC.get())).pack() 
+        tk.Button(self, text="View Gene Top:", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewHits(headDir=headDir, dirs=dirs, rep=selected.get(), tumortype=tumortype, number=int(number.get()), direction=direction.get(), rhoFC=rhoFC.get(), screenOrRnaseq=screenOrRnaseq.get())).pack() 
         number = Scale(self, from_=1, to=100, bg='white')
         number.set(25)
         number.pack(anchor=CENTER)
@@ -620,13 +812,15 @@ class PageThree(tk.Frame):
         tk.Checkbutton(self, text = "Depletion (on) / Enrichment (off)                        ", font=('Times New Roman', '12'), bg=colbg, onvalue=1, offvalue=0, variable=direction, height=1, width = 35).pack()
         rhoFC=tk.IntVar(value=1)
         tk.Checkbutton(self, text = u"\u03B1RRA (on) / Median Fold Change (off)             ", font=('Times New Roman', '12'), bg=colbg, onvalue=1, offvalue=0, variable=rhoFC, height=1, width = 35).pack()
+        screenOrRnaseq=tk.IntVar(value=1)
+        tk.Checkbutton(self, text = "Screen Results (on) / RNAseq B Cell Panel (off)", font=('Times New Roman', '12'), bg=colbg, onvalue=1, offvalue=0, variable=screenOrRnaseq, height=1, width = 35).pack()
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=30)).pack()       
         tk.Button(self, text="View Screen Details", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewScreendetails(headDir=headDir, dirs=dirs, rep=selected.get())).pack() 
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()       
         tk.Button(self, text="Search Guide Sequence", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: controller.show_frame("PageTwenty")).pack() 
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
-        tk.Button(self, text="Main Menu", font=('Times New Roman', '15'), fg='white', bg="red", command=lambda: controller.show_frame("StartPage")).pack(side='bottom')
-
+        tk.Button(self, text="Main Menu", font=('Times New Roman', '15'), fg='white', bg="red", command=lambda: controller.show_frame("StartPage")).pack(side='bottom')    
+    
 #Find guide sequence
 class PageTwenty(tk.Frame):
     def __init__(self, parent, controller):
@@ -690,6 +884,33 @@ class PageTwenty(tk.Frame):
                    Texblat.delete(1.0, tk.END)
                    Texblat.insert(tk.END, seq)
                    Texblat.pack()
+
+# RNAseq       
+class PageOneHundred(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
+        tk.Label(self, text='Which gene(s) do you want to visualize?', bg=colbg, font=('Times New Roman', '15')).pack()
+        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
+        tk.Label(self, text='Gene(s):', bg=colbg, font=('Times New Roman', '15')).pack()
+        e1 = Entry(self, width=30)
+        e1.pack()
+        tk.Label(self, text='(Separate mutiple genes by a comma)', bg=colbg, font=('Times New Roman', '10')).pack()       
+        correlategene = tk.IntVar(value=0)
+        tk.Radiobutton(self,text='View expression of selected gene(s)                      ', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=0, variable=correlategene).pack()
+        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
+        tk.Radiobutton(self,text='View expression of correlated genes (enter 1 gene)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=1, variable=correlategene).pack()
+        log=tk.IntVar(value=1)
+        tk.Checkbutton(self, text = "Correlation: linear (on) / logaritmic (off)", font=('Times New Roman', '12'), bg=colbg, onvalue=1, offvalue=0, variable=log, height=1, width = 30).pack()
+        tk.Label(self, text='How many genes to correlate?', bg=colbg, font=('Times New Roman', '12')).pack()
+        numberCor = Scale(self, from_=1, to=50, bg='white')
+        numberCor.set(10)
+        numberCor.pack(anchor=CENTER)
+        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
+        tk.Button(self, text="View Gene Expression", font=('Times New Roman', '12'), fg='black', bg='yellow', command=lambda: viewGenes(headDir=headDir, dirs=dirs, tumortype=tumortype, gene=e1.get().upper(), numberCor=numberCor.get(), correlategene=correlategene.get(), log=log.get())).pack() 
+        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=50)).pack()
+        tk.Button(self, text="Main Menu", font=('Times New Roman', '15'), fg='white', bg="red", command=lambda: controller.show_frame("StartPage")).pack(side='bottom')
                    
 if __name__ == "__main__":
     app = SampleApp()
