@@ -789,7 +789,7 @@ class PageThree(tk.Frame):
         tk.Label(self, text='Which cell do you want to analyze?', bg=colbg, font=('Times New Roman', '15')).pack()
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
         selected = tk.IntVar(value=1)
-        tk.Radiobutton(self,text='Cell 1', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=1, variable=selected).pack(anchor = 'w')
+        tk.Radiobutton(self,text='Cell 1 (Brunello Kinome Screen)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=1, variable=selected).pack(anchor = 'w')
         tk.Radiobutton(self,text='Cell 2', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=2, variable=selected).pack(anchor = 'w')
         tk.Radiobutton(self,text='Cell 3', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=3, variable=selected).pack(anchor = 'w')
         tk.Radiobutton(self,text='Cell 4', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=4, variable=selected).pack(anchor = 'w')
