@@ -21,7 +21,7 @@ Workdirectory <- "H:/BioWin/Screens/"
 # Count table files: 0 = custom, 1 = all count tables (csv files) in the workdirectory
 Data <- 0
 # If custom, which count tables?
-Filenames<- c("CountTable_test.fastq.gz.csv")
+Filenames<- c("CountTable_test.fastq.gz.csv") # or "CountTable_test.fastq.csv"
 
 # Data selection (T0/T1/T2 - replicate 1/2/3) (If a replicate is not present, fill in 
 # an existing one, and exclude it in the next option)
