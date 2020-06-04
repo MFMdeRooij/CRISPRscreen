@@ -164,7 +164,7 @@ def barcodeDetermination(seq):
 
     if printUnID == 1 and BCnumber == 0:
         print(seq+"This barcode cannot be identified: "+seq[0:BCsize])
-    return(BCnumber)
+    return BCnumber
    
 def guideDetermination(seq):
     '''Identify guides'''
