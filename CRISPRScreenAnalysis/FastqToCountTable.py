@@ -316,8 +316,8 @@ for screen in screens:
             print("Barcodes identified by biopython aligment (more mutations): %d" % (BCalign))
         if indel > 0:
             print("Reads with indels of max %dnt in upstream region of the guide: %d" % (indel,indels))
-            print("Primerdimers: %d" % (dimer))  
         if biopythonGuide == 1:
+	    print("Primerdimers: %d" % (dimer))  
             print("Correct guides: %d" % (correct)) 
             print("Guides identified by regex (a mismatch): %d" % (mismatch))
             print("Guides identified by regex (a deletion): %d" % (deletion))  
