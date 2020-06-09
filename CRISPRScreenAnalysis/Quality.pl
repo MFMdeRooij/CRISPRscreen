@@ -72,8 +72,8 @@ while (my $filename = shift) {
             }
       }
       # Make multidimensional array with read sequences     
-      push @{$readTable[$BCnumber]},substr($seq,$BCsize,(length $seq)-($BCsize+1));
-      push @allSeqs,substr($seq,$BCsize,(length $seq)-($BCsize+1));
+      push @{$readTable[$BCnumber]},substr($seq,$BCsize,(length $seq)-($BCsize));
+      push @allSeqs,substr($seq,$BCsize,(length $seq)-($BCsize));
   }  
   close FASTQ; 
 
