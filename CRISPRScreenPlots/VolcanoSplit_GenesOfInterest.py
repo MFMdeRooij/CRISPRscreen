@@ -109,7 +109,7 @@ for file in files:
            label_pos_x,
            label_pos_y,
            color=cpos if row['Type']=='p' else  cneg if row['Type']=='n' else call,
-           marker = "v" if row['fdrDepleted'] < 0.1 and genesignificant==1 else "^" if row['fdrEnriched'] < 0.1 and genesignificant else "o",
+           marker = "v" if row['fdrDepleted'] < 0.1 and genesignificant==1 else "^" if row['fdrEnriched'] < 0.1 and genesignificant==1 else "o",
            s=25
         )    
 
@@ -152,7 +152,7 @@ for file in files:
                 label_pos_x,
                 label_pos_y,
                color=cpos if row['Type']=='p' else  cneg if row['Type']=='n' else call,
-               marker = "v" if row['fdrDepleted'] < 0.1 and genesignificant==1 else "^" if row['fdrEnriched'] < 0.1 and genesignificant else "o",
+               marker = "v" if row['fdrDepleted'] < 0.1 and genesignificant==1 else "^" if row['fdrEnriched'] < 0.1 and genesignificant==1 else "o",
                s=25
             )    
     for i, row in dfgene.iterrows(): 
