@@ -93,7 +93,7 @@ for file in files:
             label_pos_x,
             label_pos_y,
             color=cpos if row['Type']=='p' else  cneg if row['Type']=='n' else call,
-            marker = "v" if row['padj'] < 0.1 and row['l2fc'] < 0 and guidesignificant==1 else "^" if row['padj'] < 0.1 and row['l2fc'] > 0 and guidesignificant else "o",
+            marker = "v" if row['padj'] < 0.1 and row['l2fc'] < 0 and guidesignificant==1 else "^" if row['padj'] < 0.1 and row['l2fc'] > 0 and guidesignificant==1 else "o",
             s=25
         )   
     for i, row in df[df['GeneSymbol']==gene].iterrows():    
@@ -103,7 +103,7 @@ for file in files:
             label_pos_x,
             label_pos_y,
             color=chit, 
-            marker = "v" if row['padj'] < 0.1 and row['l2fc'] < 0 and guidesignificant==1 else "^" if row['padj'] < 0.1 and row['l2fc'] > 0 and guidesignificant else "o",
+            marker = "v" if row['padj'] < 0.1 and row['l2fc'] < 0 and guidesignificant==1 else "^" if row['padj'] < 0.1 and row['l2fc'] > 0 and guidesignificant==1 else "o",
             s=50
         ) 
 
