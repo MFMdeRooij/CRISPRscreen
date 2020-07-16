@@ -135,12 +135,13 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
     plt.subplot2grid((5,24), (1,i*8+6), colspan=1, rowspan=4)
     h=plt.barh(dfrra['nr'], dfrra['10lrra'], align='center', color=dfrra['color'])
     plt.ylim(len(genes)+0.5,0.5)
+    plt.xlim(0,25)
     if rrascore==0:
         plt.text(0,0,'-$^{10}$log RRA$_{dep}$ score', fontsize=8)
     elif rrascore==1:
         plt.text(0,0,'-$^{10}$log RRA$_{enr}$ score', fontsize=8)
     plt.axis('off') 
-    plt.text(dfrra['10lrra'].max(),len(genes)+0.5, 'red: FDR < 0.1', rotation=-90) 
+    plt.text(20,len(genes)+0.5, 'red: FDR < 0.1', rotation=-90) 
     i+=1
 
 plt.subplots_adjust(hspace=0)
