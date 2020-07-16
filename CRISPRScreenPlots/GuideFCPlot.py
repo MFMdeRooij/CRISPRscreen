@@ -13,9 +13,16 @@ folder = "H:/BioWin/Screens/Namalwa"
 
 # Gene symbols (if there are subset, cluster the subsets)
 genes = ['BTK', 'SYK', 'PIK3R1', 'CSK', 'PRKCE', 'PRKCB', 'ACTR2', 'GUK1', 'MAP2K1', 'MAP2K2', 'AKT1', 'AKT2', 'AKT3', 'LYN']
-# #Alternatively, take all significant genes:
-# dfhits = pd.read_csv('H:/BioWin/Screens/Namalwa"DESeq2 T1vsT2 Genes.csv', sep=',')
+
+# # Alternatively, take all significant genes (remove hashtags):   
+# import pandas as pd
+# # Depleted:
+# dfhits = pd.read_csv(folder+'/DESeq2 T1vsT2 Genes.csv', sep=',')
+# dfhits.sort_values("fdrDepleted")
 # genes = dfhits[dfhits['fdrDepleted']<0.1]['GeneSymbol']
+# # # Enriched:
+# # dfhits.sort_values("fdrEnriched")
+# # genes = dfhits[dfhits['fdrEnriched']<0.1]['GeneSymbol']
 
 # Are there subsets of genes: 0 = no, 1 = yes
 geneSubsets = 1
