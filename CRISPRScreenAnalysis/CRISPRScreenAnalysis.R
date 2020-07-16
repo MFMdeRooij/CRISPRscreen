@@ -72,7 +72,7 @@ ExclNonInf = 0
 # Type of Screen: 0 = Drop out, 1 = Resistance (Just for ranking of the genes)
 Type_of_Screen <- 0
 
-# Minimal fold change of guides to be a hit: 1 = No minimal fold change,  >1: The minimal fold change
+# Minimal fold change of guides to be a hit: 1 = No minimal fold change,  >1: The minimal fold change (linear scale)
 minimalFoldChange <- 1
 
 # Number of permutation for aRRA (0 = 250 times the number of genes, 1 = Custom)
@@ -272,6 +272,10 @@ for (Filename in Filenames) {
     df_res2<-df_res
     df_res2<-df_res2[!is.na(df_res2$padj),]
     
+    if (minimalFoldChange > 1) {
+      df_res$padj[!is.na(df_res$padj) & df_res$FoldChange >= (1/minimalFoldChange) & df_res$FoldChange <= minimalFoldChange] <- 1
+    }
+    
     # Control genes
     df_res$Type<- "x"
     df_res[df_res$GeneSymbol %in% df_Control[[PC]][nchar(df_Control[[PC]])>0],"Type"]<- "p"
@@ -281,9 +285,6 @@ for (Filename in Filenames) {
     
     # Determine hits
     df_hits_total <- df_res[which(df_res$padj < 0.1),]
-    if (minimalFoldChange > 1) {
-      df_hits_total <- df_hits_total[which(df_hits_total$FoldChange <= 1/minimalFoldChange | df_hits_total$FoldChange >= minimalFoldChange),]
-    }
     df_res$count<- 1
     df_hits_A<-aggregate(df_res$count, by=list(df_res$GeneSymbol), FUN=sum)
     colnames(df_hits_A)<- c("GeneSymbol", "TotalGuides")
@@ -370,6 +371,12 @@ for (Filename in Filenames) {
     # Apply alpha criterion based on pvalues
     df_RRA$scoreDepleted[df_RRA$pvalueDepleted > 0.25] <- 1
     df_RRA$scoreEnriched[df_RRA$pvalueEnriched > 0.25] <- 1
+
+    
+    if (minimalFoldChange > 1) {
+      df_RRA$scoreDepleted[df_RRA$log2fc >= (log(1/minimalFoldChange)/log(2))] <- 1
+      df_RRA$scoreEnriched[df_RRA$log2fc <= (log(minimalFoldChange)/log(2))] <- 1
+    }
     
     # Perform RRA
     alphaBeta <- function(p.in) {
@@ -565,8 +572,8 @@ for (Filename in Filenames) {
       intersection<- den_PC$x[poi][den_PC$x[poi]<0][which.min(abs(den_PC$x[poi][den_PC$x[poi]<0]))]
       
       # F measure (with cutoff the intersection), harmonic mean of precision and recall
-      truePos<- nrow(df_PC[!is.na(df_PC$padj) & df_PC$padj<0.1 & df_PC$log2FoldChange < (log(1/minimalFoldChange)/log(2)),])
-      posPredict<- nrow(df_PC[!is.na(df_PC$padj) & df_PC$padj<0.1 & df_PC$log2FoldChange < (log(1/minimalFoldChange)/log(2)),])+nrow(df_NC[!is.na(df_NC$padj) & df_NC$padj<0.1 & df_NC$log2FoldChange < (log(1/minimalFoldChange)/log(2)),])*nrow(df_PC)/nrow(df_NC)
+      truePos<- nrow(df_PC[!is.na(df_PC$padj) & df_PC$padj<0.1 & df_PC$log2FoldChange<0,])
+      posPredict<- nrow(df_PC[!is.na(df_PC$padj) & df_PC$padj<0.1 & df_PC$log2FoldChange<0,])+nrow(df_NC[!is.na(df_NC$padj) & df_NC$padj<0.1 & df_NC$log2FoldChange<0,])*nrow(df_PC)/nrow(df_NC)
       posControls<- nrow(df_PC)
       precision<- truePos/posPredict
       recall<- truePos/posControls
