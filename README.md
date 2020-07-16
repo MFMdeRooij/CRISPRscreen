@@ -11,8 +11,7 @@ CRISPRScreenAnalysis:
 - To get information about the quality of the read mapping (e.g. how much reads map to the library, contaminations, primerdimers), use Quality.pl + Quality.R (Perl/R). To obtain more information (e.g. mutations in barcodes/guides) use FastqToCountTable.py (Python).
 
 MAviewer:
-- To interactively view the MA plots, add the output from CRISPRScreenAnalysis.R to the files/DataCRISPR03New folder of MAviewer, and open MAviewer with the sh file (Linux) or bat file (Windows), and discover your screen results (You can add a shortcut to these files for on your desktop. As an example I included the published screens of B cell lymphoma cell lines of Phelan et al, Nature 2018 (Python).
-You can also check the gene expression (RNAseq) of your top hits in a small B cell line panel (derived from the public SRA database, in which most is performed by the Broad Institute). The RNAseq data are in TPM, which are subseqently normalized by median of ratios (DESeq2) between cell lines.
+- To interactively view the MA plots, add the output from CRISPRScreenAnalysis.R to the files/DataCRISPR03New folder of MAviewer, and open MAviewer with the sh file (Linux) or bat file (Windows), and discover your screen results (You can add a shortcut to these files for on your desktop. As an example I included the published screens of B cell lymphoma cell lines of Phelan et al, Nature 2018. You can also check the gene expression (RNAseq) of your top hits in a small B cell line panel (derived from the public SRA database, in which most is performed by the Broad Institute). The RNAseq data are in TPM, which are subseqently normalized by median of ratios (DESeq2) between cell lines (Python).
 
 CRISPRScreenPlots:
 - To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python).
