@@ -51,7 +51,7 @@ T2_Rep3 <- 0
 # Paired replicates: 0 = Paired, 1 = Unpaired
 Paired <- 0
 
-# Library: 0: In countTable (1st column = sgRNA, 2nd = Gene), 1 = Brunello-Kinome, 2 = Brunello-FullGenome, 3 = Avana-FullGenome, 4 = New (add to CRISPRScreenAnalysisLibraries.csv file)
+# Library: 0: In countTable (1st column = sgRNA, 2nd = Gene), 1 = Brunello-Kinome, 2 = Brunello-WholeGenome, 3 = New1, 4 = New2 (add to CRISPRScreenAnalysisLibraries.csv file)
 Library <- 0
 
 # Positive controls: 0 = Essential (Hart et al 2017 G3)
@@ -72,7 +72,7 @@ ExclNonInf = 0
 # Type of Screen: 0 = Drop out, 1 = Resistance (Just for ranking of the genes)
 Type_of_Screen <- 0
 
-# Minimal fold change of guides to be a hit: 1 = No minimal fold change,  >1: The minimal fold change (linear scale)
+# Minimal fold change of guides to be a hit: 1 = No minimal fold change,  >1: The minimal fold change (linear scale, 2^abs(l2fc))
 minimalFoldChange <- 1
 
 # Number of permutation for aRRA (0 = 250 times the number of genes, 1 = Custom)
