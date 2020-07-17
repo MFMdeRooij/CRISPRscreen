@@ -36,7 +36,7 @@ fs = 15
 
 # Colors (see https://matplotlib.org/1.5.1/examples/color/named_colors.html)
 call = 'green'
-cpos = 'firebrick'
+cpos = 'red'
 cneg = 'blue'
 chit = 'black'
 ##########################################################################################################
