@@ -52,7 +52,7 @@ T2_Rep3 <- 0
 Paired <- 0
 
 # Library: 0: In countTable (1st column = sgRNA, 2nd = Gene), 1 = Brunello-Kinome, 2 = Brunello-FullGenome, 3 = Avana-FullGenome, 4 = New (add to CRISPRScreenAnalysisLibraries.csv file)
-Library <- 1
+Library <- 0
 
 # Positive controls: 0 = Essential (Hart et al 2017 G3)
 ControlsP <- 0
@@ -61,7 +61,7 @@ ControlsN <- 0
 # Even it is not a lethality screen, it is still worth to look how cell viability affect your screen (separation of Essential-Non-Essential)
 
 # Statistics of Essential/Non-Essential genes (only for lethality screens): 0 = With, 1 Without
-ConStat<- 1
+ConStat<- 0
 
 # Use shrinkage of fold changes noninformative guides: 0 = Yes, 1 = No
 Shrinkage<- 0
