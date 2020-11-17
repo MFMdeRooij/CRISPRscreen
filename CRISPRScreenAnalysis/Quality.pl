@@ -3,7 +3,7 @@ use warnings;
 use strict;
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
-# Linux: run in command line: ./Quality.pl data1.fastq.gz data2.fastq.gz
+# Linux: run in command line: ./Quality.pl *.fastq.gz
 # Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 44) for 'type',
 # and run in command prompt: perl Quality.pl data1.fastq data2.fastq (if you use tab to complete the filename
 # windows will add .\ before the filename (.\data1.fastq), this will give problems in naming the output file, so don't use that
