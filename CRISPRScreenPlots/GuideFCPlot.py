@@ -97,13 +97,13 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
     plt.figure(1, figsize=(30,7))
     ax = plt.subplot2grid((5,24), (0,i*8), colspan=6, rowspan=1) 
     if i==2:
-        sns.distplot(df['l2fc'], hist=False, kde_kws = {'shade': False, 'linewidth': 2}, color='magenta', label='All guides')
-        sns.distplot(df[df['Type']=='n']['l2fc'], hist=False, kde_kws = {'shade': False, 'linewidth': 2}, color='orange', label='Non-essential genes') 
-        sns.distplot(df[df['padj']<0.1]['l2fc'], hist=False, kde_kws = {'shade': False, 'linewidth': 2}, color='darkorchid', label='Significant (FDR < 0.1)')
+        sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label='All guides')
+        sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label='Non-essential genes') 
+        sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label='Significant (FDR < 0.1)')
     else:
-        sns.distplot(df['l2fc'], hist=False, kde_kws = {'shade': False, 'linewidth': 2}, color='magenta', label=None)
-        sns.distplot(df[df['Type']=='n']['l2fc'], hist=False, kde_kws = {'shade': False, 'linewidth': 2}, color='orange', label=None) 
-        sns.distplot(df[df['padj']<0.1]['l2fc'], hist=False, kde_kws = {'shade': False, 'linewidth': 2}, color='darkorchid', label=None)      
+        sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label=None)
+        sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label=None) 
+        sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label=None)       
     plt.xlim(xmin,xmax)
     if i==0:
         plt.title(title1)  
