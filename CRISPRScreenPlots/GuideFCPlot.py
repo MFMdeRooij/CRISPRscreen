@@ -16,8 +16,8 @@ genes = ['BTK', 'SYK', 'PIK3R1', 'CSK', 'PRKCE', 'PRKCB', 'ACTR2', 'GUK1', 'MAP2
 
 # # Alternatively, take all significant genes (remove hashtags):   
 # import pandas as pd
-# # Depleted:
 # dfhits = pd.read_csv(folder+'/DESeq2 T1vsT2 Genes.csv', sep=',')
+# # Depleted:
 # dfhits = dfhits.sort_values("fdrDepleted")
 # genes = dfhits[dfhits['fdrDepleted']<0.1]['GeneSymbol']
 # # # Enriched:
