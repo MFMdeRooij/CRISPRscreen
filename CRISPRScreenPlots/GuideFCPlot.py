@@ -104,7 +104,7 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label=None)
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label=None) 
         sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label=None)       
-    plt.xlim(xmin,xmax)
+    plt.xticks(np.arange(xmin, xmax, xticks))  
     if i==0:
         plt.title(title1)  
     elif i==1:
