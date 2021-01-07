@@ -104,7 +104,7 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label=None)
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label=None) 
         sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label=None)       
-    plt.xticks(np.arange(xmin, xmax, xticks))  
+    plt.xlim(xmin, xmax) 
     if i==0:
         plt.title(title1)  
     elif i==1:
@@ -121,7 +121,8 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
         plt.scatter(dfg3['l2fc'], dfg3['nr'], marker="|", s=300, c='green')
     else:
        plt.scatter(dfg['l2fc'], dfg['nr'], marker="|", s=300,  c='navy') 
-    plt.xticks(np.arange(xmin, xmax, xticks))   
+    plt.xticks(np.arange(xmin, xmax, xticks)) 
+    plt.xlim(xmin, xmax) 
     plt.yticks(np.arange(1,1+len(genes)), genes)
     plt.ylim(len(genes)+0.5,0.5)    
     plt.xlabel('$^{2}$log fold change')
