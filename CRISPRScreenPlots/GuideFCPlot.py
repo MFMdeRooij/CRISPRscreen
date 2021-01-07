@@ -121,7 +121,7 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
         plt.scatter(dfg3['l2fc'], dfg3['nr'], marker="|", s=300, c='green')
     else:
        plt.scatter(dfg['l2fc'], dfg['nr'], marker="|", s=300,  c='navy') 
-    plt.xlim(xmin,xmax)   
+    plt.xticks(np.arange(xmin, xmax, xticks))   
     plt.yticks(np.arange(1,1+len(genes)), genes)
     plt.ylim(len(genes)+0.5,0.5)    
     plt.xlabel('$^{2}$log fold change')
