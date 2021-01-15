@@ -15,19 +15,26 @@ Sort<- q(ensembl_gene_id,	hgnc_symbol,	NALM6, REH, SEM, X697, MEC1,	GRANTA519,	J
                 SUDHL6,	OCILY3,	OCILY10,	TMD8,	U2932, EJM, INA6, L363,	LP1, MM1S, NCIH929,	OPM2,	RPMI8226, U266)
 ##########################################
 setwd(Workdirectory)
+##NCBI:
+#Download, install, and configure the sra-toolkit from NCBI website:
+#https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
+
 ##Linux Tools:
-#sudo apt install sra-toolkit
 #sudo apt-get install seqtk
 #sudo apt-get install samtools
 #sudo apt-get install bowtie2
-#sudo apt-get install tophat
 #sudo apt install hisat2
+
 #biomaRt dependencies:
 #sudo apt-get install libcurl4-openssl-dev libssl-dev
 
 ##Build genome index
 #setwd("~/HumanGenome")
 #system("bowtie2-build hg38.fa hg38") 
+
+##Download reference files for RNAseq:
+# File with known splicesites (hg38_splicesites.txt)
+# File with gene loci (hg38.95.gtf)
 
 ##R Packages
 #install.packages("BiocManager")
