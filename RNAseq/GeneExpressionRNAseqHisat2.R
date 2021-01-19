@@ -48,7 +48,7 @@ library(DESeq2)
 ##https://www.ncbi.nlm.nih.gov/sra/
 ##On command line (SRA tools):
 #prefetch SRR6047361
-##for mutiple srr files:
+##for multiple SRR files:
 #for i in {2..4}; do prefetch SRR604736$i; done
 
 ##To tranfer files to another location
@@ -58,7 +58,7 @@ library(DESeq2)
 # Convert SRA files to FastQ files
 files <- (Sys.glob("*.sra"))
 for (cell in files) {
-  system(paste0("fastq-dump -v -A ",cell))
+  system(paste0("fastq-dump ",cell))
   #"fastq-dump --split-files FILE": for immediately splitting paired-end fastq files
   if (removeSRA == 0) {
     file.remove(cell)
