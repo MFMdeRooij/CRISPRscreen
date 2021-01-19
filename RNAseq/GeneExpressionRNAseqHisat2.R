@@ -58,7 +58,7 @@ library(DESeq2)
 # Convert SRA files to FastQ files
 files <- (Sys.glob("*.sra"))
 for (cell in files) {
-  system(paste0("fastq-dump ",cell))
+  system(paste0("fastq-dump -v ",cell))
   #"fastq-dump --split-files FILE": for immediately splitting paired-end fastq files
   if (removeSRA == 0) {
     file.remove(cell)
