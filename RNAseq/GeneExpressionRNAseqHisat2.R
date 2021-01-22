@@ -28,13 +28,15 @@ setwd(Workdirectory)
 #biomaRt dependencies:
 #sudo apt-get install libcurl4-openssl-dev libssl-dev
 
-##Build genome index
+##Build genome
+# Download genome in fasta format from NCBI or UCSC, unzip and add in folder ~/HumanGenome
 #setwd("~/HumanGenome")
-#system("bowtie2-build hg38.fa hg38") 
+#system("hisat2-build hg38.fa hg38") 
+#setwd(Workdirectory)
 
-##Download reference files for RNAseq:
-# File with known splicesites (hg38_splicesites.txt)
+##Download reference files for RNAseq from NCBI or UCSC:
 # File with gene loci (hg38.95.gtf)
+# Transform the gtf file into a known splice site text file using the python script delivered with hisat2 (to hg38_splicesites.txt)
 
 ##R Packages
 #install.packages("BiocManager")
