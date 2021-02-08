@@ -18,10 +18,10 @@ genes = ['BTK', 'SYK', 'PIK3R1', 'CSK', 'PRKCE', 'PRKCB', 'ACTR2', 'GUK1', 'MAP2
 # import pandas as pd
 # dfhits = pd.read_csv(folder+'/DESeq2 T1vsT2 Genes.csv', sep=',')
 # # Depleted:
-# dfhits = dfhits.sort_values("fdrDepleted")
+# dfhits = dfhits.sort_values("rhoDepleted")
 # genes = dfhits[dfhits['fdrDepleted']<0.1]['GeneSymbol']
 # # # Enriched:
-# # dfhits = dfhits.sort_values("fdrEnriched")
+# # dfhits = dfhits.sort_values("rhoEnriched")
 # # genes = dfhits[dfhits['fdrEnriched']<0.1]['GeneSymbol']
 
 # Are there subsets of genes: 0 = no, 1 = yes
