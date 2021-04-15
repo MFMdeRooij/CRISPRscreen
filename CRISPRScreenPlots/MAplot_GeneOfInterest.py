@@ -94,7 +94,7 @@ for file in files:
             label_pos_y,
             color=cpos if row['Type']=='p' else  cneg if row['Type']=='n' else call,
             marker = "v" if row['padj'] < 0.1 and row['l2fc'] < 0 and guidesignificant==1 else "^" if row['padj'] < 0.1 and row['l2fc'] > 0 and guidesignificant==1 else "o",
-            s=25
+            s=15
         )   
     for i, row in df[df['GeneSymbol']==gene].iterrows():    
         label_pos_x = row['l10rc']
@@ -104,7 +104,7 @@ for file in files:
             label_pos_y,
             color=chit, 
             marker = "v" if row['padj'] < 0.1 and row['l2fc'] < 0 and guidesignificant==1 else "^" if row['padj'] < 0.1 and row['l2fc'] > 0 and guidesignificant==1 else "o",
-            s=50
+            s=100
         ) 
 
     plt.xticks(np.arange(xmin, xmax, xticks))
