@@ -98,6 +98,10 @@ pairs<- 1
 
 # MAGeCK: 0 = Yes, 1 = No (this does not work in Windows)
 mageck<- 1
+
+# MAGeCK's aRRA with DESeq2 data: 0 = Yes, 1 = No (this does not work in Windows)
+mageckRRA<- 1
+
 # MAGeCK should be installed in linux with all its dependencies, see website: https://sourceforge.net/p/mageck/wiki/Home/
 ######################################################################################
 setwd(Workdirectory)
@@ -337,14 +341,17 @@ for (Filename in Filenames) {
     if (r==1){
       resDepleted <- results(dds, contrast=c("Time","T1","T0"), altHypothesis = "less", addMLE=TRUE)
       resEnriched <- results(dds, contrast=c("Time","T1","T0"), altHypothesis = "greater", addMLE=TRUE)
+      con <- "T0vsT1"
     }
     if (r==2){
       resDepleted <- results(dds, contrast=c("Time","T2","T0"), altHypothesis = "less", addMLE=TRUE)
       resEnriched <- results(dds, contrast=c("Time","T2","T0"), altHypothesis = "greater", addMLE=TRUE)
+      con <- "T0vsT2"
     }
     if (r==3){
       resDepleted <- results(dds, contrast=c("Time","T2","T1"), altHypothesis = "less", addMLE=TRUE)
       resEnriched <- results(dds, contrast=c("Time","T2","T1"), altHypothesis = "greater", addMLE=TRUE)
+      con <- "T1vsT2"
     }
     resDepleted <- resDepleted[order(rownames(resDepleted)), ]
     resEnriched <- resEnriched[order(rownames(resEnriched)), ]
@@ -363,6 +370,33 @@ for (Filename in Filenames) {
     df_RRA$Guide<-rownames(df_RRA)
     df_RRA<- merge(df_Gene_ID, df_RRA, by='Guide', all.y=T)
     df_RRA<- df_RRA[df_RRA$Guide %in% df_res2$Guide,]
+    
+    # MAGeCK's aRRA wirh DESeq2 data (in Linux)
+    if (mageckRRA==0){
+      df_RRAmageck <- df_RRA
+      perDep <- nrow(df_RRAmageck[df_RRAmageck$pvalueDepleted < 0.25,])/nrow(df_RRAmageck) 
+      perEnr <- nrow(df_RRAmageck[df_RRAmageck$pvalueEnriched < 0.25,])/nrow(df_RRAmageck) 
+      
+      df_RRAmageckDep <- df_RRAmageck[order(df_RRAmageck$log2fc),]
+      df_RRAmageckDep$listID<- "x"
+      df_RRAmageckDep$pval<-df_RRAmageckDep$pvalueDepleted 
+      df_RRAmageckDep$pvalueDepleted <- NULL
+      df_RRAmageckDep$pvalueEnriched<-NULL
+      df_RRAmageckDep$log2fc<-NULL
+      write.table(df_RRAmageckDep, "/tmp/Dep.txt", row.names=F, sep="\t")
+      system(paste0("~/anaconda3/bin/RRA -i /tmp/Dep.txt -o ", paste0(dirname,"/DESeq2_aRRAmageck_",con,"_Dep.txt"), " -p ",perDep))
+      
+      df_RRAmageckEnr<- df_RRAmageck[order(df_RRAmageck$log2fc, decreasing = T),]
+      df_RRAmageckEnr$listID<- "x"
+      df_RRAmageckEnr$pval<-df_RRAmageckEnr$pvalueEnriched
+      df_RRAmageckEnr$pvalueDepleted <- NULL
+      df_RRAmageckEnr$pvalueEnriched<-NULL
+      df_RRAmageckEnr$log2fc<-NULL           
+      write.table(df_RRAmageckEnr, "/tmp/Enr.txt", row.names=F, sep="\t")
+      system(paste0("~/anaconda3/bin/RRA -i /tmp/Enr.txt -o ", paste0(dirname,"/DESeq2_aRRAmageck_",con,"_Enr.txt"), " -p ",perEnr))
+    }
+ 
+    # aRRA in R
     
     # Rank by fold change
     df_RRA$scoreDepleted <- rank(df_RRA$log2fc) / nrow(df_RRA)
@@ -448,22 +482,14 @@ for (Filename in Filenames) {
     }  
     
     # Write guide and gene tables
-    if (r==1){
-      titel<-"T0vsT1"
-    }
-    if (r==2){
-      titel<-"T0vsT2"
-    }
-    if (r==3){
-      titel<-"T1vsT2"
-    }
+
     # Guide Table
     df_res_print<- df_res[,c("GeneSymbol","Guide","Type","BaseMeanA","BaseMeanB","FoldChange","pvalue","padj")]
     df_res_print<- df_res_print[order(df_res_print$Type),]
-    write.csv(df_res_print, paste0(dirname,"/DESeq2 ",titel," Guides.csv"), row.names = FALSE)
+    write.csv(df_res_print, paste0(dirname,"/DESeq2 ",con," Guides.csv"), row.names = FALSE)
     # Gene Table
     df_genes_print<-df_genes[,c("GeneSymbol", "Type", "TotalGuides", "HitsDown","HitsUp","MinFoldChange","MedianFoldChange","MaxFoldChange", "rhoDepleted",	"pvalueDepleted",	"fdrDepleted",	"rhoEnriched",	"pvalueEnriched", "fdrEnriched")] 
-    write.csv(df_genes_print, paste0(dirname,"/DESeq2 ",titel," Genes.csv"), row.names = FALSE)
+    write.csv(df_genes_print, paste0(dirname,"/DESeq2 ",con," Genes.csv"), row.names = FALSE)
     
     # Correlation plots
     df_normCounts <- as.data.frame(counts(dds, normalized=TRUE))
@@ -499,7 +525,7 @@ for (Filename in Filenames) {
     df_normCountsN$GeneSymbol<-NULL
     
     # Write Plots in PDF 
-    pdf(paste0(dirname,"/DESeq2 ",titel," Plots.pdf"), width=10, height=10)
+    pdf(paste0(dirname,"/DESeq2 ",con," Plots.pdf"), width=10, height=10)
     
     # DESEq2 plots
     plotDispEsts(dds, main="Dispersion plot")
