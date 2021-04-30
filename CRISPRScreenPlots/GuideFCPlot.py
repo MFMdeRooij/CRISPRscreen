@@ -41,6 +41,9 @@ title3 = r'$\alpha$IgM/PMA'
 # X-axis limits:
 xmin, xmax, xticks = -1.25, 1, 0.25
 
+# Essentials or significant guides in density plot (apart from All guides and non-essentials)  0 = Essentials, 1 = Significant guides
+essOrSig = 1
+
 # RRA score: 0=depletion, 1=enrichment
 rrascore = 0
 ###############################################################################################################
@@ -99,12 +102,18 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
     if i==0:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label='All guides')
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label='Non-essential genes') 
-        sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label='Significant (FDR < 0.1)')
+        if essOrSig == 0:
+             sns.kdeplot(df[df['Type']=='p']['l2fc'], linewidth= 2, color='darkorchid', label='Essential genes')
+        if essOrSig == 1:
+            sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label='Significant (FDR < 0.1)')
         plt.legend()
     else:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label=None)
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label=None) 
-        sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label=None)       
+        if essOrSig == 0:
+            sns.kdeplot(df[df['Type']=='p']['l2fc'], linewidth= 2, color='darkorchid', label=None)
+        if essOrSig == 1:
+            sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label=None)      
     plt.xlim(xmin, xmax) 
     if i==0:
         plt.title(title1)  
