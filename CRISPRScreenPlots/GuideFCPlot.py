@@ -96,10 +96,11 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
        
     plt.figure(1, figsize=(30,7))
     ax = plt.subplot2grid((5,24), (0,i*8), colspan=6, rowspan=1) 
-    if i==2:
+    if i==0:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label='All guides')
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label='Non-essential genes') 
         sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label='Significant (FDR < 0.1)')
+        plt.legend()
     else:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label=None)
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label=None) 
