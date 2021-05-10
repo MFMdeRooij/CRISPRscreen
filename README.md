@@ -28,7 +28,7 @@ Synergy:
 OncoPrint:
   - To summarize the CRISPR screen hits for multiple cell lines, you can use the OncoPrint script (R). 
 
-TestData for CRISPR screen analysis:
+TestData (for CRISPR screen analysis):
 - In the TestData folder is a test file available (test.fastq.gz), which contains the first 750k reads of a loss-of-adhesion CRISPR screen. Barcodes 1-3 corresponds to the preadhesion replicates, Barcodes 7-9 to the PMA-induced adhesion replicates, and Barcodes 4-6 to the anti-IgM-induced adhesion replicates (Note that this is the same design as a synthetic lethality screen (T0, Control, Treatment). The easiest way to analyze this, is to run the FastqToCountTable.py in Spyder to produce the count table (Know that the Perl script is much faster, so that is recommended for a complete FASTQ file), and subsequently the R script CRISPRScreenAnalysis.R in R studio to perform the statistics. For the TestData analysis you only have to adjust the workdirectories. You should get the same data as in the TestData/Output folder. This all takes only a few minutes (Windows or Linux). After performing the DESeq2 analysis succesfully, you can also test the MA plot, Volcano plot and GuideFC plot scripts in Spyder.
 - Good luck!, Martin de Rooij, The Netherlands
 
