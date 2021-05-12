@@ -1,5 +1,5 @@
 # Follow the lines with hastag signs
-# Run single-end and paired-end data separately
+# You can run a couple of cell lines together, but run single-end and paired-end data separately
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 
 # Workdirectory
@@ -57,9 +57,11 @@ if (pairedEnd==1){
   system("./MapRNAseqHuman_SRA_U.sh")
 }
 
+# With the sorted bam files, you can check the read mapping in IGV-viewer
+
 # Add an underscore and a cell name (which corresponds to a cell name in the Sort vector) to the SAM filenames ("SRR1031032.sam" -> "SRR1031032_MINO.sam")
 
-# Make Count table (TPM with DESEq2 normalisation to make it comparable between samples)
+# Make Count table (TPM with DESEq2 normalisation (median of ratios method) to make it comparable between samples)
 if (pairedEnd==0){
   fc <- featureCounts(files=Sys.glob("*.sam"), 
                       annot.ext="~/HumanGenome/hg38.95.gtf", 
@@ -82,13 +84,12 @@ CountTable<- t(t(CountTable2)/colSums(CountTable2)*1000000)
 CountTable<- as.data.frame(CountTable)
 
 # Add gene symbols
-CountTable$ensembl_gene_id<- row.names(CountTable)
-# ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
-# genes <- rownames(CountTable)
-# #AllAttributes<-listAttributes(ensembl)
-# GeneList <- getBM(filters= "ensembl_gene_id", attributes=c("ensembl_gene_id", "hgnc_symbol", "description"), values=genes,mart= ensembl)
-# 
-# write.csv(GeneList, "GeneList.csv", row.names = F)
+CountTable$ensembl_gene_id<- rownames(CountTable)
+ #ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
+ #id <- rownames(CountTable)
+ ##AllAttributes<-listAttributes(ensembl)
+ #GeneList <- getBM(filters= "ensembl_gene_id", attributes=c("ensembl_gene_id", "hgnc_symbol", "description"), values=id, mart= ensembl)
+ #write.csv(GeneList, "GeneList.csv", row.names = F)
 GeneList<-read.csv('GeneList.csv', stringsAsFactors = F)
 CountTable<- merge(GeneList, CountTable, by="ensembl_gene_id", all.x=TRUE)
 CountTable$description<-NULL
@@ -108,26 +109,23 @@ write.csv(CountTableNor, "RNAseqCountTableNorTPM.csv", row.names=FALSE)
 
 
 #PCA analysis
-#install.packages(c("corrplot", "ggplot2", "ggfortify"), dependencies=T)
+#install.packages(c("corrplot", "ggplot2", "ggfortify", "factoextra"), dependencies=T)
 library("corrplot")
 library("ggplot2")
 library("ggfortify")
+library("factoextra")
 CountTableNor<-read.csv("RNAseqCountTableNorTPM.csv")
-
 CountTableNor$minExp <- apply(CountTableNor[3:ncol(CountTableNor)], 1, FUN=min)
 CountTableNor<- CountTableNor[CountTableNor$minExp>1,]
 CountTableNor$minExp <- NULL
 sf <- estimateSizeFactorsForMatrix(CountTableNor[,3:ncol(CountTableNor)])
 CountTableNor[,3:ncol(CountTableNor)]<- as.data.frame(round(t(t(CountTableNor[,3:ncol(CountTableNor)])/sf),1))
 CountTableNor<-CountTableNor[,Sort]
-
 df_pr<- CountTableNor[,3:ncol(CountTableNor)]
 rownames(df_pr)<-paste(1:nrow(CountTableNor),CountTableNor$hgnc_symbol, sep="_")
-
 df_prScale<-t(scale(t(df_pr), center=T, scale = T))
 df_pr_NoNA<- which(!is.na(rowMeans(df_prScale)))
 df_prSel<-df_prScale[df_pr_NoNA,]
-
 samples<-data.frame(Sample = as.factor(colnames(CountTableNor)[3:ncol(CountTableNor)]))
 rownames(samples)<-colnames(CountTableNor[3:ncol(CountTableNor)])
 
@@ -136,9 +134,6 @@ pdf("PCA.pdf", width=10, height=10)
   #pairs(df_pr, cex=0.1, log='xy')
   cor<-cor(df_prSel, method = "pearson")
   corrplot(cor, method='color', order = "hclust")
-  
-  #install.packages("factoextra", dependecies=T)
-  library(factoextra)
   res.pca <- prcomp(t(df_prSel), scale.=T, center=T)
   fviz_eig(res.pca)                 
   fviz_pca_ind(res.pca,
@@ -157,5 +152,4 @@ pdf("PCA.pdf", width=10, height=10)
   res <- hcut(t(df_prSel), k = 15, stand = TRUE)
   # Visualize
   fviz_dend(res, rect = TRUE, cex = 0.5)
-
 dev.off()
