@@ -1,7 +1,7 @@
 # Follow the lines with hastag signs
 # You can run a couple of cell lines together, but run single-end and paired-end data separately
 # After the read mapping, you should rename the sam files (include the cell names)  
-# -> Soon I will automate this, so that the entire script can be run overnight)
+# (-> Soon I will automate this, so that the entire script can be run overnight)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 
 # Workdirectory
