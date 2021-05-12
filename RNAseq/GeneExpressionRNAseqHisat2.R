@@ -23,7 +23,7 @@ setwd(Workdirectory)
 # Download, install, and configure the sra-toolkit from NCBI website:
 # https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
 
-# Linux Tools:
+# Install Linux Tools on command line:
 # sudo apt-get install seqtk
 # sudo apt-get install samtools
 # sudo apt-get install hisat2
@@ -33,11 +33,13 @@ setwd(Workdirectory)
 
 # Build genome
 # Download genome in fasta format from NCBI or UCSC, unzip and add in folder ~/HumanGenome
+# cd ~/HumanGenome
 # hisat2-build hg38.fa hg38
 
 # Download reference files for RNAseq from NCBI or UCSC:
 # Download File with gene loci (hg38.95.gtf)
 # Transform the gtf file into a known splice site text file using the python script delivered with hisat2 (to hg38_splicesites.txt)
+# add these files to the ~/HumanGenome folder
 
 # R Packages
 #install.packages("BiocManager")
@@ -58,7 +60,7 @@ if (pairedEnd==1){
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
 # Add an underscore and a cell name (which corresponds to a cell name in the Sort vector) to the SAM filenames ("SRR1031032.sam" -> "SRR1031032_MINO.sam")
-# (Soon I will automate this, so that the whole script can be runned overnight)
+# (Soon I will automate this, so that the entire script can be run overnight)
 
 # Make Count table (TPM with DESEq2 normalisation (median of ratios method) to make it comparable between samples)
 if (pairedEnd==0){
