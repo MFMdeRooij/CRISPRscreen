@@ -19,32 +19,30 @@ Sort <- q(ensembl_gene_id,	hgnc_symbol,	NALM6, REH, SEM, X697, MEC1,	GRANTA519,	
                 SUDHL6,	OCILY3,	OCILY10,	TMD8,	U2932, EJM, INA6, L363,	LP1, MM1S, NCIH929,	OPM2,	RPMI8226, U266)
 ##########################################
 setwd(Workdirectory)
-##NCBI:
-#Download, install, and configure the sra-toolkit from NCBI website:
-#https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
+# NCBI:
+# Download, install, and configure the sra-toolkit from NCBI website:
+# https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
 
-##Linux Tools:
-#sudo apt-get install seqtk
-#sudo apt-get install samtools
-#sudo apt-get install hisat2
+# Linux Tools:
+# sudo apt-get install seqtk
+# sudo apt-get install samtools
+# sudo apt-get install hisat2
 
-#biomaRt dependencies:
-#sudo apt-get install libcurl4-openssl-dev libssl-dev
+# biomaRt dependencies:
+# sudo apt-get install libcurl4-openssl-dev libssl-dev
 
-##Build genome
+# Build genome
 # Download genome in fasta format from NCBI or UCSC, unzip and add in folder ~/HumanGenome
-#setwd("~/HumanGenome")
-#system("hisat2-build hg38.fa hg38") 
-#setwd(Workdirectory)
+# hisat2-build hg38.fa hg38
 
-##Download reference files for RNAseq from NCBI or UCSC:
+# Download reference files for RNAseq from NCBI or UCSC:
 # Download File with gene loci (hg38.95.gtf)
 # Transform the gtf file into a known splice site text file using the python script delivered with hisat2 (to hg38_splicesites.txt)
 
-##R Packages
+# R Packages
 #install.packages("BiocManager")
 #BiocManager::install(c("Rsubread", "biomaRt", "DESeq2"), dependencies=T)
-#if biomaRt is not working, try command line: 'sudo apt-get update' & 'sudo apt-get install r-bioc-biomart'
+# if biomaRt is not working, try command line: 'sudo apt-get update' & 'sudo apt-get install r-bioc-biomart'
 library(Rsubread)
 library(biomaRt)
 library(DESeq2)
@@ -60,6 +58,7 @@ if (pairedEnd==1){
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
 # Add an underscore and a cell name (which corresponds to a cell name in the Sort vector) to the SAM filenames ("SRR1031032.sam" -> "SRR1031032_MINO.sam")
+# (Soon I will automate this, so that the whole script can be runned overnight)
 
 # Make Count table (TPM with DESEq2 normalisation (median of ratios method) to make it comparable between samples)
 if (pairedEnd==0){
