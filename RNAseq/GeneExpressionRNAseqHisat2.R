@@ -5,7 +5,7 @@
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 
 # Workdirectory
-Workdirectory<- "~/Data/RNAseqCellLines/"
+setwd("~/Data/RNAseqCellLines/")
 
 # Paired-end reads 0 = Yes, 1 = No
 pairedEnd<-0
@@ -16,9 +16,7 @@ q<- function(...) {
 # Order count table
 Sort<- q(ensembl_gene_id,	hgnc_symbol,	NALM6, REH, SEM, X697, MEC1,	GRANTA519,	JEKO1,	MINO,	REC1, Z138, DAUDI, NAMALWA,	RAJI, DOHH2, SUDHL4, SUDHL5, 
                 SUDHL6,	OCILY3,	OCILY10,	TMD8,	U2932, EJM, INA6, L363,	LP1, MM1S, NCIH929,	OPM2,	RPMI8226, U266)
-##########################################
-setwd(Workdirectory)
-# NCBI:
+#######################################################################################################################################################
 # Download, install, and configure the sra-toolkit from NCBI website:
 # https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
 
@@ -36,9 +34,9 @@ setwd(Workdirectory)
 # hisat2-build hg38.fa hg38
 
 # Download reference files for RNAseq from NCBI or UCSC:
-# Download File with gene loci (hg38.95.gtf)
+# Download file with gene loci (hg38.95.gtf)
 # Transform the gtf file into a known splice site text file using the python script delivered with hisat2 (to hg38_splicesites.txt)
-# add these files to the ~/HumanGenome folder
+# Add both files to the ~/HumanGenome folder
 
 # R Packages
 #install.packages("BiocManager")
@@ -60,7 +58,7 @@ if (pairedEnd==1){
 
 # Add an underscore and a cell name (which corresponds to a cell name in the Sort vector) to the SAM filenames ("SRR1031032.sam" -> "SRR1031032_MINO.sam")
 
-# Make Count table (TPM with DESEq2 normalisation (median of ratios method) to make it comparable between samples)
+# Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples)
 if (pairedEnd==0){
   fc<- featureCounts(files=Sys.glob("*.sam"), 
                       annot.ext="~/HumanGenome/hg38.95.gtf", 
