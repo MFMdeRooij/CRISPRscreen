@@ -17,7 +17,7 @@ CRISPRScreenPlots:
 - To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python).
 
 RNAseq:
-- To look at gene expression of your CRISPR targets, you can download RNAseq data from most cell lines from the NCBI-SRA database, and analyze it with GeneExpressionRNAseqHisat2.R. Because this script uses various Linux apps, this does not work on Windows (R/Linux). With the Bash scripts, you can map the RNAseq data with Hisat2 outside R, which is much faster. Afterwards you can continue in R to produce count tables, or view the read mapping in IGV viewer (e.g. to look at mutations, differential splicing between cell lines, or check CRISPR induced deletions).
+- To look at gene expression of your CRISPR targets, you can download RNAseq data from most cell lines from the NCBI-SRA database, and analyze it with GeneExpressionRNAseqHisat2.R and the Bash files. Because this script uses various Linux apps, this does not work on Windows (R/Linux). With the sorted bam files you can also view the read mapping in IGV viewer (e.g. to look at mutations, differential splicing between cell lines, or check CRISPR induced deletions).
 
 SangerSeq:
 - After performing the CRISPR screen, you might validate the hits. With the Sanger script, you can analyze your Sanger sequences from your CRISPRguide cloning in a few seconds. Apart from Anaconda3, you need to install the Biopython package (Python). 
