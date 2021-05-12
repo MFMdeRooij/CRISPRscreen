@@ -15,7 +15,6 @@ do
 	samtools view -S -b $s.sam > $s.bam
 	samtools sort $s.bam > $s.sort.bam
 	samtools index $s.sort.bam
-	rm $s.sam
 	rm $s.bam
 	rm ${s}_1.fastq
 	rm ${s}_2.fastq
