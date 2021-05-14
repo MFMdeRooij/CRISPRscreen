@@ -1,5 +1,7 @@
 #!/bin/bash
-# Search for RNAseq data on https://www.ncbi.nlm.nih.gov/sra/, and fill in the SRR codes, cell # line ID and P (paired-end or U (unpaired) separated by commas in MapSamples.txt, and run the # script (./MapRNAseqHumanSRA on the command line)
+# Search for RNAseq data on https://www.ncbi.nlm.nih.gov/sra/, and fill in the SRR IDs, 
+# cell line ID and P (paired-end) or S (singleEnd) separated by commas in MapSamples.txt, 
+# and run the script (./MapRNAseqHumanSRA on the command line)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019,
 # info: m.f.derooij@amsterdamumc.nl
 mkdir pairedEnd
