@@ -36,14 +36,12 @@ Sort<- q(ensembl_gene_id,	hgnc_symbol,	NALM6, REH, SEM, X697, MEC1,	GRANTA519,	J
 #install.packages("BiocManager")
 #BiocManager::install(c("Rsubread", "biomaRt", "DESeq2"), dependencies=T)
 # if biomaRt is not working, try command line: 'sudo apt-get update' & 'sudo apt-get install r-bioc-biomart'
-library(Rsubread)
-library(biomaRt)
-library(DESeq2)
 
 # You can find the gene annotations with biomaRt, and store it in a file for reuse
+#library(biomaRt)
 #ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
 #id<- rownames(CountTable)
-##AllAttributes<- listAttributes(ensembl)
+##AllAttributes<- listAttributes(ensembl) # to see all atrributes
 #GeneList<- getBM(filters= "ensembl_gene_id", attributes=c("ensembl_gene_id", "hgnc_symbol", "description"), values=id, mart= ensembl)
 #write.csv(GeneList, "~/HumanGenome/GeneAnnotations.csv", row.names = F)
 
@@ -51,11 +49,13 @@ library(DESeq2)
 
 # Search for RNAseq data on https://www.ncbi.nlm.nih.gov/sra/, and fill in the SRR IDs, cell 
 # line ID and a P (paired-end) or S (single-end) separated by commas (SRR8615345,NAMALWA,P), and run the 
-# script (./MapRNAseqHumanSRA on the command line)
-system("bash MapRNAseqHuman_SRA.sh")
+# script (./MapRNAseqHumanSRA.sh on the command line) 
+# The first time, make the bash script excutable (chmod 755 MapRNAseqHumanSRA.sh)
+system("bash MapRNAseqHumanSRA.sh")
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
 # Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples)
+library(Rsubread)
 for (pair in c("P","S")){
   if (pair=="P"){
     fc<- featureCounts(files=Sys.glob("pairedEnd/*.sam"), 
@@ -93,7 +93,7 @@ for (pair in c("P","S")){
   CountTable<- CountTable[,Sort]
   write.csv(CountTable, "RNAseqCountTable.csv", row.names=FALSE)
 }  
-
+library(DESeq2)
 CountTable<- read.csv("RNAseqCountTable.csv", stringsAsFactors = F)
 sf<- estimateSizeFactorsForMatrix(CountTable[,3:ncol(CountTable)])
 CountTableNor<- CountTable
