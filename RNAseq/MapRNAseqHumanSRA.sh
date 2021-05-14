@@ -36,7 +36,7 @@ do
 			rm ${s}_1.fq 
 			rm ${s}_2.fq
 			break
-		elif [ $p = P ] 
+		elif [ $p = S ] 
 		then
 			fastq-dump -v $s.sra
 			seqtk trimfq $s.fastq > $s.fq
