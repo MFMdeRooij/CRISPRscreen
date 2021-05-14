@@ -55,22 +55,29 @@ system("bash MapRNAseqHumanSRA.sh")
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
 # Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples)
-library(Rsubread)
 for (pair in c("P","S")){
-  if (pair=="P"){
-    fc<- featureCounts(files=Sys.glob("pairedEnd/*.sam"), 
-                        annot.ext="~/HumanGenome/hg38.95.gtf", 
-                        isGTFAnnotationFile=TRUE,
-                        isPairedEnd=TRUE,
-                        strandSpecific=0)
+  if (pair=="P") {
+     if (length(list.files("pairedEnd/", ".sam"))>0) {
+        fc<- featureCounts(files=Sys.glob("pairedEnd/*.sam"),
+                          annot.ext="~/HumanGenome/hg38.95.gtf",
+                          isGTFAnnotationFile=TRUE,
+                          isPairedEnd=TRUE,
+                          strandSpecific=0)
+      } else {
+          next
+      }
   }
-  if (pair=="S"){
-    fc<- featureCounts(files=Sys.glob("singleEnd/*.sam"), 
-                        annot.ext="~/HumanGenome/hg38.95.gtf", 
+  if (pair=="S") {
+    if (length(list.files("singleEnd/", ".sam"))>0) {
+      fc<- featureCounts(files=Sys.glob("singleEnd/*.sam"),
+                        annot.ext="~/HumanGenome/hg38.95.gtf",
                         isGTFAnnotationFile=TRUE,
                         isPairedEnd=FALSE,
                         strandSpecific=0)
-  }
+    } else {
+        break
+      }
+  } 
   df_annotation<- as.data.frame(fc[2])
   CountTable3<- as.data.frame(fc[1])
   colnames(CountTable3)<- unlist(lapply(strsplit(colnames(CountTable3), ".sam"), "[[", 1))
@@ -78,22 +85,22 @@ for (pair in c("P","S")){
   CountTable2<- CountTable3/(df_annotation$annotation.Length)
   CountTable<- t(t(CountTable2)/colSums(CountTable2)*1000000)
   CountTable<- as.data.frame(CountTable)
-  
-  # Add gene symbols
   CountTable$ensembl_gene_id<- rownames(CountTable)
-  GeneList<- read.csv('~/HumanGenome/GeneAnnotations.csv', stringsAsFactors = F)
-  CountTable<- merge(GeneList, CountTable, by="ensembl_gene_id", all.x=TRUE)
-  CountTable$description<- NULL
-  write.csv(CountTable, "RNAseqCountTable2.csv", row.names=FALSE)
-  
-  # Add new cell lines to an existing table (make a backup of the old RNAseqCountTable.csv)
-  CountTable1<- read.csv("RNAseqCountTable.csv", stringsAsFactors = F)
-  CountTable2<- read.csv("RNAseqCountTable2.csv", stringsAsFactors = F)
-  CountTable<- merge(CountTable1, CountTable2[,-2], by='ensembl_gene_id')
+
+  if (file.exists("RNAseqCountTable.csv")) {
+    # Add to existing count table
+    CountTableOld<- read.csv("RNAseqCountTable.csv", stringsAsFactors = F)
+    CountTable<- merge(CountTableOld, CountTable, by='ensembl_gene_id')
+  } else {
+    # Add gene symbols
+    GeneList<- read.csv('~/HumanGenome/GeneAnnotations.csv', stringsAsFactors = F)
+    CountTable<- merge(GeneList, CountTable, by="ensembl_gene_id", all.x=TRUE)
+    CountTable$description<- NULL
+    }
   CountTable<- CountTable[,Sort]
   write.csv(CountTable, "RNAseqCountTable.csv", row.names=FALSE)
 }  
-library(DESeq2)
+
 CountTable<- read.csv("RNAseqCountTable.csv", stringsAsFactors = F)
 sf<- estimateSizeFactorsForMatrix(CountTable[,3:ncol(CountTable)])
 CountTableNor<- CountTable
