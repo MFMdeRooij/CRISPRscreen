@@ -50,7 +50,7 @@ library(DESeq2)
 # Now you are ready for RNAseq analysis
 
 # Search for RNAseq data on https://www.ncbi.nlm.nih.gov/sra/, and fill in the SRR IDs, cell 
-# line ID and P (paired-end or S (single-end) separated by commas in MapSamples.txt, and run the 
+# line ID and a P (paired-end) or S (single-end) separated by commas (SRR8615345,NAMALWA,P), and run the 
 # script (./MapRNAseqHumanSRA on the command line)
 system("bash MapRNAseqHuman_SRA.sh")
 # With the sorted bam files, you can check the read mapping in IGV-viewer
