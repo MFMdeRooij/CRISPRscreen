@@ -55,6 +55,7 @@ system("bash MapRNAseqHumanSRA.sh")
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
 # Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples)
+# Store always the non-normalizered count table to add more samples
 for (pair in c("P","S")){
   if (pair=="P") {
      if (length(list.files("pairedEnd/", ".sam"))>0) {
