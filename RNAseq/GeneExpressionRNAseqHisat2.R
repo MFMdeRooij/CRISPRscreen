@@ -65,7 +65,7 @@ for (pair in c("P","S")){
                           strandSpecific=0)
       } else {
           next
-      }
+        }
   }
   if (pair=="S") {
     if (length(list.files("singleEnd/", ".sam"))>0) {
@@ -92,10 +92,10 @@ for (pair in c("P","S")){
     CountTableOld<- read.csv("RNAseqCountTable.csv", stringsAsFactors = F)
     CountTable<- merge(CountTableOld, CountTable, by='ensembl_gene_id')
   } else {
-    # Add gene symbols
-    GeneList<- read.csv('~/HumanGenome/GeneAnnotations.csv', stringsAsFactors = F)
-    CountTable<- merge(GeneList, CountTable, by="ensembl_gene_id", all.x=TRUE)
-    CountTable$description<- NULL
+      # Add gene symbols
+      GeneList<- read.csv('~/HumanGenome/GeneAnnotations.csv', stringsAsFactors = F)
+      CountTable<- merge(GeneList, CountTable, by="ensembl_gene_id", all.x=TRUE)
+      CountTable$description<- NULL
     }
   CountTable<- CountTable[,Sort]
   write.csv(CountTable, "RNAseqCountTable.csv", row.names=FALSE)
