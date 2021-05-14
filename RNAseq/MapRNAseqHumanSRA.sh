@@ -35,7 +35,7 @@ do
 			rm ${s}_2.fastq
 			rm ${s}_1.fq 
 			rm ${s}_2.fq
-			break
+			break 1
 		elif [ $p = S ] 
 		then
 			fastq-dump -v $s.sra
@@ -47,7 +47,7 @@ do
 			mv ${s}_${c}.sam singleEnd/
 			rm $s.fastq 
 			rm $s.fq 
-			break
+			break 1
 		else
 			echo What means $p?, Is $s paired-end \(P\) or single-end \(S\)?
 			read p
