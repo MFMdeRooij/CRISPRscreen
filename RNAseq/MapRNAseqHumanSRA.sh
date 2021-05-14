@@ -21,7 +21,7 @@ do
 		--known-splicesite-infile ~/HumanGenome/hg38_splicesites.txt\
 	 	-1 ${s}_1.fq -2 ${s}_2.fq -S ${s}_${c}.sam\
 	 	--summary-file ${s}_${c}.summmary.txt
-	 	samtools view -S -b $${s}_${c}.sam > ${s}_${c}.bam
+	 	samtools view -S -b ${s}_${c}.sam > ${s}_${c}.bam
 	 	mv ${s}_${c}.sam pairedEnd/${s}_${c}.sam
 		rm ${s}_1.fastq
 		rm ${s}_2.fastq
@@ -33,7 +33,7 @@ do
 		hisat2 -x ~/HumanGenome/hg38\
 		--known-splicesite-infile ~/HumanGenome/hg38_splicesites.txt\
 	 	-U $s.fq -S ${s}_${c}.sam --summary-file ${s}_${c}.summmary.txt
-	 	samtools view -S -b $${s}_${c}.sam > ${s}_${c}.bam
+	 	samtools view -S -b ${s}_${c}.sam > ${s}_${c}.bam
 	 	mv ${s}_${c}.sam singleEnd/${s}_${c}.sam
 		rm $s.fastq 
 		rm $s.fq 
