@@ -3,7 +3,7 @@
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019,
 # info: m.f.derooij@amsterdamumc.nl
 mkdir pairedEnd
-mkdir unpaired
+mkdir singleEnd
 for line in `cat MapSamples.txt`
 do 
 	s="$(echo $line | cut -d"," -f1)"
@@ -34,7 +34,7 @@ do
 		--known-splicesite-infile ~/HumanGenome/hg38_splicesites.txt\
 	 	-U $s.fq -S ${s}_${c}.sam --summary-file ${s}_${c}.summmary.txt
 	 	samtools view -S -b $${s}_${c}.sam > ${s}_${c}.bam
-	 	mv ${s}_${c}.sam unpaired/${s}_${c}.sam
+	 	mv ${s}_${c}.sam singleEnd/${s}_${c}.sam
 		rm $s.fastq 
 		rm $s.fq 
 	fi
