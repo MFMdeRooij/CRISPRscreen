@@ -4,6 +4,8 @@
 # (SRR8615345,NAMALWA,P) in MapSamples.txt, 
 # and run the script (./MapRNAseqHumanSRA.sh on the command line)
 # The first time, make the bash script executable (chmod 755 MapRNAseqHumanSRA.sh)
+# Afterwards you can view the mapping in IGV viever, or make a count table with the R
+# script (GeneExpressionRNAseqHisat2)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019,
 # info: m.f.derooij@amsterdamumc.nl
 mkdir pairedEnd
