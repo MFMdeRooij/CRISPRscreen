@@ -34,7 +34,7 @@ Sort<- q(ensembl_gene_id,	hgnc_symbol,	NALM6, REH, SEM, X697, MEC1,	GRANTA519,	J
 
 # R Packages
 #install.packages("BiocManager")
-#BiocManager::install(c("Rsubread", "biomaRt", "DESeq2"), dependencies=T)
+#BiocManager::install(c("Rsubread", "DESeq2", "biomaRt"), dependencies=T)
 # if biomaRt is not working, try command line: 'sudo apt-get update' & 'sudo apt-get install r-bioc-biomart'
 
 # You can find the gene annotations with biomaRt, and store it in a file for reuse
@@ -56,6 +56,8 @@ system("bash MapRNAseqHumanSRA.sh")
 
 # Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples)
 # Store always the non-normalizered count table to add more samples
+library("Rsubread")
+library("DESeq2")
 for (pair in c("P","S")){
   if (pair=="P") {
      if (length(list.files("pairedEnd/", ".sam"))>0) {
