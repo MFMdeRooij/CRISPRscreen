@@ -3,7 +3,7 @@
 # This normalization can improve the comparison treated - control if the treated arm did not have equal cell divisions, however the separation between the essentials and 
 # non-essentials will not be improved. Synthetic lethal genes will be on the lower half of the vertical 0 axis.
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2021, info: m.f.derooij@amsterdamumc.nl
-############################################################################################################################
+##################################################################################################################################
 #                                                                 SETTINGS
 
 # Folder screen data
@@ -24,7 +24,7 @@ max<- 1
 
 # Show gene symbols (0=yes, 1=no)
 GeneSymbol<- 0
-############################################################################################################################
+##################################################################################################################################
 setwd(Workdirectory)
 
 Control<-read.csv("DESeq2 T0vsT1 Genes.csv", stringsAsFactors=F)
