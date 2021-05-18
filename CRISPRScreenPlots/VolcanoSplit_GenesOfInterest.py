@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Apr 29 13:46:40 2019
-
-@author: Martin F.M. de Rooij, PhD
+Use the CRISPRScreenAnalysis.R output files, adjust the settings, and run the script in Spyder.
+This script plots particular genes in Volcano plots of comparisons (T1/T0, T2/T0, and T2/T1).
+Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
 """
-
-# After performing the DESeq2 script sucessfully, you can produce publishing-grade Volcano plots 
 ##########################################################################################################
 #                                                 SETTINGS
 
