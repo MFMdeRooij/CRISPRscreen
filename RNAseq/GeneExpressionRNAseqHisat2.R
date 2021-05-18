@@ -1,4 +1,4 @@
-# Follow the lines with hastag signs
+# Follow the lines with hastag signs in R studio
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################################################################
 #                                                         SETTINGS
