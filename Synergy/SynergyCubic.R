@@ -1,7 +1,9 @@
 # Use a constant drugs ratio dependent on its IC50's
 # For 2 drugs the best is to use dilution factors of 2
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
-
+# Normalize the viability values/number of cells between 0 (0%) and 1 (100%), adjust te settings, and run the script in R studio
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2018, info: m.f.derooij@amsterdamumc.nl
+##################################################################################################################################
+#                                                         SETTINGS
 
 # Put NPI normalized data in SynergyTestData.csv template
 Workdirectory<- "H:/BioWin/Synergy"
@@ -14,7 +16,7 @@ DrugB<- "Drug B"
 # Name output file
 output <- "SynergyCubic.pdf"
 
-####################################################################################
+##################################################################################################################################
 
 setwd(Workdirectory)
 df_raw <- read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALSE)
