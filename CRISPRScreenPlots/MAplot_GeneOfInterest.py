@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Use the CRISPRScreenAnalysis.R output files, adjust the settings, and run the script in Spyder.
-This script plots the the guides of a particular gene in MA plots of comparisons (T1/T0, T2/T0, and T2/T1).
+This script plots all the guides of a particular gene in MA plots of comparisons (T1/T0, T2/T0, and T2/T1).
 Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
 """
 ##########################################################################################################
