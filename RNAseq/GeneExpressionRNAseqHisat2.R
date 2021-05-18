@@ -1,6 +1,7 @@
 # Follow the lines with hastag signs
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
-
+##################################################################################################################################
+#                                                         SETTINGS
 # Workdirectory
 setwd("~/Data/RNAseq/")
 
@@ -10,7 +11,7 @@ q<- function(...) {
 # Order count table
 Sort<- q(ensembl_gene_id,	hgnc_symbol,	NALM6, REH, SEM, X697, MEC1,	GRANTA519,	JEKO1,	MINO,	REC1, Z138, DAUDI, NAMALWA,	RAJI, DOHH2, SUDHL4, SUDHL5, 
                 SUDHL6,	OCILY3,	OCILY10,	TMD8,	U2932, EJM, INA6, L363,	LP1, MM1S, NCIH929,	OPM2,	RPMI8226, U266)
-#######################################################################################################################################################
+##################################################################################################################################
 # Download, install, and configure the sra-toolkit from NCBI website:
 # https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
 
