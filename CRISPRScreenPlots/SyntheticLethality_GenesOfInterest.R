@@ -2,7 +2,7 @@
 # This script normalizes the median log2 fold change to the essential and non-essential genes of a synthetic lethality screen, and plots T1control/T0 against T1treated/T0. 
 # This normalization can improve the comparison treated - control if the treated arm did not have equal cell divisions, however the separation between the essentials and 
 # non-essentials will not be improved. Synthetic lethal genes will be on the lower half of the vertical 0 axis.
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2021, info: m.f.derooij@amsterdamumc.nl
 
 # Screen data
 Workdirectory<- "H:/BioWin/RPCIWM1/"
