@@ -1,7 +1,9 @@
 ## OncoPrint:
 # To summarize your CRISPR screen hits (or originally genetic aberrations) for multiple cell lines 
-# Add your data to OncoPrintData.csv, and adjust all settings, and run the script
+# Add your data to OncoPrintData.csv, and adjust all settings, and run the script in R studio
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
+##################################################################################################################################
+#                                                          SETTINGS
 
 # Folder and data file
 setwd("H://BioWin/OncoPrint")
@@ -34,7 +36,7 @@ backgroundColor <- "#c8c8c8"
 # Size of the white areas between the blocks
 width<-1
 heigth<-1
-############################################################################################
+##################################################################################################################################
 #install.packages("BiocManager")
 #BiocManager::install("ComplexHeatmap")
 library(ComplexHeatmap)
