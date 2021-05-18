@@ -3,13 +3,14 @@
 Quick Sanger Sequence Analysis of cloning a sgRNA or shRNA insert into a plasmid:
     - Install the Biopython package (command line: conda install -c anaconda biopython)
     - Add the reference sequences (like the Gibson oligo sequences) to Sanger_RefsCloningOligo.csv
-    - Add the ab1 files and the Sanger_RefsCloningOligo.csv file to the given folder, and run the script.
+    - Add the ab1 files and the Sanger_RefsCloningOligo.csv file to the given folder, and run the script in Spyder.
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2021, info: m.f.derooij@amsterdamumc.nl
 """
+##################################################################################################################################
+#                                                           SETTINGS
 
 folder = 'H:/BioWin/SangerSeqs'
-
-###################################################################################################
+##################################################################################################################################
 import pandas as pd
 import glob
 import time
