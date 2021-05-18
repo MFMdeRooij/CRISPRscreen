@@ -4,7 +4,7 @@ Use the CRISPRScreenAnalysis.R output files, adjust the settings, and run the sc
 This script plots the fold changes of the all the guides of particulare genes in all comparisons (T1/T0, T2/T0, and T2/T1).
 Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
 """
-###############################################################################################################
+##################################################################################################################################
 #                                                      SETTINGS
 
 # Copy-paste the required folder (use / instead of \ )
@@ -45,7 +45,7 @@ essOrSig = 1
 
 # RRA score: 0=depletion, 1=enrichment
 rrascore = 0
-###############################################################################################################
+##################################################################################################################################
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
