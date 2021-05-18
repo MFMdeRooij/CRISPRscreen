@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jan 14 13:41:02 2020
-
-@author: Martin F.M. de Rooij, PhD
+# Use the CRISPRScreenAnalysis.R output files, adjust the settings, and run the script in Spyder.
+# This script plots the fold changes of the all the guides of particulare genes in all comparisons (T1/T0, T2/T0, and T2/T1).
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
 """
-# After performing the DESeq2 script sucessfully, you can produce publishing-grade GuideFC plots
 ###############################################################################################################
 #                                                      SETTINGS
 
