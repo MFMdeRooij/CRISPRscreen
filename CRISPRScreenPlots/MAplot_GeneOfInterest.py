@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Nov  5 09:26:48 2018
-
-@author: Martin F.M. de Rooij, PhD
+Use the CRISPRScreenAnalysis.R output files, adjust the settings, and run the script in Spyder.
+This script plots the the guides of a particular gene in MA plots of comparisons (T1/T0, T2/T0, and T2/T1).
+Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
 """
-
-# After performing the DESeq2 script sucessfully, you can produce publishing-grade MA plots 
 ##########################################################################################################
 #                                                 SETTINGS
 
