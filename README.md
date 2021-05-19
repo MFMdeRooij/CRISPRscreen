@@ -1,6 +1,6 @@
 # CRISPR screen analysis from fastq to robust statistics in Linux or Microsoft Windows.
 With my scripts you can analyze your own CRISPR screen completely and in a robust way with little knowledge of R, Perl, and Python. 
-The scripts are compatible with Linux as well as Microsoft Windows (with a small adjustment in the Perl scripts).
+The scripts are compatible with Linux as well as Microsoft Windows (with a small adjustment in the Perl scripts, and RNAseq as an exception).
 Open the scripts (as text file) for information how to use them.
 - Install Perl, R, R studio, and Anaconda3 (during installation of Anaconda3, add Python to your path (check the box)).
 
