@@ -1,6 +1,6 @@
 # CRISPR screen analysis from fastq to robust statistics in Linux or Microsoft Windows.
 With my scripts you can analyze your own CRISPR screen completely and in a robust way with little knowledge of R, Perl, and Python. 
-The scripts are compatible with Linux as well as Microsoft Windows (with a small adjustment in the Perl scripts, and RNAseq as an exception).
+The scripts are compatible with Linux as well as Microsoft Windows with a small adjustment in the Perl scripts, and with the exception of the RNAseq scripts and the MAGeCK option in the CRISPRScreenAnaysis.
 Open the scripts (as text file) for information how to use them.
 - Install Perl, R, R studio, and Anaconda3 (during installation of Anaconda3, add Python to your path (check the box)).
 
@@ -14,7 +14,7 @@ MAviewer:
 - To interactively view the MA plots, add the output from CRISPRScreenAnalysis.R to the files/DataCRISPR03New folder of MAviewer, and open MAviewer with the sh file (Linux) or bat file (Windows), and discover your screen results (You can add a shortcut to these files for on your desktop. As an example I included the published screens of B cell lymphoma cell lines of Phelan et al, Nature 2018. You can also check the gene expression (RNAseq) of your top hits in a small B cell line panel (derived from the public SRA database, in which most is performed by the Broad Institute). The RNAseq data are in TPM, which are subseqently normalized by median of ratios (DESeq2) between cell lines (Python).
 
 CRISPRScreenPlots:
-- To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python).
+- To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python). With the SyntheticLethality_GenesOfInterest.R script, you can get a nice visualization of your synthetic lethal hits (R).
 
 RNAseq:
 - To look at gene expression of your CRISPR targets, you can download RNAseq data from most cell lines from the NCBI-SRA database, and analyze it with GeneExpressionRNAseqHisat2.R and the Bash files. Because this script uses various Linux apps, it does not work on Windows (R/Linux). With the sorted bam files you can also view the read mapping in IGV viewer (e.g. to look at mutations, differential splicing between cell lines, or check CRISPR induced deletions).
