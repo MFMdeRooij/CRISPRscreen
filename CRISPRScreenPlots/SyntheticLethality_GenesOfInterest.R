@@ -65,7 +65,7 @@ pdf(paste0("CRISPR_SL_",cell,"_",drug,".pdf"),10,10)
   plot(Combi$Nmfc.x, Combi$Nmfc.y, xlab="Control (Relative median log2 fold change)", ylab=paste0(drug, " (Relative median log2 fold change)"), xlim=c(min,max), ylim=c(min,max), pch=16, col=3, cex=-0.2*log10(Combi$Stat))
   if (GeneSymbol == 0){
     text(Combi$Nmfc.x, Combi$Nmfc.y, labels=Combi$GeneSymbol, cex=0.5, col=8, adj = -0.3)
-    points(Combi$Nmfc.x, Combi$Nmfc.y,pch=16, col=3, cex=-0.2*log10(Combi$Stat))
+    #points(Combi$Nmfc.x, Combi$Nmfc.y,pch=16, col=3, cex=-0.2*log10(Combi$Stat))
   }
   points(pos$Nmfc.x, pos$Nmfc.y, pch=16, col=2, cex=0.7)
   points(neg$Nmfc.x, neg$Nmfc.y, pch=16, col=4, cex=0.7)
