@@ -9,7 +9,7 @@ Quick Sanger Sequence Analysis of cloning a sgRNA or shRNA insert into a plasmid
 ##################################################################################################################################
 #                                                           SETTINGS
 
-folder = 'H:/BioWin/SangerSeqs'
+folder = 'H:/BioWin/SangerSeq'
 ##################################################################################################################################
 import pandas as pd
 import glob
