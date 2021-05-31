@@ -6,7 +6,7 @@
 #                                                          SETTINGS
 
 # Folder and data file
-setwd("H://BioWin/OncoPrint")
+setwd("H:/BioWin/OncoPrint")
 matOriginal<-read.csv("OncoPrintData.csv", sep=",", header=T, row.names=1, stringsAsFactors = F)
 
 # Tumortypes: (if less or more than 3 groups, adjust the SampleOrder lines)
