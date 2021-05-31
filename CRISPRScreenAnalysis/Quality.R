@@ -7,7 +7,7 @@
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 ######################################################################################
 # Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-Workdirectory<- "~/Data/Screens"
+Workdirectory<- "~/BioLin/Screens/"
 
 # Read table files
 ReadTable<- c("ReadTable_test.fastq.gz.csv", "ReadTable_test2.fastq.gz.csv")   
