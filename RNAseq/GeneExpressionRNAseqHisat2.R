@@ -3,7 +3,7 @@
 ##################################################################################################################################
 #                                                         SETTINGS
 # Workdirectory
-setwd("~/Data/RNAseq/")
+setwd("~/BioLin/RNAseq/")
 
 q<- function(...) {
   sapply(match.call()[-1], deparse)
