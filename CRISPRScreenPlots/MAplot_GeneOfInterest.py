@@ -19,6 +19,9 @@ save = 1
 # Show significant guides as triangles (0=no, 1=yes)
 guidesignificant = 1
 
+# Show guide IDs (0=no, 1=yes)
+guideID = 1
+
 # Titles:
 maintitle = 'NAMALWA'
 
@@ -104,6 +107,21 @@ for file in files:
             marker = "v" if row['padj'] < 0.1 and row['l2fc'] < 0 and guidesignificant==1 else "^" if row['padj'] < 0.1 and row['l2fc'] > 0 and guidesignificant==1 else "o",
             s=100
         ) 
+
+
+    if guideID==1:
+        for i, row in df[df['GeneSymbol']==gene].iterrows(): 
+                label = "#"+row['Guide'].split("-")[1]
+                label_pos_x = row['l10rc']
+                label_pos_y = row['l2fc']
+                plt.text(
+                    label_pos_x+0.05,
+                    label_pos_y-0.02,
+                    label,
+                    color='black',
+                    fontsize=10,
+                    weight="bold"
+            )
 
     plt.xticks(np.arange(xmin, xmax, xticks))
     plt.yticks(np.arange(ymin, ymax, yticks))
