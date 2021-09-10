@@ -209,7 +209,7 @@ for (Filename in Filenames) {
   if (Paired==1) {
     dds <- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Time)
   }  
-  dds$time <- relevel(dds$Time, "T0")
+  dds$Time <- relevel(dds$Time, "T0")
   dds <- DESeq(dds, fitType = 'local', betaPrior = TRUE)
   #fitType, default is parametric, for CRISPR screens local is better (parametric is in most cases not possible; betaPrior=TRUEis for shrinkage of noninformative fold changes)
   
