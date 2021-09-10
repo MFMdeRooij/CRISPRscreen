@@ -249,7 +249,7 @@ for (Filename in Filenames) {
       df_res$log2FoldChange <- df_res$lfcMLE
     }
     df_baseMeanPerLvl <- as.data.frame(sapply(levels(dds$Time), function(lvl) rowMeans(counts(dds, normalized=TRUE)
-                                                                                       [,dds$time==lvl])))
+                                                                                       [,dds$Time==lvl])))
     if (r==1){
       df_res$BaseMeanA <-round(df_baseMeanPerLvl$T0,0)
       df_res$logBaseMeanA <-log(df_baseMeanPerLvl$T0+1)/log(10)
