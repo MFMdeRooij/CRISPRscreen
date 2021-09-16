@@ -126,7 +126,7 @@ CountTableNor<- read.csv("RNAseqCountTableNorTPM.csv")
 #sf<- estimateSizeFactorsForMatrix(CountTableNor[,3:ncol(CountTableNor)])
 #CountTableNor[,3:ncol(CountTableNor)]<- as.data.frame(round(t(t(CountTableNor[,3:ncol(CountTableNor)])/sf),1))
 CountTableNor<- CountTableNor[,Sort]
-df_pr<- CountTableNor[,3:ncol(CountTableNor)]
+df_pr<- log(CountTableNor[,3:ncol(CountTableNor)])
 rownames(df_pr)<- paste(1:nrow(CountTableNor),CountTableNor$hgnc_symbol, sep="_")
 df_prScale<- t(scale(t(df_pr), center=T, scale = T))
 df_pr_NoNA<- which(!is.na(rowMeans(df_prScale)))
