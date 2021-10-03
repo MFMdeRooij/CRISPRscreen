@@ -120,11 +120,17 @@ library("ggfortify")
 library("factoextra")
 CountTableNor<- read.csv("RNAseqCountTableNorTPM.csv")
 # If there is RNAseq data mapped to another genome reference, you can remove genes which are not available in all samples
-#CountTableNor$minExp<- apply(CountTableNor[3:ncol(CountTableNor)], 1, FUN=min)
-#CountTableNor<- CountTableNor[CountTableNor$minExp>1,]
-#CountTableNor$minExp<- NULL
+#CountTableNor$minExpr<- apply(CountTableNor[3:ncol(CountTableNor)], 1, FUN=min)
+#CountTableNor<- CountTableNor[CountTableNor$minExpr>1,]
+#CountTableNor$minExpr<- NULL
 #sf<- estimateSizeFactorsForMatrix(CountTableNor[,3:ncol(CountTableNor)])
 #CountTableNor[,3:ncol(CountTableNor)]<- as.data.frame(round(t(t(CountTableNor[,3:ncol(CountTableNor)])/sf),1))
+
+# Remove low noisy counts
+CountTableNor$meanExpr<- apply(CountTableNor[3:ncol(CountTableNor)], 1, FUN=mean)
+CountTableNor<- CountTableNor[CountTableNor$meanExpr>10,]
+CountTableNor$meanExpr<- NULL
+
 CountTableNor<- CountTableNor[,Sort]
 df_pr<- log(CountTableNor[,3:ncol(CountTableNor)])
 rownames(df_pr)<- paste(1:nrow(CountTableNor),CountTableNor$hgnc_symbol, sep="_")
