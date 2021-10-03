@@ -141,7 +141,7 @@ samples<- data.frame(Sample = as.factor(colnames(CountTableNor)[3:ncol(CountTabl
 rownames(samples)<- colnames(CountTableNor[3:ncol(CountTableNor)])
 
 pdf("PCA.pdf", width=10, height=10)
-  autoplot(prcomp(t(df_prSel)), data=samples, colour="Sample")
+  #autoplot(prcomp(t(df_prSel)), data=samples, colour="Sample")
   #pairs(df_pr, cex=0.1, log='xy')
   cor<- cor(df_prSel, method = "pearson")
   corrplot(cor, method='color', order = "hclust")
