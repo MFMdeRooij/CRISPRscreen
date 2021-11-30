@@ -37,6 +37,9 @@ title1 = 'PMA/input'
 title2 = r'$\alpha$IgM/input'
 title3 = r'$\alpha$IgM/PMA'  
 
+# 2 superscript (dutch log style) and 0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
+# greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 
+
 # X-axis limits:
 xmin, xmax, xticks = -1.25, 1, 0.25
 

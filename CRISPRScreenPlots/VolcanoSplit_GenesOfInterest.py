@@ -2,6 +2,7 @@
 """
 Use the CRISPRScreenAnalysis.R output files, adjust the settings, and run the script in Spyder.
 This script plots particular genes in splitted Volcano plots of all comparisons (T1/T0, T2/T0, and T2/T1).
+If the gene symbols are overlapping, you can move them in Adobe Illustrator.
 Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
 """
 ##################################################################################################################################
@@ -22,18 +23,18 @@ genesignificant = 1
 # Titles:
 maintitle = 'NAMALWA'
 
-x1title = '$^{2}$log fold change (PMA/input)'
-x2title = r'$^{2}$log fold change ($\alpha$IgM/input)'
-x3title = r'$^{2}$log fold change ($\alpha$IgM/PMA)'
+x1title = 'Log2 fold change (PMA/input)'
+x2title = r'Log2 fold change ($\alpha$IgM/input)'
+x3title = r'Log2 fold change ($\alpha$IgM/PMA)'
 
-#0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
-#greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 
+# 2 superscript (dutch log style) and 0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
+# greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 
 
 # Font size of X- and Y-axis titles (the main title is 10 bigger)
 fs = 15
 
 # Colors (see https://matplotlib.org/1.5.1/examples/color/named_colors.html)
-call = 'green'
+call = 'silver'
 cpos = 'red'
 cneg = 'blue'
 chit = 'black'
@@ -69,7 +70,7 @@ for file in files:
     gs = axs[0].get_gridspec()
     axbig = fig.add_subplot(gs[0, 0:2])
 
-    ymin=-1
+    ymin=-0.2
     ymax=16
     xmin=min(dfg['l2mfc']-0.5)
     xmax=max(dfg['l2mfc']+0.5)
@@ -93,7 +94,7 @@ for file in files:
 
     axs[0].set_xlim(xmin,xmax)
     axs[0].set_ylim(ymin,ymax)
-    axs[0].set_ylabel(r'- $^{10}$log $\rho$ ($\alpha$RRA$_{depleted}$)', fontsize=fs)
+    axs[0].set_ylabel(r'-Log10 $\rho$ ($\alpha$RRA$_{depleted}$)', fontsize=fs)
     axs[0].axvline(0, color='black', linewidth=1)  
     axs[0].spines['bottom'].set_linewidth(1.5)
     axs[0].spines['top'].set_linewidth(1.5)
@@ -136,7 +137,7 @@ for file in files:
     axs[1].yaxis.set_label_position('right')
     axs[1].set_xlim(xmin,xmax)
     axs[1].set_ylim(ymin,ymax)
-    axs[1].set_ylabel(r'- $^{10}$log $\rho$ ($\alpha$RRA$_{enriched}$)', rotation=-90, fontsize=fs, labelpad=20)
+    axs[1].set_ylabel(r'Log10 $\rho$ ($\alpha$RRA$_{enriched}$)', rotation=-90, fontsize=fs, labelpad=20)
     axs[1].axvline(0, color='black', linewidth=1)
     axs[1].spines['bottom'].set_linewidth(1.5)
     axs[1].spines['top'].set_linewidth(1.5)

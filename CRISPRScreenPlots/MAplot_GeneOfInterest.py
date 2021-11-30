@@ -25,17 +25,17 @@ guideID = 1
 # Titles:
 maintitle = 'NAMALWA'
 
-x1title = '$^{10}$log average read counts (input)'
-y1title = '$^{2}$log fold change (PMA/input)'
+x1title = 'Log10 average read counts (input)'
+y1title = 'Log2 fold change (PMA/input)'
 
-x2title = '$^{10}$log average read counts (input)'
-y2title = r'$^{2}$log fold change ($\alpha$IgM/input)'
+x2title = 'Log10 average read counts (input)'
+y2title = r'Log2 fold change ($\alpha$IgM/input)'
 
-x3title = '$^{10}$log average read counts (PMA)'
-y3title = r'$^{2}$log fold change ($\alpha$IgM/PMA)'
+x3title = 'Log10 average read counts (PMA)'
+y3title = r'Log2 fold change ($\alpha$IgM/PMA)'
 
-#0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
-#greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 
+# 2 superscript (dutch log style) and 0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
+# greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 
 
 # X- and Y-axis limits:
 xmin=0
@@ -50,7 +50,7 @@ yticks=0.25
 fs = 15
 
 # Colors (see https://matplotlib.org/1.5.1/examples/color/named_colors.html)
-call = 'green'
+call = 'silver'
 cpos = 'red'
 cneg = 'blue'
 chit = 'black'

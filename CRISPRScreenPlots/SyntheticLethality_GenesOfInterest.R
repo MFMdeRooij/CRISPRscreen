@@ -7,7 +7,7 @@
 #                                                                 SETTINGS
 
 # Folder screen data
-Workdirectory<- "H:/BioWin/RPCIWM1/"
+Workdirectory<- "H:/BioWin/Screens/RPCIWM1/"
 
 # Cell line ID
 cell<- "RPCIWM1"
