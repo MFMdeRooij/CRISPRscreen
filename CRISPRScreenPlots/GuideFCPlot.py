@@ -102,17 +102,17 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label='All guides')
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label='Non-essential genes') 
         if essOrSig == 0:
-             sns.kdeplot(df[df['Type']=='p']['l2fc'], linewidth= 2, color='darkorchid', label='Essential genes')
+             sns.kdeplot(df[df['Type']=='p']['l2fc'], linewidth= 2, color='royalblue', label='Essential genes')
         if essOrSig == 1:
-            sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label='Significant (FDR < 0.1)')
+            sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='royalblue', label='Significant (FDR < 0.1)')
         plt.legend()
     else:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label=None)
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label=None) 
         if essOrSig == 0:
-            sns.kdeplot(df[df['Type']=='p']['l2fc'], linewidth= 2, color='darkorchid', label=None)
+            sns.kdeplot(df[df['Type']=='p']['l2fc'], linewidth= 2, color='royalblue', label=None)
         if essOrSig == 1:
-            sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='darkorchid', label=None)      
+            sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='royalblue', label=None)      
     plt.xlim(xmin, xmax) 
     if i==0:
         plt.title(title1)  
@@ -134,7 +134,7 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
     plt.xlim(xmin, xmax) 
     plt.yticks(np.arange(1,1+len(genes)), genes)
     plt.ylim(len(genes)+0.5,0.5)    
-    plt.xlabel('$^{2}$log fold change')
+    plt.xlabel('Log2 fold change')
     plt.axvline(x=0, color='black', linewidth=1.5)
     if geneSubsets==1:
         plt.axhline(y=len(pd.unique(dfg1['GeneSymbol']))+0.5, color='black', linewidth=1.5)
@@ -147,9 +147,9 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
     plt.ylim(len(genes)+0.5,0.5)
     plt.xlim(0,25)
     if rrascore==0:
-        plt.text(0,0,'-$^{10}$log RRA$_{dep}$ score', fontsize=8)
+        plt.text(0,0,'-Log10 RRA$_{dep}$ score', fontsize=8)
     elif rrascore==1:
-        plt.text(0,0,'-$^{10}$log RRA$_{enr}$ score', fontsize=8)
+        plt.text(0,0,'-Log10 RRA$_{enr}$ score', fontsize=8)
     plt.axis('off') 
     plt.text(20,len(genes)+0.5, 'red: FDR < 0.1', rotation=-90) 
     i+=1
