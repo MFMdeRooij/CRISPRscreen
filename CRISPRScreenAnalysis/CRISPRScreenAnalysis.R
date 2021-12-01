@@ -44,9 +44,9 @@ T0_Rep3 <- 0
 T1_Rep1 <- 0
 T1_Rep2 <- 0
 T1_Rep3 <- 0
-T2_Rep1 <- 1
-T2_Rep2 <- 1
-T2_Rep3 <- 1
+T2_Rep1 <- 0
+T2_Rep2 <- 0
+T2_Rep3 <- 0
 
 # Paired replicates: 0 = Paired, 1 = Unpaired
 Paired <- 0
