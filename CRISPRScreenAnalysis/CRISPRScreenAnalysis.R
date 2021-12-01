@@ -44,9 +44,9 @@ T0_Rep3 <- 0
 T1_Rep1 <- 0
 T1_Rep2 <- 0
 T1_Rep3 <- 0
-T2_Rep1 <- 0
-T2_Rep2 <- 0
-T2_Rep3 <- 0
+T2_Rep1 <- 1
+T2_Rep2 <- 1
+T2_Rep3 <- 1
 
 # Paired replicates: 0 = Paired, 1 = Unpaired
 Paired <- 0
@@ -561,10 +561,10 @@ for (Filename in Filenames) {
       r2 <- round(summary(reg1)$r.squared, 3)
       eq1 <- bquote(italic(y) == .(slope)*italic(x) + .(intercept) ~"("*r^2 == .(r2)*")")
       
-      plot(df_normCounts[,e1], df_normCounts[,e2], type="p", col=3, cex=.1, main="Correlation plot", 
+      plot(df_normCounts[,e1], df_normCounts[,e2], type="p", col="gray", cex=.1, main="Correlation plot", 
            xlab=df_rep[i,1], ylab=df_rep[i,2], xlim=xyrange, ylim=xyrange)
-      points(df_normCountsP[,e1], df_normCountsP[,e2], type="p", col=2, cex=.1)
-      points(df_normCountsN[,e1], df_normCountsN[,e2], type="p", col=4, cex=.1)
+      points(df_normCountsP[,e1], df_normCountsP[,e2], type="p", col="red", cex=.3)
+      points(df_normCountsN[,e1], df_normCountsN[,e2], type="p", col="blue", cex=.3)
       abline(reg1, col=6)
       abline(0,1, col=1)
       text(x = xyrange[2]/2, y = xyrange[2]*0.95, labels= eq1)
@@ -612,7 +612,7 @@ for (Filename in Filenames) {
       
       par(mar=c(4,5,2,1))
       par(fig=c(0.1,0.83,0.1,0.83))
-      plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col=3, cex=.7, pch=16, xlab="Log10 BaseMeanA", 
+      plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col="gray", cex=.7, pch=16, xlab="Log10 Average Read Counts (Control)", 
            ylab="Log2 Fold Change", cex.lab=1.5, cex.axis=1.3, xlim=xrange, ylim=yrange, xaxp = c(0, 10, 10), 
            yaxp = c(-10, 10, 20))
       if (ConStat==0) {
@@ -620,8 +620,8 @@ for (Filename in Filenames) {
                                                      " NP50: ", format(round(intersection,2), nsmall=2), " F1: ", format(round(F1,2),nsmall = 2), 
                                                      " (Pre: ", format(round(precision,2),nsmall = 2), " Rec: ", format(round(recall,2),nsmall = 2), "))"))
       }
-      points(df_PC$logBaseMeanA, df_PC$log2FoldChange, type="p", col=2, cex=1, pch=15)
-      points(df_NC$logBaseMeanA, df_NC$log2FoldChange, type="p", col=4, cex=1, pch=17)
+      points(df_PC$logBaseMeanA, df_PC$log2FoldChange, type="p", col="red", cex=1, pch=15)
+      points(df_NC$logBaseMeanA, df_NC$log2FoldChange, type="p", col="blue", cex=1, pch=17)
       if (Gene=="Hitlist"&& nrow(df_hits_total)>1){
         points(df_hits_total$logBaseMeanA, df_hits_total$log2FoldChange, type="p", col=1, cex=0.7, pch=19)
       }
@@ -629,16 +629,16 @@ for (Filename in Filenames) {
         points(df_GOI$logBaseMeanA, df_GOI$log2FoldChange, type="p", col=1, cex=1.5, pch=19)
       }
       legend(xrange[1],yrange[2],legend=c("Total", "Essential", if (ControlsN==0 | ControlsN==1){"Non-Essential"}, if (ControlsN==2)
-      {"Non-Targeting"}, if (nchar(Gene)>1 && !is.na(Gene)) {Gene}), cex=1, pch=c(16,15,17,if (nchar(Gene)>1 && !is.na(Gene)) {19}), col=c(3,2,4,if (nchar(Gene)>1 && !is.na(Gene)) {1}))
+      {"Non-Targeting"}, if (nchar(Gene)>1 && !is.na(Gene)) {Gene}), cex=1, pch=c(16,15,17,if (nchar(Gene)>1 && !is.na(Gene)) {19}), col=c("gray","red","blue",if (nchar(Gene)>1 && !is.na(Gene)) {1}))
       abline(median(df_res$log2FoldChange, na.rm=TRUE),0, col=1, lty=3, untf=TRUE)
       
       # Density plot fold change
       par(fig=c(0.75,1,0.1,0.83),new=TRUE)
-      plot(den_tot$y, den_tot$x, ylim=range(yrange), xlim=(c(0,denMax)), type='l', axes=FALSE, col=3, xlab="", 
+      plot(den_tot$y, den_tot$x, ylim=range(yrange), xlim=(c(0,denMax)), type='l', axes=FALSE, col="gray", xlab="", 
            ylab="", lwd=2)
       par(new=TRUE)
-      lines(den_PC$y, den_PC$x, col=2, lwd=2)
-      lines(den_NC$y, den_NC$x, col=4, lwd=2)
+      lines(den_PC$y, den_PC$x, col="red", lwd=2)
+      lines(den_NC$y, den_NC$x, col="blue", lwd=2)
       if (Gene=="Hitlist" && nrow(df_hits_total)>1){
         den_hits_total<-density(df_hits_total$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
         lines(den_hits_total$y, den_hits_total$x, col=1, lwd=2)
@@ -656,10 +656,10 @@ for (Filename in Filenames) {
       
       par(fig=c(0.1,0.83,0.75,1),new=TRUE)
       denX_tot<-density(df_res$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-      plot(denX_tot$x, denX_tot$y, xlim=range(xrange), ylim=c(0,denXMax), type='l', axes=FALSE, col=3, xlab="", 
+      plot(denX_tot$x, denX_tot$y, xlim=range(xrange), ylim=c(0,denXMax), type='l', axes=FALSE, col="gray", xlab="", 
            ylab="", lwd=2)
-      lines(denX_PC$x, denX_PC$y, col=2, lwd=2)
-      lines(denX_NC$x, denX_NC$y, col=4, lwd=2)
+      lines(denX_PC$x, denX_PC$y, col="red", lwd=2)
+      lines(denX_NC$x, denX_NC$y, col="blue", lwd=2)
       if (Gene=="Hitlist" && nrow(df_hits_total)>1){
         par(new=TRUE)
         denX_hits_total<-density(df_hits_total$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
