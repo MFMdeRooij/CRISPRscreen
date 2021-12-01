@@ -612,8 +612,8 @@ for (Filename in Filenames) {
       
       par(mar=c(4,5,2,1))
       par(fig=c(0.1,0.83,0.1,0.83))
-      plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col=3, cex=.7, pch=16, xlab=~""*""^10*"Log BaseMeanA", 
-           ylab=~""*""^2*"Log Fold Change", cex.lab=1.5, cex.axis=1.3, xlim=xrange, ylim=yrange, xaxp = c(0, 10, 10), 
+      plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col=3, cex=.7, pch=16, xlab="Log10 BaseMeanA", 
+           ylab="Log2 Fold Change", cex.lab=1.5, cex.axis=1.3, xlim=xrange, ylim=yrange, xaxp = c(0, 10, 10), 
            yaxp = c(-10, 10, 20))
       if (ConStat==0) {
         text(median(xrange), yrange[2],labels=paste0("(rZ': ", format(round(Zprime,2), nsmall=2), 
