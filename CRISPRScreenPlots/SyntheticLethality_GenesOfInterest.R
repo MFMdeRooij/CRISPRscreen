@@ -19,7 +19,7 @@ drug<- "Ruxolitinib"
 GenesOfInterest<- c("JAK1", "JAK2")
 
 # X and Y axis limits (Relative median log2 fold change)
-min<- -3
+min<- -2
 max<- 1
 
 # Show gene symbols (0=yes, 1=no)
