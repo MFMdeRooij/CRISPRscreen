@@ -19,7 +19,7 @@ drug<- "Ruxolitinib"
 GenesOfInterest<- c("JAK1", "JAK2")
 
 # X and Y axis limits (Relative median log2 fold change)
-min<- -2
+min<- -3
 max<- 1
 
 # Show gene symbols (0=yes, 1=no)
@@ -62,13 +62,13 @@ denXMax <- max(c(denX_PC$y, denX_NC$y))
 pdf(paste0("CRISPR_SL_",cell,"_",drug,".pdf"),10,10)
   par(mar=c(4,5,2,1))
   par(fig=c(0.1,0.87,0.1,0.87))
-  plot(Combi$Nmfc.x, Combi$Nmfc.y, xlab="Control (Relative median log2 fold change)", ylab=paste0(drug, " (Relative median log2 fold change)"), xlim=c(min,max), ylim=c(min,max), pch=16, col=3, cex=-0.2*log10(Combi$Stat))
+  plot(Combi$Nmfc.x, Combi$Nmfc.y, xlab="Control (Relative median log2 fold change)", ylab=paste0(drug, " (Relative median log2 fold change)"), xlim=c(min,max), ylim=c(min,max), pch=16, col="gray", cex=-0.2*log10(Combi$Stat))
   if (GeneSymbol == 0){
     text(Combi$Nmfc.x, Combi$Nmfc.y, labels=Combi$GeneSymbol, cex=0.5, col=8, adj = -0.3)
     #points(Combi$Nmfc.x, Combi$Nmfc.y,pch=16, col=3, cex=-0.2*log10(Combi$Stat))
   }
-  points(pos$Nmfc.x, pos$Nmfc.y, pch=16, col=2, cex=0.7)
-  points(neg$Nmfc.x, neg$Nmfc.y, pch=16, col=4, cex=0.7)
+  points(pos$Nmfc.x, pos$Nmfc.y, pch=16, col="red", cex=0.7)
+  points(neg$Nmfc.x, neg$Nmfc.y, pch=16, col="blue", cex=0.7)
   points(hit$Nmfc.x, hit$Nmfc.y, pch=16, col=1, cex=-0.2*log10(hit$Stat))
   text(hit$Nmfc.x, hit$Nmfc.y, labels=hit$GeneSymbol, cex=1, col=1, adj = -0.3)
   abline(v=0, col=1)
@@ -82,5 +82,5 @@ pdf(paste0("CRISPR_SL_",cell,"_",drug,".pdf"),10,10)
   par(fig=c(0.1,0.87,0.75,1),new=TRUE)
   plot(denX_PC$x, denX_PC$y, xlim=c(min,max), ylim=c(0,denXMax), type='l', axes=FALSE, col=2, xlab="", ylab="", lwd=2, main=cell)
   lines(denX_NC$x, denX_NC$y, col=4, lwd=2)
-  legend(min,denXMax,legend=c("Essential","Non-essential"), pch=16, col=c(2,4))
+  legend(min,denXMax,legend=c("Essential","Non-essential"), pch=16, col=c("red","blue"))
 dev.off()
