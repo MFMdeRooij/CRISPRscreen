@@ -5,12 +5,8 @@
 # Workdirectory
 setwd("~/BioLin/RNAseq/")
 
-q<- function(...) {
-  sapply(match.call()[-1], deparse)
-}
-# Order count table
-Sort<- q(ensembl_gene_id,	hgnc_symbol,	NALM6, REH, SEM, X697, MEC1,	GRANTA519,	JEKO1,	MINO,	REC1, Z138, DAUDI, NAMALWA,	RAJI, DOHH2, SUDHL4, SUDHL5, 
-                SUDHL6,	OCILY3,	OCILY10,	TMD8,	U2932, EJM, INA6, L363,	LP1, MM1S, NCIH929,	OPM2,	RPMI8226, U266)
+# Order samples: 0 = Yes, 1 = No (order MapSamples.txt (together with existing samples) in  AllSamplesSorted.txt)
+order<- 0
 ##################################################################################################################################
 # Download, install, and configure the sra-toolkit from NCBI website:
 # https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
@@ -55,7 +51,7 @@ Sort<- q(ensembl_gene_id,	hgnc_symbol,	NALM6, REH, SEM, X697, MEC1,	GRANTA519,	J
 system("bash MapRNAseqHumanSRA.sh")
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
-# Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples)
+# Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples (nTPX))
 # Store always the non-normalizered count table to add more samples
 library("Rsubread")
 library("DESeq2")
@@ -101,16 +97,19 @@ for (pair in c("P","S")){
       CountTable<- merge(GeneList, CountTable, by="ensembl_gene_id", all.x=TRUE)
       CountTable$description<- NULL
     }
-  CountTable<- CountTable[,Sort]
+  if (order==0){
+    dfSort<-read.table("AllSamplesSorted.txt", sep=",")
+    CountTable<- CountTable[,c("ensembl_gene_id","hgnc_symbol",dfSort$V2)]
+  }
   write.csv(CountTable, "RNAseqCountTable.csv", row.names=FALSE)
 }  
 
+# Normalize samples (TPM -> between sample normalization -> nTPX)
 CountTable<- read.csv("RNAseqCountTable.csv", stringsAsFactors = F)
 sf<- estimateSizeFactorsForMatrix(CountTable[,3:ncol(CountTable)])
 CountTableNor<- CountTable
 CountTableNor[,3:ncol(CountTable)]<- as.data.frame(round(t(t(CountTable[,3:ncol(CountTable)])/sf),1))
-CountTableNor<- CountTableNor[,Sort]
-write.csv(CountTableNor, "RNAseqCountTableNorTPM.csv", row.names=FALSE)
+write.csv(CountTableNor, "RNAseqCountTableNorTPX.csv", row.names=FALSE)
 
 #PCA analysis
 #install.packages(c("corrplot", "ggplot2", "ggfortify", "factoextra"), dependencies=T)
@@ -118,48 +117,34 @@ library("corrplot")
 library("ggplot2")
 library("ggfortify")
 library("factoextra")
-CountTableNor<- read.csv("RNAseqCountTableNorTPM.csv")
-# If there is RNAseq data mapped to another genome reference, you can remove genes which are not available in all samples
-#CountTableNor$minExpr<- apply(CountTableNor[3:ncol(CountTableNor)], 1, FUN=min)
-#CountTableNor<- CountTableNor[CountTableNor$minExpr>1,]
-#CountTableNor$minExpr<- NULL
-#sf<- estimateSizeFactorsForMatrix(CountTableNor[,3:ncol(CountTableNor)])
-#CountTableNor[,3:ncol(CountTableNor)]<- as.data.frame(round(t(t(CountTableNor[,3:ncol(CountTableNor)])/sf),1))
+CountTableNor<- read.csv("RNAseqCountTableNorTPX.csv")
 
 # Remove low noisy counts
-CountTableNor$meanExpr<- apply(CountTableNor[3:ncol(CountTableNor)], 1, FUN=mean)
-CountTableNor<- CountTableNor[CountTableNor$meanExpr>10,]
-CountTableNor$meanExpr<- NULL
-
-CountTableNor<- CountTableNor[,Sort]
-df_pr<- log(CountTableNor[,3:ncol(CountTableNor)])
+df_pr<-CountTableNor[3:ncol(CountTableNor)]
 rownames(df_pr)<- paste(1:nrow(CountTableNor),CountTableNor$hgnc_symbol, sep="_")
-df_prScale<- t(scale(t(df_pr), center=T, scale = T))
-df_pr_NoNA<- which(!is.na(rowMeans(df_prScale)))
-df_prSel<- df_prScale[df_pr_NoNA,]
-samples<- data.frame(Sample = as.factor(colnames(CountTableNor)[3:ncol(CountTableNor)]))
-rownames(samples)<- colnames(CountTableNor[3:ncol(CountTableNor)])
+df_pr$meanExpr<- apply(df_pr, 1, FUN=mean)
+df_prSel <- df_pr[df_pr$meanExpr>10,]
+df_prSel$meanExpr<- NULL
+
+df_prSel<- t(scale(t(df_prSel), center=T, scale = T))
+df_prSel<- df_prSel[which(!is.na(rowMeans(df_prSel))),]
 
 pdf("PCA.pdf", width=10, height=10)
-  #autoplot(prcomp(t(df_prSel)), data=samples, colour="Sample")
-  #pairs(df_pr, cex=0.1, log='xy')
   cor<- cor(df_prSel, method = "pearson")
   corrplot(cor, method='color', order = "hclust")
-  res.pca<- prcomp(t(df_prSel), scale.=T, center=T)
+  res.pca<- prcomp(t(df_prSel))
   fviz_eig(res.pca)                 
   fviz_pca_ind(res.pca,
                col.ind = "cos2", # Color by the quality of representation
                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
                repel = TRUE     # Avoid text overlapping
   )
-  res.pca<- prcomp((df_prSel), scale.=T, center=T)
+  res.pca<- prcomp((df_prSel))
   fviz_pca_var(res.pca,
                col.var = "contrib", # Color by contributions to the PC
                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
                repel = TRUE     # Avoid text overlapping
   )
-  my_data<- t(df_prSel)
-  #fviz_nbclust(my_data, kmeans, method = "gap_stat")
   res<- hcut(t(df_prSel), k = 15, stand = TRUE)
   fviz_dend(res, rect = TRUE, cex = 0.5)
 dev.off()
