@@ -74,9 +74,9 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                     #MA plots
                     plt.figure(1, figsize=(30,12))
                     plt.subplot2grid((3,16), (0,(rep-1)*4) if rep < 5 else (1,(rep-5)*4) if rep < 9 else (2,(rep-9)*4), colspan=2)   
-                    plt.scatter(df['l10rc'],df['l2fc'],c='green', s=3)
-                    plt.scatter(dfpos['l10rc'],dfpos['l2fc'],c='orangered', s=2)
-                    plt.scatter(dfneg['l10rc'],dfneg['l2fc'],c='cornflowerblue', s=2)
+                    plt.scatter(df['l10rc'],df['l2fc'],c='silver', s=3)
+                    plt.scatter(dfpos['l10rc'],dfpos['l2fc'],c='red', s=2)
+                    plt.scatter(dfneg['l10rc'],dfneg['l2fc'],c='blue', s=2)
                     plt.scatter(dfhit['l10rc'],dfhit['l2fc'],c='black', s=10)         
                     if scale==0:
                         xmin=min(df['l10rc'])
@@ -94,8 +94,8 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                     ymax=ymax+1
                     plt.xlim(xmin,xmax)
                     plt.ylim(ymin,ymax)
-                    plt.xlabel('$^{10}$log read counts (t$_0$)', fontsize=10)
-                    plt.ylabel('$^{2}$log fold change (t$_1$/t$_0$)', fontsize=10)
+                    plt.xlabel('Log10 read counts (t$_0$)', fontsize=10)
+                    plt.ylabel('Log2 fold change (t$_1$/t$_0$)', fontsize=10)
                     plt.title(cell.split( "csv")[0], fontsize=12)
                     if guideID==1:                       
                         for i, row in dfhit.iterrows():   
@@ -114,7 +114,7 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                     plt.text(xmin+(xmax-xmin)/2, ymax-0.05*(ymax-ymin), '$\itP$$_{adj}$ = '+padjD2+ r' ($\alpha$RRA$_{dep}$) / $\itP$$_{adj}$ = '+padjE2+ r' ($\alpha$RRA$_{enr}$)', fontsize=6, horizontalalignment='center')
                     plt.axhline(0, color='black', linewidth=1)
                     plt.subplot2grid((3,16), (0,(rep-1)*4+2) if rep < 5 else (1,(rep-5)*4+2) if rep < 9 else (2,(rep-9)*4+2))
-                    sns.kdeplot(y=df['l2fc'], linewidth=1, fill=True, color='green')
+                    sns.kdeplot(y=df['l2fc'], linewidth=1, fill=True, color='silver')
                     sns.kdeplot(y=dfpos['l2fc'], linewidth=1, fill=True, color='red')
                     sns.kdeplot(y=dfneg['l2fc'], linewidth=1, fill=True, color='blue')
                     sns.kdeplot(y=dfhit['l2fc'], linewidth=1, fill=True, color='black')
@@ -171,21 +171,21 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                     axbig.spines['left'].set_linewidth(0)
                     axbig.spines['right'].set_linewidth(0)
                     axbig.text(0.5, 1.1, cell.split( "csv")[0], fontsize=12, ha='center')
-                    axbig.text(0.5, -0.25, '$^{2}$log median fold change (t$_1$/t$_0$)', fontsize=10, ha='center')
+                    axbig.text(0.5, -0.25, 'Log2 median fold change (t$_1$/t$_0$)', fontsize=10, ha='center')
                     axbig.set_facecolor('None')
                                         
                     # Left vulcano plot
                     xcoor = (rep-1)*3 if rep < 5 else (rep-5)*3 if rep < 9 else (rep-9)*3
                     ycoor = 0 if rep < 5 else 1 if rep < 9 else 2
                                         
-                    axs[ycoor,xcoor].scatter(dfg['l2mfc'],dfg['l10rdep'],c='green', s=3)
+                    axs[ycoor,xcoor].scatter(dfg['l2mfc'],dfg['l10rdep'],c='silver', s=3)
                     axs[ycoor,xcoor].scatter(dfhitdep['l2mfc'],dfhitdep['l10rdep'], facecolors='none', edgecolors='black', s=10, alpha=0.5) 
-                    axs[ycoor,xcoor].scatter(dfpos['l2mfc'],dfpos['l10rdep'],c='orangered', s=1)
-                    axs[ycoor,xcoor].scatter(dfneg['l2mfc'],dfneg['l10rdep'],c='cornflowerblue', s=1)
+                    axs[ycoor,xcoor].scatter(dfpos['l2mfc'],dfpos['l10rdep'],c='red', s=1)
+                    axs[ycoor,xcoor].scatter(dfneg['l2mfc'],dfneg['l10rdep'],c='blue', s=1)
 
                     axs[ycoor,xcoor].set_xlim(xmin,xmax)
                     axs[ycoor,xcoor].set_ylim(ymin,ymax)
-                    axs[ycoor,xcoor].set_ylabel(r'- $^{10}$log $\rho$ ($\alpha$RRA$_{dep}$)', fontsize=10)
+                    axs[ycoor,xcoor].set_ylabel(r'-Log10 $\rho$ ($\alpha$RRA$_{dep}$)', fontsize=10)
                                            
                     df_geneX = dfg.loc[dfg['GeneSymbol']==gene]
                     for i, row in df_geneX.iterrows():    
@@ -212,16 +212,16 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                     # Right vulcano plot
                     xcoor += 1        
 
-                    axs[ycoor,xcoor].scatter(dfg['l2mfc'],dfg['l10renr'],c='green', s=3)
+                    axs[ycoor,xcoor].scatter(dfg['l2mfc'],dfg['l10renr'],c='silver', s=3)
                     axs[ycoor,xcoor].scatter(dfhitenr['l2mfc'],dfhitenr['l10renr'], facecolors='none', edgecolors='black', s=10, alpha=0.5) 
-                    axs[ycoor,xcoor].scatter(dfpos['l2mfc'],dfpos['l10renr'],c='orangered', s=1)
-                    axs[ycoor,xcoor].scatter(dfneg['l2mfc'],dfneg['l10renr'],c='cornflowerblue', s=1)
+                    axs[ycoor,xcoor].scatter(dfpos['l2mfc'],dfpos['l10renr'],c='red', s=1)
+                    axs[ycoor,xcoor].scatter(dfneg['l2mfc'],dfneg['l10renr'],c='blue', s=1)
 
                     axs[ycoor,xcoor].yaxis.tick_right()
                     axs[ycoor,xcoor].yaxis.set_label_position('right')
                     axs[ycoor,xcoor].set_xlim(xmin,xmax)
                     axs[ycoor,xcoor].set_ylim(ymin,ymax)
-                    axs[ycoor,xcoor].set_ylabel(r'- $^{10}$log $\rho$ ($\alpha$RRA$_{enr}$)', rotation=-90, fontsize=10, labelpad=20)
+                    axs[ycoor,xcoor].set_ylabel(r'-Log10 $\rho$ ($\alpha$RRA$_{enr}$)', rotation=-90, fontsize=10, labelpad=20)
                     
                     df_geneX = dfg.loc[dfg['GeneSymbol']==gene]
                     for i, row in df_geneX.iterrows():    
@@ -268,7 +268,7 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
 
 
     elif re.match('RNAseq', headDir):
-        nameGene = glob.glob(cwd+'/files/Data'+headDir+'/'+dirs[0]+'/*NorTPM.csv')[0]           
+        nameGene = glob.glob(cwd+'/files/Data'+headDir+'/'+dirs[0]+'/*NorTPX.csv')[0]           
         dfgenes = pd.read_csv(nameGene, sep=',')
         dfgenes = dfgenes.drop_duplicates()
         dfgenes.loc[dfgenes['hgnc_symbol'].isnull(), 'hgnc_symbol'] = dfgenes.loc[dfgenes['hgnc_symbol'].isnull(), 'ensembl_gene_id']  
@@ -293,7 +293,7 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                     plt.yticks(np.arange(len(dfgenes.columns)-2), dfgenes.columns[2:len(dfgenes.columns)])
                     plt.gca().invert_yaxis()
                     plt.ylabel('Cell line', fontsize=10)    
-                    plt.xlabel('Gene expression (normalized TPM)', fontsize=10) 
+                    plt.xlabel('Gene expression (normalized TPX)', fontsize=10) 
                     plt.title(gene)   
                    
                     # Tumor colors
@@ -343,7 +343,7 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
             im = ax.imshow(data, cmap="coolwarm")     
             # Create colorbar
             cbar = ax.figure.colorbar(im, ax=ax)
-            cbar.ax.set_ylabel("Gene expression (Color scale:Z score per gene, values: normalized TPM)", rotation=-90, va="bottom")       
+            cbar.ax.set_ylabel("Gene expression (Color scale:Z score per gene, values: normalized TPX)", rotation=-90, va="bottom")       
             # We want to show all ticks...
             ax.set_xticks(np.arange(data.shape[1]))
             ax.set_yticks(np.arange(data.shape[0]))
@@ -443,11 +443,11 @@ def viewGuides(headDir, dirs, rep):
         df['l2fc'].fillna(0, inplace=True)
         df['l2fc'].replace([np.inf, -np.inf], 0, inplace=True)
         df.fillna(1, inplace=True) 
-        df['col'] =  'green'
+        df['col'] =  'silver'
         df['size'] =  2
-        df.loc[df['Type']=='p', 'col'] = 'orangered'
+        df.loc[df['Type']=='p', 'col'] = 'red'
         df.loc[df['Type']=='p', 'size'] = 10
-        df.loc[df['Type']=='n', 'col'] = 'cornflowerblue'
+        df.loc[df['Type']=='n', 'col'] = 'blue'
         df.loc[df['Type']=='n', 'size'] = 10
         
         axis_values_x = df['l10rc']
@@ -468,8 +468,8 @@ def viewGuides(headDir, dirs, rep):
                 picker=True
             )
             ax.set_title(dirs[rep-1].split( "csv")[0], fontsize=20)
-            ax.set_xlabel('$^{10}$log read counts (t$_0$)', fontsize=15)
-            ax.set_ylabel('$^{2}$log fold change (t$_1$/t$_0$)', fontsize=15)
+            ax.set_xlabel('Log10 read counts (t$_0$)', fontsize=15)
+            ax.set_ylabel('Log2 fold change (t$_1$/t$_0$)', fontsize=15)
             
         # draw the initial scatterplot
         draw_scatterplot()
@@ -565,11 +565,11 @@ def viewHits(headDir, dirs, rep, tumortype=0, number=25, direction=1, rhoFC=1, s
             plt.gca().invert_yaxis()
             plt.ylabel('Gene Symbol', fontsize=10)    
             if direction==1:
-                plt.xlabel(r'$^{10}$log $\rho$ ($\alpha$RRA$_{dep}$)', fontsize=10)
+                plt.xlabel(r'Log10 $\rho$ ($\alpha$RRA$_{dep}$)', fontsize=10)
                 rhocutoff = dfg[dfg['fdrDepleted']>=0.1]['rhoDepleted']
                 plt.text(np.log10(min(rhocutoff)), number/2, r'$\itP$$_{adj}$ < 0.1 ($\alpha$RRA$_{dep}$)', rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
             elif direction==0:
-                plt.xlabel(r'$^{10}$log $\rho$ ($\alpha$RRA$_{enr}$)', fontsize=10)
+                plt.xlabel(r'Log10 $\rho$ ($\alpha$RRA$_{enr}$)', fontsize=10)
                 rhocutoff = dfg[dfg['fdrEnriched']>=0.1]['rhoEnriched']
                 plt.text(np.log10(min(rhocutoff)), number/2, r'$\itP$$_{adj}$ < 0.1 ($\alpha$RRA$_{enr}$)',rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
             plt.axvline(np.log10(min(rhocutoff)), color='red', linewidth=1) 
@@ -590,7 +590,7 @@ def viewHits(headDir, dirs, rep, tumortype=0, number=25, direction=1, rhoFC=1, s
                     ytick.set_color(color)
             plt.gca().invert_yaxis()
             plt.ylabel('Gene Symbol', fontsize=10)
-            plt.xlabel(r'$^{2}$log Median Fold Change', fontsize=10)
+            plt.xlabel(r'Log2 median fold change', fontsize=10)
             plt.title('Gene Top '+str(number)+' ('+dirs[rep-1].split( "csv")[0]+')') 
             plt.show()
     if screenOrRnaseq==0:
