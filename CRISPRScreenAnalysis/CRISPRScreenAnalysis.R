@@ -371,7 +371,7 @@ for (Filename in Filenames) {
     df_RRA<- merge(df_Gene_ID, df_RRA, by='Guide', all.y=T)
     df_RRA<- df_RRA[df_RRA$Guide %in% df_res2$Guide,]
     
-    # MAGeCK's aRRA wirh DESeq2 data (in Linux)
+    # MAGeCK's aRRA with DESeq2 data (in Linux)
     if (mageckRRA==0){
       df_RRAmageck <- df_RRA
       perDep <- nrow(df_RRAmageck[df_RRAmageck$pvalueDepleted < 0.25,])/nrow(df_RRAmageck) 
