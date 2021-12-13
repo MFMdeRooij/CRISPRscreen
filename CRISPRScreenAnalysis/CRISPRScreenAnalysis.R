@@ -622,10 +622,10 @@ for (Filename in Filenames) {
       }
       points(df_PC$logBaseMeanA, df_PC$log2FoldChange, type="p", col="red", cex=1, pch=15)
       points(df_NC$logBaseMeanA, df_NC$log2FoldChange, type="p", col="blue", cex=1, pch=17)
-      if (Gene=="Hitlist"&& nrow(df_hits_total)>1){
+      if (Gene=="Hitlist"&& nrow(df_hits_total)>=1){
         points(df_hits_total$logBaseMeanA, df_hits_total$log2FoldChange, type="p", col=1, cex=0.7, pch=19)
       }
-      if (nrow(df_GOI)>1){
+      if (nrow(df_GOI)>=1){
         points(df_GOI$logBaseMeanA, df_GOI$log2FoldChange, type="p", col=1, cex=1.5, pch=19)
       }
       legend(xrange[1],yrange[2],legend=c("Total", "Essential", if (ControlsN==0 | ControlsN==1){"Non-Essential"}, if (ControlsN==2)
