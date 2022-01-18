@@ -6,7 +6,7 @@
 setwd("~/BioLin/RNAseq/")
 
 # Order samples: 0 = Yes, 1 = No (order MapSamples.txt (together with existing samples) in  AllSamplesSorted.txt)
-order<- 0
+order<- 1
 ##################################################################################################################################
 # Download, install, and configure the sra-toolkit from NCBI website:
 # https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
@@ -48,7 +48,7 @@ order<- 0
 # line ID and a P (paired-end) or S (single-end) separated by commas (SRR8615345,NAMALWA,P), and run the 
 # script (./MapRNAseqHumanSRA.sh on the command line) 
 # The first time, make the bash script excutable (chmod 755 MapRNAseqHumanSRA.sh)
-system("bash MapRNAseqHumanSRA.sh")
+#system("bash MapRNAseqHumanSRA.sh")
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
 # Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples (nTPX))
@@ -79,37 +79,45 @@ for (pair in c("P","S")){
       }
   } 
   df_annotation<- as.data.frame(fc[2])
-  CountTable3<- as.data.frame(fc[1])
-  colnames(CountTable3)<- unlist(lapply(strsplit(colnames(CountTable3), ".sam"), "[[", 1))
-  colnames(CountTable3)<- unlist(lapply(strsplit(colnames(CountTable3), "_"), "[[", 2))
-  CountTable2<- CountTable3/(df_annotation$annotation.Length)
-  CountTable<- t(t(CountTable2)/colSums(CountTable2)*1000000)
-  CountTable<- as.data.frame(CountTable)
-  CountTable$ensembl_gene_id<- rownames(CountTable)
-
-  if (file.exists("RNAseqCountTable.csv")) {
+  CountTableRaw<- as.data.frame(fc[1])
+  colnames(CountTableRaw)<- unlist(lapply(strsplit(colnames(CountTableRaw), ".sam"), "[[", 1))
+  colnames(CountTableRaw)<- unlist(lapply(strsplit(colnames(CountTableRaw), "_"), "[[", 2))
+  CountTableRaw$ensembl_gene_id<- rownames(CountTableRaw)
+  
+  if (file.exists("RNAseqCountTableRaw.csv")) {
     # Add to existing count table
-    CountTableOld<- read.csv("RNAseqCountTable.csv", stringsAsFactors = F)
-    CountTable<- merge(CountTableOld, CountTable, by='ensembl_gene_id')
+    CountTableOld<- read.csv("RNAseqCountTableRaw.csv", stringsAsFactors = F)
+    CountTableRaw<- merge(CountTableOld, CountTableRaw, by='ensembl_gene_id')
   } else {
       # Add gene symbols
       GeneList<- read.csv('~/HumanGenome/GeneAnnotations.csv', stringsAsFactors = F)
-      CountTable<- merge(GeneList, CountTable, by="ensembl_gene_id", all.x=TRUE)
-      CountTable$description<- NULL
+      CountTableRaw<- merge(GeneList, CountTableRaw, by="ensembl_gene_id", all.x=TRUE)
+      CountTableRaw$description<- NULL
     }
   if (order==0){
     dfSort<-read.table("AllSamplesSorted.txt", sep=",")
-    CountTable<- CountTable[,c("ensembl_gene_id","hgnc_symbol",dfSort$V2)]
+    CountTableRaw<- CountTableRaw[,c("ensembl_gene_id","hgnc_symbol",dfSort$V2)]
   }
-  write.csv(CountTable, "RNAseqCountTable.csv", row.names=FALSE)
+  # The raw counts can be used for DESeq2 analysis
+  write.csv(CountTableRaw, "RNAseqCountTableRaw.csv", row.names=FALSE)
 }  
 
-# Normalize samples (TPM -> between sample normalization -> nTPX)
-CountTable<- read.csv("RNAseqCountTable.csv", stringsAsFactors = F)
-sf<- estimateSizeFactorsForMatrix(CountTable[,3:ncol(CountTable)])
-CountTableNor<- CountTable
-CountTableNor[,3:ncol(CountTable)]<- as.data.frame(round(t(t(CountTable[,3:ncol(CountTable)])/sf),1))
-write.csv(CountTableNor, "RNAseqCountTableNorTPX.csv", row.names=FALSE)
+# Gene size normalization (If you know the fragment length you can convert the gene length to effective gene length,
+# however FeatureCounts takes the complete exonic gene length and doesn't care about splice isoforms)
+CountTableTPM<- CountTableRaw
+df_ann<-data.frame(ensembl_gene_id=df_annotation$annotation.GeneID, Length=df_annotation$annotation.Length)
+CountTableTPM<- merge(CountTableTPM,df_ann, by="ensembl_gene_id", all.x=T)
+CountTableTPM[,-1:-2]<- CountTableTPM[,-1:-2]/(CountTableTPM$Length)
+CountTableTPM$Length<-NULL
+CountTableTPM[,-1:-2]<- as.data.frame(t(t(CountTableTPM[,-1:-2])/colSums(as.data.frame(CountTableTPM[,-1:-2]))*1000000))
+write.csv(CountTableTPM, "RNAseqCountTableTPM.csv", row.names=FALSE)
+
+# Sample normalization (TPM -> between sample normalization -> nTPX)
+CountTableTPM <- read.csv("RNAseqCountTableTPM.csv", stringsAsFactors = F)
+sf<- estimateSizeFactorsForMatrix(CountTableTPM[,-1:-2])
+CountTableNorTPX<- CountTableTPM
+CountTableNorTPX[,-1:-2]<- as.data.frame(round(t(t(CountTableTPM[,-1:-2])/sf),1))
+write.csv(CountTableNorTPX, "RNAseqCountTableNorTPX.csv", row.names=FALSE)
 
 #PCA analysis
 #install.packages(c("corrplot", "ggplot2", "ggfortify", "factoextra"), dependencies=T)
@@ -126,6 +134,7 @@ df_pr$meanExpr<- apply(df_pr, 1, FUN=mean)
 df_prSel <- df_pr[df_pr$meanExpr>10,]
 df_prSel$meanExpr<- NULL
 
+# Z scores
 df_prSel<- t(scale(t(df_prSel), center=T, scale = T))
 df_prSel<- df_prSel[which(!is.na(rowMeans(df_prSel))),]
 
@@ -145,6 +154,6 @@ pdf("PCA.pdf", width=10, height=10)
                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
                repel = TRUE     # Avoid text overlapping
   )
-  res<- hcut(t(df_prSel), k = 15, stand = TRUE)
+  res<- hcut(t(df_prSel), k = 5, stand = TRUE)
   fviz_dend(res, rect = TRUE, cex = 0.5)
 dev.off()
