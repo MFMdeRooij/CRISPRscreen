@@ -48,7 +48,9 @@ order<- 1
 # line ID and a P (paired-end) or S (single-end) separated by commas (SRR8615345,NAMALWA,P), and run the 
 # script (./MapRNAseqHumanSRA.sh on the command line) 
 # The first time, make the bash script excutable (chmod 755 MapRNAseqHumanSRA.sh)
-#system("bash MapRNAseqHumanSRA.sh")
+
+system("bash MapRNAseqHumanSRA.sh")
+
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
 # Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples (nTPX))
