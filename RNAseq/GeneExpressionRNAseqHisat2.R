@@ -48,8 +48,8 @@ order<- 1
 # line ID and a P (paired-end) or S (single-end) separated by commas (SRR8615345,NAMALWA,P), and run the 
 # script (./MapRNAseqHumanSRA.sh on the command line) 
 # The first time, make the bash script excutable (chmod 755 MapRNAseqHumanSRA.sh)
-
-system("bash MapRNAseqHumanSRA.sh")
+# You can also run the bash script here by uncommenting and run the next line:
+#system("bash MapRNAseqHumanSRA.sh")
 
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
