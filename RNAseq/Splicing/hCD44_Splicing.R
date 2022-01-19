@@ -1,3 +1,4 @@
+# With this script you can look at splicing of human CD44, which has constant and variable exon usage.
 # Follow the lines with hastag signs in R studio
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################################################################
@@ -30,7 +31,7 @@ wd<-"~/BioLin/RNAseq/"
 #BiocManager::install(c("scales","Rsamtools","stringr"))
 
 # For other genes than CD44, you can find in ensemble the exon loci, which you can put in hCD44_GeneStructure.csv, and 
-# also adjust the most upstream and downstram loci in hCD44_Splicing.sh
+# also adjust the most upstream and downstream loci in hCD44_Splicing.sh
 
 # Now you are ready to look at the splice variants
 
