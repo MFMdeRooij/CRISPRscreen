@@ -251,26 +251,26 @@ for (Filename in Filenames) {
     df_baseMeanPerLvl <- as.data.frame(sapply(levels(dds$Time), function(lvl) rowMeans(counts(dds, normalized=TRUE)
                                                                                        [,dds$Time==lvl])))
     if (r==1){
-      df_res$BaseMeanA <-round(df_baseMeanPerLvl$T0,0)
-      df_res$logBaseMeanA <-log(df_baseMeanPerLvl$T0+1)/log(10)
-      df_res$BaseMeanB <-round(df_baseMeanPerLvl$T1,0)
+      df_res$BaseMeanA <- df_baseMeanPerLvl$T0
+      df_res$logBaseMeanA <- log(df_baseMeanPerLvl$T0+1)/log(10)
+      df_res$BaseMeanB <- df_baseMeanPerLvl$T1
     } 
     if (r==2){
-      df_res$BaseMeanA <-round(df_baseMeanPerLvl$T0,0)
-      df_res$logBaseMeanA <-log(df_baseMeanPerLvl$T0+1)/log(10)
-      df_res$BaseMeanB <-round(df_baseMeanPerLvl$T2,0)
+      df_res$BaseMeanA <- df_baseMeanPerLvl$T0
+      df_res$logBaseMeanA <- log(df_baseMeanPerLvl$T0+1)/log(10)
+      df_res$BaseMeanB <- df_baseMeanPerLvl$T2
     } 
     if (r==3){
-      df_res$BaseMeanA <-round(df_baseMeanPerLvl$T1,0)
-      df_res$logBaseMeanA <-log(df_baseMeanPerLvl$T1+1)/log(10)
-      df_res$BaseMeanB <-round(df_baseMeanPerLvl$T2,0)
+      df_res$BaseMeanA <- df_baseMeanPerLvl$T1
+      df_res$logBaseMeanA <- log(df_baseMeanPerLvl$T1+1)/log(10)
+      df_res$BaseMeanB <- df_baseMeanPerLvl$T2
     } 
     
     # Guide IDs
     df_res$Guide<-rownames(df_res)
     df_res<- merge(df_Gene_ID, df_res, by='Guide', all.y=T)
     df_res$log2FoldChange[is.na(df_res$log2FoldChange)]<-0
-    df_res$FoldChange<- round(2^df_res$log2FoldChange,3)
+    df_res$FoldChange<- 2^df_res$log2FoldChange
     
     # Exclude noninformative guides from aRRA
     df_res2<-df_res
