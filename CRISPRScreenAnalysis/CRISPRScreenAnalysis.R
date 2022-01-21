@@ -67,7 +67,7 @@ ConStat<- 0
 Shrinkage<- 0
 
 # Exclude noninformative guides for DESEq2-FDR & aRRA: 0 = Yes, 1 = No
-ExclNonInf = 0
+ExclNonInf <- 0
 
 # Type of Screen: 0 = Drop out, 1 = Resistance (Just for ranking of the genes)
 Type_of_Screen <- 0
