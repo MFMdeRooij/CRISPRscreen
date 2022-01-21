@@ -62,16 +62,16 @@ df_raw <- read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALSE
 # Gene annotation
 df_Gene_ID<- df_raw[,1:2]  
 
-# Count table for DESEq2
-counts <- df_raw[,-1:-2]
-rownames(counts) <- df_raw[,1]
-
 # Sample metadata
 df_design<-read.csv("RNAseqDesign.csv")
-df_design<-df_design[match(df_design$Sample, colnames(counts)),]
 df_colData <- data.frame(Group=df_design$Group, Rep=df_design$Rep) 
 df_colData$Group <- as.factor(df_colData$Group)
 df_colData$Rep <- as.factor(df_colData$Rep)
+
+# Count table for DESEq2
+counts <- df_raw[,-1:-2]
+rownames(counts) <- df_raw[,1]
+counts2<-counts[,df_design$Sample]
 
 # DESeq2 pipeline
 if (Paired==0) {
