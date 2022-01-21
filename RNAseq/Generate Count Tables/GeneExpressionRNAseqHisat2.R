@@ -5,8 +5,15 @@
 # Workdirectory
 setwd("~/BioLin/RNAseq/")
 
+# Select for protein-coding genes: 0 Yes, 1 = No
+pcg <- 0
+
+# Use effective gene lengths: 0 Yes, 1 = No, if yes, what is the mean fragment size?
+effLen <- 1
+fragmentSize <- 500
+
 # Order samples: 0 = Yes, 1 = No (order MapSamples.txt (together with existing samples) in  AllSamplesSorted.txt)
-order<- 1
+order <- 1
 ##################################################################################################################################
 # Download, install, and configure the sra-toolkit from NCBI website:
 # https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
@@ -26,8 +33,11 @@ order<- 1
 
 # Download reference files for RNAseq from NCBI or UCSC:
 # Download file with gene loci (hg38.95.gtf)
+# extract protein coding genes:
+# cat hg38.95.gtf | grep "gene_biotype \"protein_coding\"" > protein_coding.gtf
+# awk '$3=="gene"{print $14}' protein_coding.gtf | sed 's/\"//g' | sed 's/\;//g'| sort -u > hg38.95.proteinCodingGenes.txt
 # Transform the gtf file into a known splice site text file using the python script delivered with hisat2 (to hg38_splicesites.txt)
-# Add both files to the ~/HumanGenome folder
+# Add these files to the ~/HumanGenome folder
 
 # R Packages
 #install.packages("BiocManager")
@@ -104,11 +114,27 @@ for (pair in c("P","S")){
   write.csv(CountTableRaw, "RNAseqCountTableRaw.csv", row.names=FALSE)
 }  
 
-# Gene size normalization (If you know the fragment length you can convert the gene length to effective gene length,
-# however FeatureCounts takes the complete exonic gene length and doesn't care about splice isoforms)
+#CountTableRaw<- read.csv("RNAseqCountTableRaw.csv", stringsAsFactors = F)
 CountTableTPM<- CountTableRaw
 df_ann<-data.frame(ensembl_gene_id=df_annotation$annotation.GeneID, Length=df_annotation$annotation.Length)
 CountTableTPM<- merge(CountTableTPM,df_ann, by="ensembl_gene_id", all.x=T)
+
+# Effective gene length is gene length minus fragment length (because the gene ends contain less reads)
+if (effLen==0) {
+  CountTableTPM$Length[CountTableTPM$Length>2*fragmentSize]<- CountTableTPM$Length[CountTableTPM$Length>2*fragmentSize]-fragmentSize
+}
+# When poly-A captured, remove all other genes than protein-coding genes
+if (pcg==0){
+  protein_coding<-read.table("~/HumanGenome/hg38.95.proteinCodingGenes.txt")
+  CountTableTPM<-CountTableTPM[CountTableTPM$hgnc_symbol %in% protein_coding$V1,]
+}
+
+# Check uniqueness of gene symbols
+#x<-data.frame(g=CountTableTPM$hgnc_symbol, c=1)
+#y<-aggregate(x$c, by=list(x$g), FUN=sum)
+#z<-CountTableTPM[CountTableTPM$hgnc_symbol %in% y$Group.1[y$x==2],]
+
+# Calculate TPM
 CountTableTPM[,-1:-2]<- CountTableTPM[,-1:-2]/(CountTableTPM$Length)
 CountTableTPM$Length<-NULL
 CountTableTPM[,-1:-2]<- as.data.frame(t(t(CountTableTPM[,-1:-2])/colSums(as.data.frame(CountTableTPM[,-1:-2]))*1000000))
@@ -156,6 +182,7 @@ pdf("PCA.pdf", width=10, height=10)
                gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
                repel = TRUE     # Avoid text overlapping
   ))
-  res<- hcut(t(df_prSel), k = 5, stand = TRUE)
+  # You can adjust k to the number of groups
+  res<- hcut(t(df_prSel), k = ncol(df_prSel)-1, stand = TRUE)
   print(fviz_dend(res, rect = TRUE, cex = 0.5))
 dev.off()
