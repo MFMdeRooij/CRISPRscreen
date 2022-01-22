@@ -121,7 +121,8 @@ CountTableTPM<- merge(CountTableTPM,df_ann, by="ensembl_gene_id", all.x=T)
 
 # Effective gene length is gene length minus fragment length (because the gene ends contain less reads)
 if (effLen==0) {
-  CountTableTPM$Length[CountTableTPM$Length>2*fragmentSize]<- CountTableTPM$Length[CountTableTPM$Length>2*fragmentSize]-fragmentSize
+  CountTableTPM$Length<- CountTableTPM$Length-fragmentSize
+  CountTableTPM$Length[CountTableTPM$Length < fragmentSize] <- fragmentSize
 }
 # When poly-A captured, remove all other genes than protein-coding genes
 if (pcg==0){
