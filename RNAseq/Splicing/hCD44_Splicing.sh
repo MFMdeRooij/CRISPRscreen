@@ -1,10 +1,11 @@
 #!/bin/bash
+# First Download a recent GTP file from Ensembl website,and make a file with known splice sites with the Hisat2 
+# delivered phton script (python hisat2_extract_splice_sites.py hg38.105.gtf > ~/HumanGenome/hg38.105_spliceSites.txt)
+# The first time, make this bash script executable (chmod 755 hCD44_Splicing.sh)
 # Search for RNAseq data on https://www.ncbi.nlm.nih.gov/sra/, and fill in the SRR IDs, 
 # cell line ID and a P (paired-end) or S (single-end) separated by commas 
-# (SRR8615345,NAMALWA,P) in MapSamples.txt.
-# Download a recent GTP file from Ensembl website, and make 
+# (SRR8615345,NAMALWA,P) in MapSamples.txt,
 # and run the script (./hCD44_Splicing.sh on the command line)
-# The first time, make the bash script executable (chmod 755 hCD44_Splicing.sh)
 # Afterwards you can view the mapping in IGV viever, or plot the splicing with the R
 # script (hCD44_Splicing.R)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022,
