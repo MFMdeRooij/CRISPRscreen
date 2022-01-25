@@ -1,6 +1,6 @@
 ## RNAseq differential expression:
 # - Make count tables with the GeneExpressionRNAseqHisat2.R script
-# - Use the RNAseqCountTableRaw.csv count table
+# - Use the RNAseqCountTableRawProteinCoding.csv count table
 # - This script also uses the CRISPRScreenAnalysisLibraries.csv file to highlight the essentials/nonessential genes, 
 #   you can change these genes by for example certain pathway genes; this script also extract the kinome in the end
 # - Fill in the Design table in RNAseqDesign.csv
@@ -25,7 +25,7 @@ Workdirectory<- "H:/BioWin/RNAseq/"
 #Workdirectory <- "~/BioLin/RNAseq/"
 
 # Which count table?
-Filename <- "RNAseqCountTableRaw.csv"
+Filename <- "RNAseqCountTableRawProteinCoding.csv"
 
 # Fill in the table in RNAseqDesign.csv (Group = tumor-subtypes, Rep = replicates (when paired, this should be matched))
 
