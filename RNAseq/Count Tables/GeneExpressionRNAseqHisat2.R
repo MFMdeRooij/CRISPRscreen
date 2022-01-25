@@ -26,14 +26,10 @@ order <- 1
 # sudo apt-get install samtools
 # sudo apt-get install hisat2
 
-# biomaRt dependencies:
-# sudo apt-get install libcurl4-openssl-dev libssl-dev
-
 # Build genome
 # Download genome in fasta format from NCBI, UCSC, or Ensembl (hg38.fa.gz), unzip and add in folder ~/HumanGenome
 # cd ~/HumanGenome
 # hisat2-build hg38.fa hg38
-
 
 # Download GTF file with gene loci from Ensembl download page (Homo_sapiens.GRCh38.105.gtf.gz), unzip, rename to hg38.105.gtf.gz, and add in folder ~/HumanGenome
 # Transform the gtf file into a known splice site text file using the python script delivered with hisat2 (in the bin folder)
