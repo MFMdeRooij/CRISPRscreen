@@ -17,20 +17,19 @@ wd<-"~/BioLin/RNAseq/"
 # sudo apt-get install hisat2
 
 # Build genome
-# Download genome in fasta format from NCBI or UCSC, unzip and add in folder ~/HumanGenome
+# Download genome in fasta format from NCBI, UCSC, or Ensembl (hg38.fa.gz), unzip and add in folder ~/HumanGenome
 # cd ~/HumanGenome
 # hisat2-build hg38.fa hg38
 
-# Download reference files for RNAseq from NCBI or UCSC:
-# Download file with gene loci (hg38.95.gtf)
-# Transform the gtf file into a known splice site text file using the python script delivered with hisat2 (to hg38_splicesites.txt)
-# Add both files to the ~/HumanGenome folder
+# Download GTF file with gene loci from Ensembl download page (Homo_sapiens.GRCh38.105.gtf.gz), unzip, rename to hg38.105.gtf.gz, and add in folder ~/HumanGenome
+# Transform the gtf file into a known splice site text file using the python script delivered with hisat2 (in the bin folder)
+# python hisat2_extract_splice_sites.py hg38.105.gtf > ~/HumanGenome/hg38.105_spliceSites.txt
 
 # R Packages
 #install.packages("BiocManager")
 #BiocManager::install(c("scales","Rsamtools","stringr"))
 
-# For other genes than CD44, you can find in ensemble the exon loci, which you can put in hCD44_GeneStructure.csv, and 
+# For other genes than CD44, you can find in Ensembl the exon loci (or in the GTF file), which you can put in hCD44_GeneStructure.csv, and 
 # also adjust the most upstream and downstream loci in hCD44_Splicing.sh
 
 # Now you are ready to look at the splice variants
