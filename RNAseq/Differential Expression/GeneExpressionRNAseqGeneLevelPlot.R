@@ -27,7 +27,7 @@ Filename<- "RNAseqCountTableNorTPX.csv"
 Norm<- 0
 
 # Title of dataset
-title<- "B cell lines"
+Title<- "B cell lines"
 
 # Use Group and Rep as combined factors (Like different cells (-> Group) and different drugs (-> Rep)): 0 = Yes, 1 = No
 GRC<- 1
@@ -90,7 +90,7 @@ for (gene in interestingGenes){
     g<-ggplot(df_pca, aes(x=Group, y=Gene, fill=Group)) + geom_boxplot() + geom_jitter(color=df_pca$color, size=2, alpha=0.9, height = 0) 
     g<-g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "", y=paste0(gene," expression (nTPX)"))
     set.seed(101)
-    print(g + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5)))
+    print(g + ggtitle(Title) + theme(plot.title = element_text(hjust = 0.5)))
     
     var1<-round(get_eig(res.pca)[1,2],1)
     var2<-round(get_eig(res.pca)[2,2],1)
