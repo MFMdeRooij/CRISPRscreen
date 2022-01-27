@@ -18,8 +18,6 @@ library("basicPlotteR")
 #                                     SETTINGS
 
 # Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-
-# Windows
 Workdirectory<- "H:/BioWin/RNAseq/"
 
 # Which count table?
