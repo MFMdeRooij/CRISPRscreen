@@ -23,6 +23,9 @@ Data <- 0
 # If custom, which count tables?
 Filenames<- c("CountTable_test.fastq.gz.csv") # or "CountTable_test.fastq.csv"
 
+# Round numbers in output tables: 0 = Yes, 1 = No
+RoundNumbers <- 0
+
 # Data selection (T0/T1/T2 - replicate 1/2/3) (If a replicate is not present, fill in 
 # an existing one, and exclude it in the next option)
 # Fill in the column names of the count table
@@ -486,9 +489,17 @@ for (Filename in Filenames) {
     # Guide Table
     df_res_print<- df_res[,c("GeneSymbol","Guide","Type","BaseMeanA","BaseMeanB","FoldChange","pvalue","padj")]
     df_res_print<- df_res_print[order(df_res_print$Type),]
+    if (RoundNumbers==0){
+      df_res_print[,c("BaseMeanA","BaseMeanB")]<-round(df_res_print[,c("BaseMeanA","BaseMeanB")],0)
+      df_res_print[,c("FoldChange","pvalue","padj")]<-signif(df_res_print[,c("FoldChange","pvalue","padj")],3)
+    }
     write.csv(df_res_print, paste0(dirname,"/DESeq2 ",con," Guides.csv"), row.names = FALSE)
     # Gene Table
     df_genes_print<-df_genes[,c("GeneSymbol", "Type", "TotalGuides", "HitsDown","HitsUp","MinFoldChange","MedianFoldChange","MaxFoldChange", "rhoDepleted",	"pvalueDepleted",	"fdrDepleted",	"rhoEnriched",	"pvalueEnriched", "fdrEnriched")] 
+    if (RoundNumbers==0){
+      df_genes_print[,c("MinFoldChange","MedianFoldChange","MaxFoldChange", "rhoDepleted",	"pvalueDepleted",	"fdrDepleted",	"rhoEnriched",	"pvalueEnriched", 
+      "fdrEnriched")]<-signif(df_genes_print[,c("MinFoldChange","MedianFoldChange","MaxFoldChange", "rhoDepleted",	"pvalueDepleted",	"fdrDepleted",	"rhoEnriched",	"pvalueEnriched", "fdrEnriched")],3)
+    }
     write.csv(df_genes_print, paste0(dirname,"/DESeq2 ",con," Genes.csv"), row.names = FALSE)
     
     # Correlation plots
