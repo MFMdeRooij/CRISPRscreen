@@ -65,6 +65,7 @@ readBAM <- function(bamFile){
   #return a list that can be called as a data frame 
   return(bam_df) 
 }
+                 
 dfID<- read.csv("MapSamples.txt", header=F, stringsAsFactors = F)
 GeneStructure_hCD44<- read.csv("hCD44_GeneStructure.csv", stringsAsFactors = F)
 for (i in 1:nrow(dfID)){
