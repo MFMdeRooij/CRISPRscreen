@@ -19,27 +19,24 @@ library("gtools")
 #                                     SETTINGS
 
 # Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-# Windows
 Workdirectory<- "H:/BioWin/RNAseq/"
-# Linux
-#Workdirectory <- "~/BioLin/RNAseq/"
 
 # Which count table?
 Filename <- "RNAseqCountTableRawProteinCoding.csv"
 
 # Fill in the table in RNAseqDesign.csv (Group = tumor-subtypes, Rep = replicates (when paired, this should be matched))
 
-# Round numbers in output tables: 0 = Yes, 1 = No
+# Round numbers in output table: 0 = Yes, 1 = No
 RoundNumbers <- 0
 
 # Paired replicates: 0 = Paired, 1 = Unpaired
-Paired <- 0
+Paired <- 1
 
 # Minimal fold change of guides to be a hit: 1 = No minimal fold change,  >1: The minimal fold change (linear scale, 2^abs(l2fc))
 minimalFoldChange <- 1
 
 # MA plots of all genes: 0 = Yes, 1 = No, 2 = Top 10, 3 = Genes of interest
-MA_all_genes <- 3
+MA_all_genes <- 2
 # Genes of interest
 if (MA_all_genes==3){
   q <- function(...) {
