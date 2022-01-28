@@ -29,6 +29,9 @@ Filename <- "RNAseqCountTableRawProteinCoding.csv"
 
 # Fill in the table in RNAseqDesign.csv (Group = tumor-subtypes, Rep = replicates (when paired, this should be matched))
 
+# Round numbers in output tables: 0 = Yes, 1 = No
+RoundNumbers <- 0
+
 # Paired replicates: 0 = Paired, 1 = Unpaired
 Paired <- 0
 
@@ -135,6 +138,10 @@ for (i in 1:nrow(combi)){
   # Guide Table
   df_res_print<- df_res[,c("hgnc_symbol","ensembl_gene_id","Type","BaseMeanA","BaseMeanB","FoldChange","pvalue","padj")]
   df_res_print<- df_res_print[order(df_res_print$FoldChange),]
+  if (RoundNumbers==0){
+    df_res_print[,c("BaseMeanA","BaseMeanB")]<-round(df_res_print[,c("BaseMeanA","BaseMeanB")],0)
+    df_res_print[,c("FoldChange","pvalue","padj")]<-signif(df_res_print[,c("FoldChange","pvalue","padj")],3)
+  }                                                                                       
   write.csv(df_res_print, paste0(dirname,"/DESeq2_RNAseq_",con1, "vs",con2,".csv"), row.names = FALSE)
   
   # Write Plots in PDF 
