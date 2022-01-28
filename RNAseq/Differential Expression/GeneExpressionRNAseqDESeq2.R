@@ -37,6 +37,7 @@ minimalFoldChange <- 1
 
 # MA plots of all genes: 0 = Yes, 1 = No, 2 = Top 10, 3 = Genes of interest
 MA_all_genes <- 2
+
 # Genes of interest
 if (MA_all_genes==3){
   q <- function(...) {
