@@ -622,7 +622,7 @@ def dataSet(cwd, dataset):
 
     # RNAseq tumortypes
     global tumortype
-    tumortype=[1,1,1,1,2,3,3,3,3,3,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,7,7,7,7,7]
+    tumortype=[1,1,1,1,2,3,3,3,3,3,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,7,7,7,7,7,7]
       
     # CRISPR Screens
     if dataset==2: 
