@@ -9,7 +9,7 @@ setwd("~/BioLin/RNAseq/")
 pcg <- 0
 
 # Use effective gene lengths: 0 Yes, 1 = No, if yes, what is the mean fragment size?
-effLen <- 0
+effLen <- 1
 fragmentSize <- 500
 
 # PCA analysis:  0 Yes, 1 = No 
