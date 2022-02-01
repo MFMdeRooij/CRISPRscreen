@@ -72,7 +72,7 @@ df_colData$Rep <- as.factor(df_colData$Rep)
 # Count table for DESEq2
 counts <- df_raw[,-1:-2]
 rownames(counts) <- df_raw[,1]
-counts2<-counts[,df_design$Sample]
+counts<-counts[,df_design$Sample]
 
 # DESeq2 pipeline
 if (Paired==0) {
