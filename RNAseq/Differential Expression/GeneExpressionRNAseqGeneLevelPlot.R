@@ -66,11 +66,12 @@ df_pr<- as.data.frame(t(scale(t(df_pr), center=T, scale=T)))
 df_pr<- df_pr[which(!is.na(rowMeans(df_pr))),]
 
 # Generate plots
+interestingGenes<-toupper(interestingGenes)
 for (gene in interestingGenes){
   # data table
   res.pca<- prcomp(t(df_pr))
   df_pca<- data.frame(PC1=res.pca$x[,1], PC2=res.pca$x[,2])
-  df_gene<- CountTableNor[CountTableNor$hgnc_symbol==gene,df_design$Sample]
+  df_gene<- CountTableNor[toupper(CountTableNor$hgnc_symbol)==gene,df_design$Sample]
   if (nrow(df_gene)>1){
     df_gene<-df_gene[which.max(rowMeans(df_gene)),]
   }
