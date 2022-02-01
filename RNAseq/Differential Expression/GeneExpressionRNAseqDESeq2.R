@@ -104,7 +104,7 @@ for (i in 1:nrow(combi)){
   # GeneIDs
   df_res$ensembl_gene_id <- rownames(df_res)
   df_res <- merge(df_Gene_ID, df_res, by='ensembl_gene_id', all.y=T)
-  df_res$log2FoldChange[is.na(df_res$log2FoldChange)] < -0
+  df_res$log2FoldChange[is.na(df_res$log2FoldChange)] <-0
   df_res$FoldChange <- 2^df_res$log2FoldChange
     
   if (minimalFoldChange > 1) {
