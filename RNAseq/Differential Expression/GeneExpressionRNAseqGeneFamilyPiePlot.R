@@ -11,7 +11,7 @@
 setwd("H:/BioWin/RNAseq/")
 
 # Which count table?
-Filename<- read.csv(file="RNAseqCountTableNorTPX.csv", sep=",", header=TRUE, stringsAsFactors = FALSE)
+CountTableNor<- read.csv(file="RNAseqCountTableNorTPX.csv", sep=",", header=TRUE, stringsAsFactors = FALSE)
 
 # Title gene family
 Title<- "ChemokineReceptors"
