@@ -41,6 +41,9 @@ order <- 1
 # df_gene_id<-df_gene_id[df_gene_id$V15=="gene_name",]
 # df_gene_id$V15<-NULL
 # df_gene_protein<-df_gene_id[df_gene_id$V22=="protein_coding",]
+# # Add B and T cell receptor constant genes
+# df_gene_protein<-rbind(df_gene_protein,df_gene_id[df_gene_id$V22=="IG_C_gene",])
+# df_gene_protein<-rbind(df_gene_protein,df_gene_id[df_gene_id$V22=="TR_C_gene",])
 # df_gene_id$V22<-NULL
 # df_gene_protein$V22<-NULL
 # colnames(df_gene_id)<-c("ensembl_gene_id", "hgnc_symbol")
