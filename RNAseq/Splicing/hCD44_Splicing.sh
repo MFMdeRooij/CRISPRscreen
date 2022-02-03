@@ -63,17 +63,17 @@ do
 	mv ${s}_${c}.summmary.txt ${s}_${c}
 
 	samtools view -b ${s}_${c}.sort.bam "chr11:35139171-35232402" > ${s}_${c}/${s}_${c}.cd44.bam
-	samtools depth ${s}_${c}/${s}_${c}.cd44.bam > ${s}_${c}/${s}_${c}.cd44.bam.txt
+	samtools depth -d 0 ${s}_${c}/${s}_${c}.cd44.bam > ${s}_${c}/${s}_${c}.cd44.bam.txt
 		
 	samtools view -b ${s}_${c}.sort.bam "chr7:5527147-5530601" > ${s}_${c}/${s}_${c}.actb.bam
-	samtools depth ${s}_${c}/${s}_${c}.actb.bam > ${s}_${c}/${s}_${c}.actb.bam.txt
+	samtools depth -d 0 ${s}_${c}/${s}_${c}.actb.bam > ${s}_${c}/${s}_${c}.actb.bam.txt
 
 	cd ${s}_${c}
 	for bamfile in *.bam; do
 		samtools view -H $bamfile > temp.sam
 		samtools view $bamfile | awk '($6 ~ /N/)' >> temp.sam
 		samtools view -bS temp.sam > splice_$bamfile
-		samtools depth splice_$bamfile > splice_$bamfile.txt
+		samtools depth -d 0 splice_$bamfile > splice_$bamfile.txt
 	done
 	rm temp.sam
 	samtools index ${s}_${c}.cd44.bam
