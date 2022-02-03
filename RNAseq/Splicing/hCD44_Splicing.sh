@@ -82,7 +82,3 @@ do
 	rm ${s}_${c}.sort.bam
 	rm ${s}_${c}.sort.bam.bai
 done
-
-
-
-
