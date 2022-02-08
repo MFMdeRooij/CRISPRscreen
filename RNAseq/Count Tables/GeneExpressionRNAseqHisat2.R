@@ -177,7 +177,7 @@ if (pca==0) {
   
   # Remove low noisy counts
   df_pr<-CountTableNor[3:ncol(CountTableNor)]
-  rownames(df_pr)<- paste(1:nrow(CountTableNor),CountTableNor$hgnc_symbol, sep="_")
+  rownames(df_pr)<- CountTableNor$ensembl_gene_id
   df_pr$meanExpr<- apply(df_pr, 1, FUN=mean)
   df_prSel <- df_pr[df_pr$meanExpr>10,]
   df_prSel$meanExpr<- NULL
