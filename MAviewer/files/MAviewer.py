@@ -270,10 +270,13 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
     elif re.match('RNAseq', headDir):
         nameGene = glob.glob(cwd+'/files/Data'+headDir+'/'+dirs[0]+'/*NorTPX.csv')[0]           
         dfgenes = pd.read_csv(nameGene, sep=',')
-        dfgenes = dfgenes.drop_duplicates()
         dfgenes.loc[dfgenes['hgnc_symbol'].isnull(), 'hgnc_symbol'] = dfgenes.loc[dfgenes['hgnc_symbol'].isnull(), 'ensembl_gene_id']  
-        dfgenes['hgnc_symbol'] = dfgenes['hgnc_symbol'].str.upper()
-        dfgenes['hgnc_symbol'][dfgenes['hgnc_symbol'].duplicated()] = dfgenes['hgnc_symbol'][dfgenes['hgnc_symbol'].duplicated()] + "_2"
+        dfgenes['hgnc_symbol'] = dfgenes['hgnc_symbol'].str.upper()  
+        
+        # Remove duplicate gene symbols and keep the ones with highest expression level
+        dfgenes["RowMean"] = dfgenes.iloc[:,3:len(dfgenes.columns)].mean(axis=1)
+        dfgenes = dfgenes.drop_duplicates(subset=['hgnc_symbol'], keep='last')
+        dfgenes = dfgenes.drop(["RowMean"], axis=1)
 
         # Tumor colors
         dftype = pd.DataFrame({'cell':dfgenes.columns[2:len(dfgenes.columns)], 'type': tumortype}) 
