@@ -112,6 +112,7 @@ for (pair in c("P","S")){
     }
   if (order==0){
     dfSort<-read.table("AllSamplesSorted.txt", sep=",")
+    dfSort<-dfSort[dfSort$V2 %in% colnames(CountTableRaw[-1:-2]),]
     CountTableRaw<- CountTableRaw[,c("ensembl_gene_id","hgnc_symbol",dfSort$V2)]
   }
   # The raw counts can be used for DESeq2 analysis
