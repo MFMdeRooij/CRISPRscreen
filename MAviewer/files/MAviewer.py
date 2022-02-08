@@ -314,11 +314,11 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                     if log==0:
                         rowmeansSel = rowmeans.loc[rowmeans>-2]
                     else: rowmeansSel = rowmeans.loc[rowmeans>1]
-                    dfexpr = dfexpr.reindex(rowmeansSel.index)
+                    dfexpr = dfexpr.loc[rowmeansSel.index]
                     
                     corrSer = dfexpr.corrwith(corr, axis=1)
                     corrSer = corrSer.sort_values(ascending = False) 
-                    dfexprCorr = dfexpr.reindex(corrSer.index)
+                    dfexprCorr = dfexpr.loc[corrSer.index]
                     genes1 = list(dfexprCorr.index[0:numberCor+1])
                     genes2 = list(dfexprCorr.index[len(dfexprCorr)-numberCor:len(dfexprCorr)])
                     genes = (genes1+genes2)
