@@ -17,8 +17,8 @@ CountTableNor<- read.csv(file="RNAseqCountTableNorTPX.csv", sep=",", header=TRUE
 Title<- "ChemokineReceptors"
 
 # Select genes with regular expression
-sel<- CountTableNor[grep("^CXCR[[:digit:]]$", toupper(CountTableNor$hgnc_symbol)),]
-sel<- rbind(sel,CountTableNor[grep("^CCR[[:digit:]]$", toupper(CountTableNor$hgnc_symbol)),])
+sel<- CountTableNor[grep("^CXCR[0-9]{1,}$", toupper(CountTableNor$hgnc_symbol)),]
+sel<- rbind(sel,CountTableNor[grep("^CCR[0-9]{1,}$", toupper(CountTableNor$hgnc_symbol)),])
 
 # # Select genes from a file (Make a csv file with gene symbols in the first column with Gene as colname)
 # GeneList<- read.csv("GeneList.csv", sep=",", header=TRUE, stringsAsFactors = FALSE)
