@@ -36,7 +36,7 @@ order <- 1
 # python hisat2_extract_splice_sites.py hg38.105.gtf > ~/HumanGenome/hg38.105_spliceSites.txt
 
 # # Make tables with gene symbols and protein coding genes from the GTF file:
-# gtf<- read.table("~/HumanGenome/hg38.105.gtf", sep="\t")
+# gtf<- read.table("~/HumanGenome/hg38.105.gtf", fill=T)
 # df_gene_id<- gtf[,c(10,15,16,22)]
 # df_gene_id<-df_gene_id[df_gene_id$V15=="gene_name",]
 # df_gene_id$V15<-NULL
