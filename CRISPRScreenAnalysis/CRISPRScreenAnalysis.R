@@ -80,7 +80,7 @@ minimalFoldChange <- 1
 
 # Number of permutation for aRRA (0 = 250 times the number of genes, 1 = Custom)
 numPer <- 0
-# If number of permutation is custom, how much? (The best p value form aRRA is 1/numOfPer)
+# If number of permutation is custom, how much? (The best p value from alphaRRA is 1/numOfPer)
 numOfPer <- 1000
 
 # MA plots of all genes: 0 = Yes, 1 = No, 2 = Top 10, 3 = Genes of interest
