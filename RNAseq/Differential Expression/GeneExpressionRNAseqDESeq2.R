@@ -138,7 +138,7 @@ for (i in 1:nrow(combi)){
   df_res_print<- df_res_print[order(df_res_print$FoldChange),]
   if (RoundNumbers==0){
     df_res_print[,c("BaseMeanA","BaseMeanB")]<-round(df_res_print[,c("BaseMeanA","BaseMeanB")],0)
-    df_res_print[,c("FoldChange","pvalue","padj")]<-signif(df_res_print[,c("FoldChange","pvalue","padj")],3)
+    df_res_print[,c("FoldChange","pvalue","padj")]<-signif(df_res_print[,c("FoldChange","pvalue","padj")],4)
   }                                                                                       
   write.csv(df_res_print, paste0(dirname,"/DESeq2_RNAseq_",con1, "vs",con2,".csv"), row.names = FALSE)
   
