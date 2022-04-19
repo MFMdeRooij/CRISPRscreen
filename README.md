@@ -33,7 +33,7 @@ TestData (for CRISPR screen analysis):
 - Good luck!, Martin de Rooij, The Netherlands
 
 Publication
-- de Rooij et al Nature Communications 2022
+- Martin F.M. de Rooij, Yvonne J. Thus, Nathalie Swier, Roderick L. Beijersbergen, Steven T. Pals, and Marcel Spaargaren. A loss-of-adhesion CRISPR-Cas9 screening platform to identify cell adhesion-regulatory proteins and signaling pathways. Nat Commun 13, 2136 (2022). https://doi.org/10.1038/s41467-022-29835-y
 
 For more information, suggestions, or bugs: m.f.derooij@amsterdamumc.nl
 
