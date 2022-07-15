@@ -333,7 +333,6 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
         if numberofgenes>1:
             dfexpr = dfgenes[dfgenes['hgnc_symbol'].isin(genes)]
             dfexpr.index = dfexpr['hgnc_symbol']
-            dfexpr = dfexpr.loc[genes]
             dfexpr = dfexpr.drop(["ensembl_gene_id",'hgnc_symbol'], axis=1)           
     
             fig, ax = plt.subplots()
