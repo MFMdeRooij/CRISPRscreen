@@ -105,7 +105,7 @@ for (gene in interestingGenes){
     addTextLabels(df_pca$PC1,df_pca$PC2,paste0(rownames(df_pca),"\n(", as.character(df_pca$Group),")"), avoidPoints = TRUE,
                   keepLabelsInside = TRUE, col.label=as.numeric(df_pca$Group), cex.label=0.5)
     x=1
-    y=seq(min(df_pca$Gene)*100+1,max(df_pca$Gene)*100+1,len=100)
+    y=seq((min(df_pca$Gene)-min(df_pca$Gene))*100+1,(max(df_pca$Gene)-min(df_pca$Gene))*100+1,len=100)
     z=matrix(1:100,nrow=1)
     par(fig=c(0.8,0.95,0.1,0.83),new=TRUE)
     image(x,((y-1)/100)+min(df_pca$Gene),z,col=palette(max(y))[y], xaxt='n', xlab="",ylab=paste0(gene, " (nTPX)"))
