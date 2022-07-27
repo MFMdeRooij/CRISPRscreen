@@ -19,7 +19,7 @@ wd<-"H:/BioWin/CCC/"
 setwd(wd)
 
 # Autocrine signaling: 0 = No (paracrine), 1 = Yes
-autocrine<- 1
+autocrine<- 0
 
 # Producer cells (ligands)
 a<-read.csv("RNAseqCountTableTPMstr.csv", stringsAsFactors = F)
