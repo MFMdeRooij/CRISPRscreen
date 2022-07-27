@@ -238,3 +238,156 @@ pdf(paste0("CCC",strsplit(strsplit(LigandReceptorFile,".csv")[[1]][1], "LR")[[1]
       draw(ht, padding = unit(c(10, 50, 10, 10), "mm"))
   }
 dev.off()
+
+############################################################################################################
+# # Generate LRlists from CellPhoneDB database
+# #
+# # Linux: pip install -U cellphonedb
+# #        cellphonedb database download
+# 
+# setwd("H:/BioWin/CCC/LRlist/")
+# 
+# complex<-read.csv("import/complex_input.csv", stringsAsFactors = F)
+# gene<-read.csv("import/gene_input.csv", stringsAsFactors = F)
+# interaction<-read.csv("import/interaction_input.csv", stringsAsFactors = F)
+# protein<-read.csv("import/protein_input.csv", stringsAsFactors = F)
+# 
+# LR<- interaction[,1:2]
+# for (c in complex$complex_name){
+#   temp1<-LR[LR$partner_a %in% c,]
+#   if (nrow(temp1)>0){
+#     temp2<-complex[complex$complex_name %in% c,]
+#     temp2<- temp2[,grep("uniprot",colnames(temp2))]
+#     temp2<-as.character(temp2)
+#     temp2<- temp2[temp2!="NA"]
+#     temp2<- temp2[temp2!=""]
+#     for (row in 1:nrow(temp1)){
+#       for (i in temp2){
+#         LR<-rbind(LR,c(i,temp1$partner_b[row]))
+#       }
+#     }
+#     LR<-LR[!LR$partner_a %in% c,]
+#   }
+# }
+# for (c in complex$complex_name){
+#   temp1<-LR[LR$partner_b %in% c,]
+#   if (nrow(temp1)>0){
+#     temp2<-complex[complex$complex_name %in% c,]
+#     temp2<- temp2[,grep("uniprot",colnames(temp2))]
+#     temp2<-as.character(temp2)
+#     temp2<- temp2[temp2!="NA"]
+#     temp2<- temp2[temp2!=""]
+#     for (row in 1:nrow(temp1)){
+#       for (i in temp2){
+#         LR<-rbind(LR,c(temp1$partner_a[row],i))
+#       }
+#     }
+#     LR<-LR[!LR$partner_b %in% c,]
+#   }
+# }
+# 
+# gs<-unique(gene[2:3])
+# gs<-gs[gs$hgnc_symbol!="",]
+# 
+# for (i in 1:nrow(LR)){
+#   gsi<- gs[gs$uniprot==LR[i,1],"hgnc_symbol"]
+#   if (length(gsi)==1){
+#     LR[i,1]<-gsi
+#   } else{
+#     LR[i,1]<-paste(gsi,collapse=":")
+#   }
+#   gsi<- gs[gs$uniprot==LR[i,2],"hgnc_symbol"]
+#   if (length(gsi)==1){
+#     LR[i,2]<-gsi
+#   } else{
+#     LR[i,2]<-paste(gsi,collapse=":")
+#   }
+# }
+# 
+# doubles<- grep(":", LR$partner_a)
+# for (i in doubles){
+#   temp1<- LR[i,]
+#   LR<-rbind(LR,c(strsplit(temp1[1,1],":")[[1]][1],temp1[1,2]))
+#   LR<-rbind(LR,c(strsplit(temp1[1,1],":")[[1]][2],temp1[1,2]))
+# }
+# LR<-LR[-doubles,]
+# doubles<- grep(":", LR$partner_b)
+# for (i in doubles){
+#   temp1<- LR[i,]
+#   LR<-rbind(LR,c(temp1[1,1],strsplit(temp1[1,2],":")[[1]][1]))
+#   LR<-rbind(LR,c(temp1[1,1],strsplit(temp1[1,2],":")[[1]][2]))
+# }  
+# LR<-LR[-doubles,]
+# LR<-unique(LR)  
+# 
+# 
+# LR2<-LR[,c(2,1)]
+# colnames(LR2)<-colnames(LR)
+# LR<-rbind(LR,LR2)
+# LR<-unique(LR)
+# write.csv(LR,"LRall.csv", row.names = F, quote = F)
+# #########################################################
+# # select membrane proteins in partner_b
+# 
+# transmembrane<-protein
+# for (i in 1:nrow(transmembrane)){
+#   gsi<- gs[gs$uniprot==transmembrane[i,1],"hgnc_symbol"]
+#   if (length(gsi)==1){
+#     transmembrane[i,1]<-gsi
+#   } else{
+#     transmembrane[i,1]<-paste(gsi,collapse=":")
+#   }
+# }
+# colnames(transmembrane)[1]<-"hgnc_symbol"
+# doubles<- grep(":", transmembrane$hgnc_symbol)
+# for (i in doubles){
+#   temp1<- transmembrane[i,]
+#   tempG<- temp1[1,1]
+#   temp1[1,1]<- strsplit(tempG,":")[[1]][1]
+#   transmembrane<-rbind(transmembrane,temp1)
+#   temp1[1,1]<- strsplit(tempG,":")[[1]][2]
+#   transmembrane<-rbind(transmembrane,temp1)
+# }
+# transmembrane<-transmembrane[-doubles,]
+# transmembrane<-unique(transmembrane) 
+# transmembranesOnly<-transmembrane[transmembrane$transmembrane=="True",]
+# LR$transmembraneA<-0
+# LR$transmembraneB<-0
+# LR[LR$partner_a %in% transmembranesOnly$hgnc_symbol,"transmembraneA"]<-1
+# LR[LR$partner_b %in% transmembranesOnly$hgnc_symbol,"transmembraneB"]<-1
+# 
+# LRtransmembraneB<- LR[LR$transmembraneB==1,]
+# #LRtransmembraneB<- LRtransmembraneB[LRtransmembraneB$transmembraneA==1,]
+# LRtransmembraneB<- LRtransmembraneB[1:2]
+# write.csv(LRtransmembraneB,"LRtransmembrane.csv", row.names = F, quote = F)
+# #################################################################
+# # Complexes
+# complexGeneSymbols<-complex
+# gs<-unique(gene[2:3])
+# gs<-gs[gs$hgnc_symbol!="",]
+# 
+# for (j in 2:5){
+#   for (i in 1:nrow(complexGeneSymbols)){
+#     gsi<- gs[gs$uniprot==complexGeneSymbols[i,j],"hgnc_symbol"]
+#     if (length(gsi)==1){
+#       complexGeneSymbols[i,j]<-gsi
+#     } else{
+#       complexGeneSymbols[i,j]<-paste(gsi,collapse=":")
+#     }
+#   }
+# }
+# complexGeneSymbols<-complexGeneSymbols[1:5]
+# colnames(complexGeneSymbols)<- gsub("uniprot","GeneSymbol",colnames(complexGeneSymbols))
+# 
+# complexGeneSymbols$complex_name<- paste0(complexGeneSymbols$complex_name, " complex")
+# lipids<-grep("by", complexGeneSymbols$complex_name)
+# complexGeneSymbols$complex_name[lipids]<- gsub(" complex","",complexGeneSymbols$complex_name[lipids])
+# complexGeneSymbols$complex_name[lipids]<- gsub("_by"," by ",complexGeneSymbols$complex_name[lipids])
+# complexGeneSymbols$complex_name<- gsub("_receptor"," receptor ",complexGeneSymbols$complex_name)
+# complexGeneSymbols$complex_name<- gsub("_","-",complexGeneSymbols$complex_name)
+# complexGeneSymbols$complex_name<- gsub(":","-",complexGeneSymbols$complex_name)
+# complexGeneSymbols$complex_name<- gsub("  "," ",complexGeneSymbols$complex_name)
+# complexGeneSymbols$complex_name<- gsub("complex complex","complex",complexGeneSymbols$complex_name)
+# complexGeneSymbols$complex_name<- gsub("-complex"," complex",complexGeneSymbols$complex_name)
+# complexGeneSymbols$complex_name<- gsub(" -","-",complexGeneSymbols$complex_name)
+# write.csv(complexGeneSymbols,"complexGeneSymbols.csv", row.names = F,quote = F)
