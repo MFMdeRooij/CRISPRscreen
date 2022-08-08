@@ -142,10 +142,10 @@ for (i in 1:nrow(dfID)){
     }
     par(mar=c(4,5,2,1))
     par(fig=c(0.1,0.83,0.5,1))
-    plot(df$V2, df$V3, type="l" , cex=0.1, xlim=xlim, ylim=c(0, ylim), xlab="", xaxt="n", ylab="depth", col="black" , main=main)
+    plot(df$V2, df$V3, type="l" , cex=0.1, xlim=xlim, ylim=c(0, ylim), xlab="", xaxt="n", ylab="depth", col="white" , main=main)
   
-    polygon(c(min(df$V2)-1,df$V2, max(df$V2)+1), c(0,df$V3,0), col="lightblue", border="lightblue")
-    polygon(c(min(dfs$V2)-1,dfs$V2, max(dfs$V2)+1), c(0,dfs$V3,0), col="black", border=" black")
+    polygon(c(min(df$V2)-1,df$V2, max(df$V2)+1), c(0,df$V3,0), col="lightblue", border=F)
+    polygon(c(min(dfs$V2)-1,dfs$V2, max(dfs$V2)+1), c(0,dfs$V3,0), col="black", border=F)
   
     par(fig=c(0.1,0.83,0.1,0.73),new=TRUE)
     ylimMax<-nrow(dfIntron)*-10*(5/4)
