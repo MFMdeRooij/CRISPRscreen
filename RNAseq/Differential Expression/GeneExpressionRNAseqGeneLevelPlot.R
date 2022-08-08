@@ -36,10 +36,10 @@ GRC<- 1
 q <- function(...) {
   sapply(match.call()[-1], deparse)
 }
-interestingGenes <-q(
+interestingGenes <- toupper(q(
   # Which genes?  
   BTK, SYK, PIK3CA, PIK3CD, PIK3R1, LYN
-)
+))
 ##################################################################################
 setwd(Workdirectory)
 CountTableNor<-read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALSE)
