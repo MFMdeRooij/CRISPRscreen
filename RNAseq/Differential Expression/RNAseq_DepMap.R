@@ -4,7 +4,7 @@
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################
 # Workdirectory (folder where "Expression_22Q2_Public.csv" is located)
-setwd("H:/BioWin/")
+setwd("H:/BioWin/DepMap/")
 
 # Genes of interest (add to line 15)
 q <- function(...) {
@@ -23,7 +23,7 @@ library("ggrepel")
 #install.packages("devtools")
 #devtools::install_github("JosephCrispell/basicPlotteR")
 library("basicPlotteR")
-if (!exists("dataDepMap")) {
+if (!exists("RNAseq")) {
   dataDepMap<-read.csv("Expression_22Q2_Public.csv",stringsAsFactors = F)
   RNAseq<-as.data.frame(t(dataDepMap[,c(7:ncol(dataDepMap))]))
   colnames(RNAseq)<- dataDepMap$cell_line_display_name
