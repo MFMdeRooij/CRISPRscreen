@@ -4,7 +4,7 @@
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################
 # Workdirectory (folder where "CRISPR_(DepMap_22Q2_Public+Score,_Chronos).csv" is located)
-setwd("H:/BioWin/")
+setwd("H:/BioWin/DepMap/")
 
 # Genes of interest (add to line 15)
 q <- function(...) {
@@ -58,7 +58,7 @@ for (gene in interestingGenes){
         # Barplot
         g<-ggplot(df_gene, aes(x=Gene, y=Group, fill=Group, label=rownames(df_gene))) + geom_boxplot() + geom_jitter(color=df_gene$color, size=2, alpha=0.9, height = 0) + 
           theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(y = "", x="CRISPR score (Chronos)") +
-          ggtitle(paste0(gene, " (DepMap)")) + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5)) +
+          ggtitle(paste0(gene, " knockout (DepMap)")) + theme(legend.position="none") + theme(plot.title = element_text(hjust = 0.5)) +
           geom_vline(xintercept = 0, color = "blue", size=0.5) + geom_vline(xintercept = -1, color = "red", size=0.5)
         if (i==1){  
           print(g)
