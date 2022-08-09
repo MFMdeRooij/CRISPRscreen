@@ -23,7 +23,7 @@ library("ggrepel")
 #install.packages("devtools")
 #devtools::install_github("JosephCrispell/basicPlotteR")
 library("basicPlotteR")
-if (!exists("dataDepMap")) {
+if (!exists("chronos")) {
   dataDepMap<-read.csv("CRISPR_(DepMap_22Q2_Public+Score,_Chronos).csv",stringsAsFactors = F)
   chronos<-as.data.frame(t(dataDepMap[,c(7:ncol(dataDepMap))]))
   colnames(chronos)<- dataDepMap$cell_line_display_name
