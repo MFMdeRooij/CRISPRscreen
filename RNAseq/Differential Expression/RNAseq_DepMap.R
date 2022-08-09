@@ -23,7 +23,7 @@ library("ggrepel")
 #install.packages("devtools")
 #devtools::install_github("JosephCrispell/basicPlotteR")
 library("basicPlotteR")
-if (!exists("RNAseq")) {
+if (!exists("dataDepMap")) {
   dataDepMap<-read.csv("Expression_22Q2_Public.csv",stringsAsFactors = F)
   RNAseq<-as.data.frame(t(dataDepMap[,c(7:ncol(dataDepMap))]))
   colnames(RNAseq)<- dataDepMap$cell_line_display_name
