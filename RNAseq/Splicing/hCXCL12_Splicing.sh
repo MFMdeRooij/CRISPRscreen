@@ -1,13 +1,13 @@
 #!/bin/bash
 # First Download a recent GTP file from Ensembl download page, and make a file with known splice sites with the Hisat2 
 # delivered python script (python hisat2_extract_splice_sites.py hg38.105.gtf > ~/HumanGenome/hg38.105_spliceSites.txt)
-# The first time, make this bash script executable (chmod 755 hCD44_Splicing.sh)
+# The first time, make this bash script executable (chmod 755 hCXCL12_Splicing.sh)
 # Search for RNAseq data on https://www.ncbi.nlm.nih.gov/sra/, and fill in the SRR IDs, 
 # cell line ID and a P (paired-end) or S (single-end) separated by commas 
 # (SRR8615345,NAMALWA,P) in MapSamples.txt,
-# and run the script (./hCD44_Splicing.sh on the command line)
+# and run the script (./hCXCL12_Splicing.sh on the command line)
 # Afterwards you can view the mapping in IGV viever, or plot the splicing with the R
-# script (hCD44_Splicing.R)
+# script (Splicing.R)
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022,
 # info: m.f.derooij@amsterdamumc.nl
 
@@ -62,8 +62,8 @@ do
 	mkdir ${s}_${c}
 	mv ${s}_${c}.summmary.txt ${s}_${c}
 
-	samtools view -b ${s}_${c}.sort.bam "chr11:35139171-35232402" > ${s}_${c}/${s}_${c}.cd44.bam
-	samtools depth -d 0 ${s}_${c}/${s}_${c}.cd44.bam > ${s}_${c}/${s}_${c}.cd44.bam.txt
+	samtools view -b ${s}_${c}.sort.bam "chr10:44370165-44385092" > ${s}_${c}/${s}_${c}.cxcl12.bam
+	samtools depth -d 0 ${s}_${c}/${s}_${c}.cxcl12.bam > ${s}_${c}/${s}_${c}.cxcl12.bam.txt
 		
 	samtools view -b ${s}_${c}.sort.bam "chr7:5527147-5530601" > ${s}_${c}/${s}_${c}.actb.bam
 	samtools depth -d 0 ${s}_${c}/${s}_${c}.actb.bam > ${s}_${c}/${s}_${c}.actb.bam.txt
@@ -76,7 +76,7 @@ do
 		samtools depth -d 0 splice_$bamfile > splice_$bamfile.txt
 	done
 	rm temp.sam
-	samtools index ${s}_${c}.cd44.bam
+	samtools index ${s}_${c}.cxcl12.bam
 	cd ..
 	
 	rm ${s}_${c}.sort.bam
