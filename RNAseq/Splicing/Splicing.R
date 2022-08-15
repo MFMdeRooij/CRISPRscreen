@@ -6,9 +6,9 @@
 
 # Workdirectory
 wd <- "~/BioLin/RNAseq/"
-
+#wd <- "H:/BioWin/RNAseq/"
 GeneStructure<- "hCD44_GeneStructure.csv"
-# GeneStructure<- "hCXCL12_GeneStructure.csv"
+#GeneStructure<- "hCXCL12_GeneStructure.csv"
 ##################################################################################################################################
 # Download, install, and configure the sra-toolkit from NCBI website:
 # https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
@@ -95,6 +95,9 @@ for (i in 1:nrow(dfID)){
   try(
     splice_actb<-read.table(paste0("splice_",ID,".actb.bam.txt"), sep="\t", fill=T)
   )
+  
+  # Count introns
+  
   # Load the bam file
   bam<-data.frame(qname=1,flag=1,rname=1,strand=1,pos=1,qwidth=1,mapq=1,cigar=1,mrnm=1,mpos=1,isize=1,seq=1,qual=1)
   
@@ -104,6 +107,9 @@ for (i in 1:nrow(dfID)){
   if (nrow(bam2)>0){
     bam<-bam2
   }
+  # Use only 1-times mapped reads (some reads are inconclusive)
+  uniquenessMapping<-as.data.frame(table(bam$qname))
+  bam<- bam[bam$qname %in% uniquenessMapping$Var1[uniquenessMapping$Freq==1],] 
   bam$numberIntr<- str_count(bam$cigar, pattern = "N")
   bam$up<- unlist(lapply(strsplit(as.character(bam$cigar), "N"), "[", 1)) 
   bam$startintron<-0
@@ -111,7 +117,8 @@ for (i in 1:nrow(dfID)){
     bam$startintron[i]<-bam$pos[i]+sum(as.numeric(sub("M", "", str_extract_all(bam$up[i],"(\\d+)(M)",simplify = T))))
   }
   bam$endintron<- bam$startintron+as.numeric(str_extract_all(bam$up, "\\d+$"))
-  # Multiple introns per read
+
+  # Include multiple introns per read
   if (max(bam$numberIntr)>1){
     bamMultInt<- bam[bam$numberIntr>1,]
     for (n in 2:max(bam$numberIntr)){
@@ -119,7 +126,7 @@ for (i in 1:nrow(dfID)){
       for (i in 1:nrow(bamMultInt)){
         bamMultInt$cigar[i]<-strsplit(bamMultInt$cigar[i], paste0(bamMultInt$up[i], "N"))[[1]][2]
       }
-      bamMultInt$up<- unlist(lapply(strsplit(as.character(bamMultInt$cigar), "N"), "[", 1)) 
+      bamMultInt$up<- unlist(lapply(strsplit(as.character(bamMultInt$cigar), "N"), "[", 1))
       for (i in 1:nrow(bamMultInt)){
         bamMultInt$startintron[i]<-bamMultInt$endintron[i]+sum(as.numeric(sub("M", "", str_extract_all(bamMultInt$up[i],"(\\d+)(M)",simplify = T))))
       }
@@ -145,41 +152,67 @@ for (i in 1:nrow(dfID)){
   } else{
     dfIntron<- dfIntron[order(dfIntron$start, decreasing = T),]
   }
+  # Use only introns which are abundant > 1% of the most frequent intron
   dfIntron<-dfIntron[dfIntron$x>max(dfIntron$x)/100,]
-  ##############################################
   
+  # Read densities
+  df<-GOI
+  dfs<-splice_GOI
+  xlim<-c(min(GeneStructure_GOI[c("Start","End")]),max(GeneStructure_GOI[c("Start","End")]))
+  if (direction=="neg"){
+    xlim<-rev(xlim)
+  }
+  chr<-paste0("Chr",GeneStructure_GOI$Chr[1])
+  main=GeneSymbol
+  df2<- data.frame(V2=min(xlim):max(xlim), V4=0)
+  df<-merge(df,df2,by="V2", all.y=T)
+  df$V3[is.na(df$V3)]<-0
+  df$V3<-df$V4+df$V3
+  dfs2<- data.frame(V2=min(xlim):max(xlim), V4=0)
+  dfs<-merge(dfs,dfs2,by="V2", all.y=T)
+  dfs$V3[is.na(dfs$V3)]<-0
+  dfs$V3<-dfs$V4+dfs$V3
+  ylim<-max(df$V3)
+  if (ylim<10){
+    ylim=10
+  }
   pdf(paste0("../", ID,".pdf"),10,5)
-    df<-GOI
-    dfs<-splice_GOI
-    xlim<-c(min(GeneStructure_GOI[c("Start","End")]),max(GeneStructure_GOI[c("Start","End")]))
-    if (direction=="neg"){
-      xlim<-rev(xlim)
-    }
-    chr<-paste0("Chr",GeneStructure_GOI$Chr[1])
-    main=GeneSymbol
-    df2<- data.frame(V2=min(xlim):max(xlim), V4=0)
-    df<-merge(df,df2,by="V2", all.y=T)
-    df$V3[is.na(df$V3)]<-0
-    df$V3<-df$V4+df$V3
-    dfs2<- data.frame(V2=min(xlim):max(xlim), V4=0)
-    dfs<-merge(dfs,dfs2,by="V2", all.y=T)
-    dfs$V3[is.na(dfs$V3)]<-0
-    dfs$V3<-dfs$V4+dfs$V3
-    ylim<-max(df$V3)
-    if (ylim<10){
-      ylim=10
-    }
     par(mar=c(4,5,2,1))
+    
+    # Plot read density
     par(fig=c(0.1,0.83,0.5,1))
     plot(df$V2, df$V3, type="l" , cex=0.1, xlim=xlim, ylim=c(0, ylim), xlab="", xaxt="n", ylab="depth", col="white" , main=main)
-  
     polygon(c(min(df$V2)-1,df$V2, max(df$V2)+1), c(0,df$V3,0), col="lightblue", border=F)
     polygon(c(min(dfs$V2)-1,dfs$V2, max(dfs$V2)+1), c(0,dfs$V3,0), col="black", border=F)
     segments(xlim[1], 0, xlim[2],0, col="gray", lwd=0.1)
+
+    # Draw gene structures 
     par(fig=c(0.1,0.83,0.1,0.73),new=TRUE)
     ylimMax<-nrow(dfIntron)*-10*(5/4)
-    plot(1, type='n', xlab=chr, ylab="Splicing", xlim=xlim, yaxt="n", ylim=c(ylimMax,0))
+    plot(1, type='n', xlab=chr, ylab="Introns", xlim=xlim, yaxt="n", ylim=c(ylimMax,0), yaxs="i")
+    abline(h=(ylimMax/5))
+    for (i in 1:nrow(GeneStructure_GOI)){
+      if (!grepl("st", GeneStructure_GOI$Exon[i])){
+        rect(GeneStructure_GOI$Start[i],	ylimMax-1000, GeneStructure_GOI$End[i], ylimMax/5, col=alpha(GeneStructure_GOI$Color[i],0.1), border=F)
+      }
+    }
+    for (i in 1:nrow(GeneStructure_GOI)){
+      if (!grepl("st", GeneStructure_GOI$Exon[i])){
+        text(((GeneStructure_GOI$Start[i]+GeneStructure_GOI$End[i])/2), ylimMax/5*0.5, GeneStructure_GOI$Exon[i], cex=0.3, col=GeneStructure_GOI$Color[i],
+              adj=if (GeneSymbol=="CD44"){if(GeneStructure_GOI$Exon[i]=="v4"){0.7}else{if(GeneStructure_GOI$Exon[i]=="v5"){0.3}else{0.5}}})
+      }
+    }
+    for (i in 1:nrow(GeneStructure_GOI)){
+      segments(GeneStructure_GOI$Start[i],	ylimMax/5*0.7, GeneStructure_GOI$End[i], ylimMax/5*0.7,lwd=GeneStructure_GOI$Size[i], col=GeneStructure_GOI$Color[i], lend=1)
+    }
   
+    # Draw introns
+    for (i in 1:nrow(dfIntron)){
+      rect(dfIntron$start[i],	(ylimMax/5)+i*((ylimMax-(ylimMax/5))/(nrow(dfIntron)+1))-ylimMax/100, dfIntron$end[i], (ylimMax/5)+i*((ylimMax-(ylimMax/5))/(nrow(dfIntron)+1))+ylimMax/100, lwd=0.1, col="white", border="black")
+      rect(dfIntron$start[i],	(ylimMax/5)+i*((ylimMax-(ylimMax/5))/(nrow(dfIntron)+1))-ylimMax/100, dfIntron$end[i], (ylimMax/5)+i*((ylimMax-(ylimMax/5))/(nrow(dfIntron)+1))+ylimMax/100, lwd=0.1, col=alpha("black",dfIntron$x[i]/max(dfIntron$x)), border="black")
+      text(if (direction=="neg"){dfIntron$start[i]} else{dfIntron$end[i]}, (ylimMax/5)+i*((ylimMax-(ylimMax/5))/(nrow(dfIntron)+1)), pos=4,offset=0.1, paste0("(",dfIntron$x[i],")"), srt = 0, xpd = TRUE, cex=0.3)
+    }
+
     # Special features for CD44
     if (GeneSymbol=="CD44"){
       dfFeatures<-data.frame(
@@ -198,28 +231,7 @@ for (i in 1:nrow(dfID)){
       for (i in 1:nrow(dfFeatures2)) {
         text(((GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures2$exon[i]]+GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures2$exon[i]])/2), ylimMax/5*0.1, dfFeatures2$feature[i], col="gray", cex=0.3, srt=45)
       }    
-    }
-    
-    for (i in 1:nrow(GeneStructure_GOI)){
-      if (!grepl("st", GeneStructure_GOI$Exon[i])){
-        rect(GeneStructure_GOI$Start[i],	ylimMax-1000, GeneStructure_GOI$End[i], ylimMax/5*0.95, col=alpha(GeneStructure_GOI$Color[i],0.1), border=F)
-      }
-    }
-    for (i in 1:nrow(GeneStructure_GOI)){
-      if (!grepl("st", GeneStructure_GOI$Exon[i])){
-        text(((GeneStructure_GOI$Start[i]+GeneStructure_GOI$End[i])/2), ylimMax/5*0.5, GeneStructure_GOI$Exon[i], cex=0.3, col=GeneStructure_GOI$Color[i],
-              adj=if (GeneSymbol=="CD44"){if(GeneStructure_GOI$Exon[i]=="v4"){0.7}else{if(GeneStructure_GOI$Exon[i]=="v5"){0.3}else{0.5}}})
-      }
-    }
-    for (i in 1:nrow(GeneStructure_GOI)){
-      segments(GeneStructure_GOI$Start[i],	ylimMax/5*0.7, GeneStructure_GOI$End[i], ylimMax/5*0.7,lwd=GeneStructure_GOI$Size[i], col=GeneStructure_GOI$Color[i], lend=1)
-    }
-  
-    abline(h=(ylimMax/5*0.95))
-    for (i in 1:nrow(dfIntron)){
-      rect(dfIntron$start[i],	ylimMax/5-i*10-ylimMax/100, dfIntron$end[i], ylimMax/5-i*10+ylimMax/100, lwd=0.1, col="white", border="black")
-      rect(dfIntron$start[i],	ylimMax/5-i*10-ylimMax/100, dfIntron$end[i], ylimMax/5-i*10+ylimMax/100, lwd=0.1, col=alpha("black",dfIntron$x[i]/max(dfIntron$x)), border="black")
-    }
+    }    
     
     #Actin
     df<-actb
@@ -251,6 +263,5 @@ for (i in 1:nrow(dfID)){
     segments(5528185,	ylim/-9, 5528004, ylim/-9,lwd=5, col="red", lend=1)
     segments(5527891,	ylim/-9, 5527751, ylim/-9,lwd=5, col="red", lend=1)
     segments(5527891,	ylim/-9, 5527147, ylim/-9,lwd=2, col="red", lend=1)
-    
   dev.off()
 }
