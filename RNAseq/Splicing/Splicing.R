@@ -145,7 +145,7 @@ for (i in 1:nrow(dfID)){
     unlist(lapply(strsplit(as.character(dfIntron$Group.1), ","), "[", 2))
   ) 
   dfIntron$size<- dfIntron$end-dfIntron$start
-  dfIntron<- dfIntron[order(dfIntron$size, decreasing = T),]
+  dfIntron<- dfIntron[order(dfIntron$x, decreasing = T),]
   if (direction=="pos"){
     dfIntron<- dfIntron[order(dfIntron$start),]
   } else{
