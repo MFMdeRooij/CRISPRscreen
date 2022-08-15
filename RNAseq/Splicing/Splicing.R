@@ -146,7 +146,6 @@ for (i in 1:nrow(dfID)){
   ) 
   dfIntron$size<- dfIntron$end-dfIntron$start
   dfIntron<- dfIntron[order(dfIntron$size, decreasing = T),]
-  dfIntron<- dfIntron[order(dfIntron$start),]
   if (direction=="pos"){
     dfIntron<- dfIntron[order(dfIntron$start),]
   } else{
