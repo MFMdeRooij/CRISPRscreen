@@ -150,7 +150,7 @@ for (i in 1:nrow(dfID)){
   if (direction=="pos"){
     dfIntron<- dfIntron[order(dfIntron$start),]
   } else{
-    dfIntron<- dfIntron[order(dfIntron$start, decreasing = T),]
+    dfIntron<- dfIntron[order(dfIntron$end, decreasing = T),]
   }
   # Use only introns which are abundant > 1% of the most frequent intron
   dfIntron<-dfIntron[dfIntron$x>max(dfIntron$x)/100,]
