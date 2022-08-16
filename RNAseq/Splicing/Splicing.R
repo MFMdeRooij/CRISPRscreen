@@ -108,8 +108,7 @@ for (i in 1:nrow(dfID)){
     bam<-bam2
   }
   # Use only 1-times mapped reads (some reads are inconclusive)
-  uniquenessMapping<-as.data.frame(table(bam$qname))
-  bam<- bam[bam$qname %in% uniquenessMapping$Var1[uniquenessMapping$Freq==1],] 
+  bam<- bam[bam$mapq==60,]
   bam$numberIntr<- str_count(bam$cigar, pattern = "N")
   bam$up<- unlist(lapply(strsplit(as.character(bam$cigar), "N"), "[", 1)) 
   bam$startintron<-0
