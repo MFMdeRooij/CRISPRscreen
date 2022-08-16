@@ -220,16 +220,16 @@ for (i in 1:nrow(dfID)){
         start=c("1start","17","18stop"),
         end=c("16","17","18stop")
       )
+      for (i in 1:nrow(dfFeatures)) {
+        text(((GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures$start[i]]+GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures$end[i]])/2), ylimMax/5*0.15, dfFeatures$feature[i], font=2, cex=0.3, adj=0.5)
+        segments(GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures$start[i]],	ylimMax/5*0.3, GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures$end[i]], ylimMax/5*0.3, lwd=0.5, col="black", lend=1)
+      }
       dfFeatures2<-data.frame(
         feature=c("HS","MET"),
         exon=c("v3","v6")
       )
-      for (i in 1:nrow(dfFeatures)) {
-        text(((GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures$start[i]]+GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures$end[i]])/2), ylimMax/5*0.1, dfFeatures$feature[i], font=2, cex=0.3, adj=0.5)
-        segments(GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures$start[i]],	ylimMax/5*0.3, GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures$end[i]], ylimMax/5*0.3, lwd=0.5, col="black", lend=1)
-      }
       for (i in 1:nrow(dfFeatures2)) {
-        text(((GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures2$exon[i]]+GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures2$exon[i]])/2), ylimMax/5*0.1, dfFeatures2$feature[i], col="gray", cex=0.3, srt=45)
+        text(((GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures2$exon[i]]+GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures2$exon[i]])/2), ylimMax/5*0.15, dfFeatures2$feature[i], col="gray", cex=0.3, srt=45)
       }    
     }    
     
