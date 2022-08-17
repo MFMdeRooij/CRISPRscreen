@@ -1,4 +1,4 @@
-# With this script you can look at splicing of human CD44, which has constant and variable exon usage, or or CXCL12 which has different isoforms
+# With this script you can look at splicing of human CD44, which has constant and variable exon usage, or CXCL12 which has different isoforms
 # Follow the lines with hastag signs in R studio
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################################################################
