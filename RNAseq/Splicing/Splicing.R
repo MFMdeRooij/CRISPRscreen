@@ -4,14 +4,21 @@
 ##################################################################################################################################
 #                                                         SETTINGS
 
-# Workdirectory
+# Workdirectory Linux
 wd <- "~/BioLin/RNAseq/"
-# Windows
+
+# Workdirectory Windows (The read mapping should be in Linux)
 #wd <- "H:/BioWin/RNAseq/"
 
 # Gene structure file 
 GeneStructure<- "hCD44_GeneStructure.csv"
 #GeneStructure<- "hCXCL12_GeneStructure.csv"
+
+# Minimal mapping quality: Hisat2: 0= multiple mapped reads with lost of mismatches/indels, 1: multiple mapped reads, 60: unique mapped reads
+minMapQ <- 60
+
+# Minimal frequency of intron abundancy (compared to the most abundant intron (%)
+minIntronFreq<- 1
 ##################################################################################################################################
 # Download, install, and configure the sra-toolkit from NCBI website:
 # https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
@@ -87,16 +94,16 @@ for (i in 1:nrow(dfID)){
   actb<-data.frame(seqnames=1,pos=1,count=1)
   splice_actb<-data.frame(seqnames=1,pos=1,count=1)
   try(
-    GOI<- pileup(paste0(ID, ".", tolower(GeneSymbol), ".bam"), paste0(ID, ".", tolower(GeneSymbol), ".bam.bai"), pileupParam=PileupParam(max_depth=10^9, min_mapq=60))
+    GOI<- pileup(paste0(ID, ".", tolower(GeneSymbol), ".bam"), paste0(ID, ".", tolower(GeneSymbol), ".bam.bai"), pileupParam=PileupParam(max_depth=10^9, min_mapq=minMapQ))
   )  
   try(
-    splice_GOI<- pileup(paste0("splice_", ID, ".", tolower(GeneSymbol), ".bam"), paste0("splice_", ID, ".", tolower(GeneSymbol), ".bam.bai"), pileupParam=PileupParam(max_depth=10^9, min_mapq=60))
+    splice_GOI<- pileup(paste0("splice_", ID, ".", tolower(GeneSymbol), ".bam"), paste0("splice_", ID, ".", tolower(GeneSymbol), ".bam.bai"), pileupParam=PileupParam(max_depth=10^9, min_mapq=minMapQ))
   ) 
   try(
-    actb<-pileup(paste0(ID, ".actb.bam"), paste0(ID, ".actb.bam.bai"), pileupParam=PileupParam(max_depth=10^9, min_mapq=60))
+    actb<-pileup(paste0(ID, ".actb.bam"), paste0(ID, ".actb.bam.bai"), pileupParam=PileupParam(max_depth=10^9, min_mapq=minMapQ))
   )
   try(
-    splice_actb<-pileup(paste0("splice_", ID, ".actb.bam"), paste0("splice_", ID, ".actb.bam.bai"), pileupParam=PileupParam(max_depth=10^9, min_mapq=60))
+    splice_actb<-pileup(paste0("splice_", ID, ".actb.bam"), paste0("splice_", ID, ".actb.bam.bai"), pileupParam=PileupParam(max_depth=10^9, min_mapq=minMapQ))
   )
   
   # Count introns
@@ -111,7 +118,7 @@ for (i in 1:nrow(dfID)){
     bam<-bam2
   }
   # Use only 1-times mapped reads (some reads are inconclusive)
-  bam<- bam[bam$mapq==60,]
+  bam<- bam[bam$mapq>=minMapQ,]
   bam$numberIntr<- str_count(bam$cigar, pattern = "N")
   bam$up<- unlist(lapply(strsplit(as.character(bam$cigar), "N"), "[", 1)) 
   bam$startintron<-0
@@ -154,8 +161,8 @@ for (i in 1:nrow(dfID)){
   } else{
     dfIntron<- dfIntron[order(dfIntron$end, decreasing = T),]
   }
-  # Use only introns which are abundant > 1% of the most frequent intron
-  dfIntron<-dfIntron[dfIntron$x>max(dfIntron$x)/100,]
+  # Filter low abundant introns out
+  dfIntron<-dfIntron[dfIntron$x>=(max(dfIntron$x)*(minIntronFreq/100)),]
   
   # Read densities
   df<-GOI
@@ -183,7 +190,7 @@ for (i in 1:nrow(dfID)){
   if (ylim<10){
     ylim=10
   }
-  pdf(paste0("../", ID,".pdf"),10,5)
+  pdf(paste0("../", ID,".", minMapQ, ".",minIntronFreq,".pdf"),10,5)
     par(mar=c(4,5,2,1))
     
     # Plot read density
