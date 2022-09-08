@@ -91,7 +91,15 @@ for (gene in interestingGenes){
     g<-ggplot(df_pca, aes(x=Group, y=Gene, fill=Group)) + geom_boxplot() + geom_jitter(color=df_pca$color, size=2, alpha=0.9, height = 0) 
     g<-g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "", y=paste0(gene," expression (nTPX)"))
     set.seed(101)
-    print(g + ggtitle(Title) + theme(plot.title = element_text(hjust = 0.5)))
+    print(g + ggtitle(Title) + theme(
+      plot.title = element_text(size = 20, hjust = 0.5),
+      axis.title.x = element_text(size = 20),
+      axis.text.x = element_text(size = 20),
+      axis.title.y = element_text(size = 20),
+      axis.text.y = element_text(size = 20),
+      legend.title=element_text(size=20),
+      legend.text=element_text(size=20))
+    )
     
     var1<-round(get_eig(res.pca)[1,2],1)
     var2<-round(get_eig(res.pca)[2,2],1)
