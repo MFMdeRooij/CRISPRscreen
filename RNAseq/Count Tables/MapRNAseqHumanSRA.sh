@@ -14,9 +14,9 @@ mkdir pairedEnd
 mkdir singleEnd
 for line in `cat MapSamples.txt`
 do 
-	s="$(echo $line | cut -d"," -f1)"
-	c="$(echo $line | cut -d"," -f2)"
-	p="$(echo $line | cut -d"," -f3 | sed $'s/\r//')"
+	s="$(echo $line | cut -d ',' -f1)"
+	c="$(echo $line | cut -d ',' -f2)"
+	p="$(echo $line | cut -d ',' -f3 | sed $'s/\r//')"
 	echo ID:$s Cell:$c Reads:$p
 	prefetch $s
 	mv ~/ncbi/sra/$s.sra $PWD 
