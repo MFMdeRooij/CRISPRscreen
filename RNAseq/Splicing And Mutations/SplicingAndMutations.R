@@ -40,6 +40,9 @@ MutminCoverage<- 0
 
 # For other genes, you can find in Ensembl the exon loci (or in the GTF file), which you can put in hgeneX.csv, and 
 # also adjust the most upstream and downstream loci in SplicingAndMutationsHg38.sh
+# cxcl12 <- gtf[grep("CXCL12", gtf$V34),]
+# write.csv(cxcl12,"cxcl12.csv", row.names=F, quote=F)
+# Adjust this table to the example (hgeneX.csv)
 
 # R Packages
 #install.packages("BiocManager")
