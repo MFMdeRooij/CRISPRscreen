@@ -7,7 +7,7 @@
 # The random seeds are different in Windows and Linux R versions, so the p-values on gene level can be different
 ######################################################################################
 ## Install DESeq2
-#install.packages("BiocManager")
+#install.packages(c("BiocManager", "rstudioapi"))
 #BiocManager::install(c("DESeq2", "pheatmap", "RColorBrewer"), dependencies=TRUE)
 library("DESeq2")
 library("pheatmap")
@@ -15,11 +15,13 @@ library("RColorBrewer")
 ######################################################################################
 #                                     SETTINGS
 
-# Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-Workdirectory <- "H:/BioWin/Screens/"
+# Put this script in the folder where the count tables are located
+Workdirectory <- dirname(rstudioapi::getActiveDocumentContext()$path)
+## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
+#Workdirectory <- "H:/BioWin/Screens/"
 
 # Count table files: 0 = custom, 1 = all count tables (csv files) in the workdirectory
-Data <- 0
+Data <- 1
 # If custom, which count tables?
 Filenames<- c("CountTable_test.fastq.gz.csv") # or "CountTable_test.fastq.csv"
 
