@@ -201,17 +201,20 @@ if (ncol(df_heatmap)>1){
 if (ncol(df_heatmap)>1){
   df_heatmap<- df_heatmap[rowSums(df_heatmap==0)<=(ncol(df_heatmap)-minCell),]
   df_heatmapInclComplex<- df_heatmapInclComplex[rowSums(df_heatmapInclComplex==0)<=(ncol(df_heatmapInclComplex)-minCell),]
-
-  partner_a_cell <- as.numeric(factor(unlist(lapply(strsplit(as.character(colnames(df_heatmap)),"_"), "[", 1)),levels=colnames(a)[-1:-2]))
-  partner_b_cell <- as.numeric(factor(unlist(lapply(strsplit(as.character(colnames(df_heatmap)),"_"), "[", 2)),levels=colnames(b)[-1:-2]))
-  
-  col_funProd = colorRamp2(c(1,max(partner_a_cell)), c("darkolivegreen1","cornflowerblue"))
-  col_funRec = colorRamp2(c(1,max(partner_b_cell)), c("khaki","magenta1"))
-  col<- list(`producer cell`=col_funProd, `receiver cell`=col_funRec)
-} else{
-  col_funProd = colorRamp2(c(1,2), c("darkolivegreen1","cornflowerblue"))
-  col_funRec = colorRamp2(c(1,2), c("khaki","magenta1"))
 }
+partner_a_cell <- as.numeric(factor(unlist(lapply(strsplit(as.character(colnames(df_heatmap)),"_"), "[", 1)),levels=colnames(a)[-1:-2]))
+partner_b_cell <- as.numeric(factor(unlist(lapply(strsplit(as.character(colnames(df_heatmap)),"_"), "[", 2)),levels=colnames(b)[-1:-2]))
+if (length(colAa)>1){
+  col_funProd = colorRamp2(c(1,max(partner_a_cell)), c("darkolivegreen1","cornflowerblue"))
+  } else{
+    col_funProd = colorRamp2(c(1,2), c("darkolivegreen1","cornflowerblue"))
+}
+if (length(colBb)>1){
+  col_funRec = colorRamp2(c(1,max(partner_b_cell)), c("khaki","magenta1"))
+  } else{
+    col_funRec = colorRamp2(c(1,2), c("khaki","magenta1"))
+}
+col<- list(`producer cell`=col_funProd, `receiver cell`=col_funRec)
 ha = HeatmapAnnotation(`producer cell`=partner_a_cell, `receiver cell`=partner_b_cell, col=col, gp = gpar(col = "black"), border=T, show_legend=F)
 
 col_fun = colorRamp2(c(0,2,6), c("white","blue","red"))
