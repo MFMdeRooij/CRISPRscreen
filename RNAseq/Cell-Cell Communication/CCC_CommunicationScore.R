@@ -150,7 +150,7 @@ df_heatmapInclComplex<-df_heatmapInclComplex[!df_heatmapInclComplex$partner_a %i
 
 # Complex in partner b
 for (i in 1:nrow(complexGeneSymbols)){
-  temp<- df_heatmapComplex[df_heatmapComplex$partner_b %in% complexGeneSymbols[i,2:ncol(complexGeneSymbols)],]
+  temp<- df_heatmapInclComplex[df_heatmapInclComplex$partner_b %in% complexGeneSymbols[i,2:ncol(complexGeneSymbols)],]
   if (all(complexGeneSymbols[i,2:ncol(complexGeneSymbols)][complexGeneSymbols[i,2:ncol(complexGeneSymbols)]!=""] %in% temp$partner_b)){
     for (pa in unique(temp$partner_a)){
       #pa<-unique(temp$partner_a)[6]
