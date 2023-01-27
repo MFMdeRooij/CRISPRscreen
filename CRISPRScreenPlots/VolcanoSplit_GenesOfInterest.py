@@ -9,7 +9,7 @@ Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.dero
 #                                                 SETTINGS
 
 # Copy-paste the required folder (use / instead of \ )
-folder = "H:/BioWin/CRISPR/Z138"
+folder = "H:/BioWin/Screens/Namalwa"
 
 # Which genes to highlight:
 gene = ['BTK', 'SYK', 'PIK3R1']
