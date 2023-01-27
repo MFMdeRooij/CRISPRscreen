@@ -99,7 +99,8 @@ for file in files:
     axs[0].spines['bottom'].set_linewidth(1.5)
     axs[0].spines['top'].set_linewidth(1.5)
     axs[0].spines['left'].set_linewidth(1.5)
-    axs[0].spines['right'].set_linewidth(1.5)                            
+    axs[0].spines['right'].set_linewidth(1.5)    
+    axs[0].tick_params(axis='both', labelsize=fs)                        
     for i, row in dfg.iterrows():    
         label_pos_x = row['l2mfc']
         label_pos_y = row['l10rdep']
@@ -143,6 +144,7 @@ for file in files:
     axs[1].spines['top'].set_linewidth(1.5)
     axs[1].spines['left'].set_linewidth(1.5)
     axs[1].spines['right'].set_linewidth(1.5) 
+    axs[1].tick_params(axis='both', labelsize=fs)
     for i, row in dfg.iterrows():    
             label_pos_x = row['l2mfc']
             label_pos_y = row['l10renr']
