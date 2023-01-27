@@ -143,6 +143,7 @@ for file in files:
     ax.spines['top'].set_linewidth(1.5)
     ax.spines['left'].set_linewidth(1.5)
     ax.spines['right'].set_linewidth(1.5)
+    axs.tick_params(axis='both', labelsize=fs)
     
     from matplotlib.lines import Line2D
     if guidesignificant==1:
