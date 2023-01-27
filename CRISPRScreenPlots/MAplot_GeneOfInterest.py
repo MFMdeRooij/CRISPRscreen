@@ -137,7 +137,7 @@ for file in files:
         
     plt.xlabel(xtitle, fontsize=fs)
     plt.ylabel(ytitle, fontsize=fs)   
-    plt.title(maintitle, fontsize=fs+10, y=1.05)
+    plt.title(maintitle, fontsize=fs+10, fontweight="bold", y=1.05)
     
     ax.spines['bottom'].set_linewidth(1.5)
     ax.spines['top'].set_linewidth(1.5)
