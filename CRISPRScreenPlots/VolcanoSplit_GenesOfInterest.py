@@ -9,7 +9,7 @@ Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.dero
 #                                                 SETTINGS
 
 # Copy-paste the required folder (use / instead of \ )
-folder = "H:/BioWin/Screens/Namalwa"
+folder = "H:/BioWin/CRISPR/Z138"
 
 # Which genes to highlight:
 gene = ['BTK', 'SYK', 'PIK3R1']
@@ -88,8 +88,8 @@ for file in files:
     axbig.spines['top'].set_linewidth(0)
     axbig.spines['left'].set_linewidth(0)
     axbig.spines['right'].set_linewidth(0)
-    axbig.text(0.5, 1.1, maintitle, fontsize=fs+10, ha='center')
-    axbig.text(0.5, -0.25, xtitle, fontsize=fs, ha='center')
+    axbig.text(0.5, 1.1, maintitle, fontsize=fs+10, fontweight="bold", ha='center')
+    axbig.text(0.5, -0.15, xtitle, fontsize=fs, ha='center')
     axbig.set_facecolor('None')
 
     axs[0].set_xlim(xmin,xmax)
