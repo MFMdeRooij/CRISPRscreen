@@ -41,7 +41,10 @@ title3 = r'$\alpha$IgM/PMA'
 # greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 
 
 # X-axis limits:
-xmin, xmax, xticks = -1.25, 1, 0.25
+xmin, xmax, xticks = -1.25, 1.1, 0.25
+
+# Font size of X- and Y-axis titles (the main title is 10 bigger)
+fs = 15
 
 # Essentials or significant guides in density plot (apart from All guides and non-essentials)  0 = Essentials, 1 = Significant guides
 essOrSig = 1
@@ -99,7 +102,7 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
         dfrra['10lrra']=-1*np.log(dfrra['rhoEnriched'])/np.log(10)
         dfrra.loc[dfrra['fdrEnriched']<0.1,'color']='red'
        
-    plt.figure(1, figsize=(30,7))
+    plt.figure(1, figsize=(35,7))
     ax = plt.subplot2grid((5,24), (0,i*8), colspan=6, rowspan=1) 
     if i==0:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label='All guides')
@@ -108,7 +111,7 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
              sns.kdeplot(df[df['Type']=='p']['l2fc'], linewidth= 2, color='royalblue', label='Essential genes')
         if essOrSig == 1:
             sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='royalblue', label='Significant (FDR < 0.1)')
-        plt.legend()
+        plt.legend(fontsize=fs)
     else:
         sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label=None)
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label=None) 
@@ -118,11 +121,11 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
             sns.kdeplot(df[df['padj']<0.1]['l2fc'], linewidth= 2, color='royalblue', label=None)      
     plt.xlim(xmin, xmax) 
     if i==0:
-        plt.title(title1)  
+        plt.title(title1,fontsize=fs+10, fontweight="bold")      
     elif i==1:
-        plt.title(title2) 
+        plt.title(title2, fontsize=fs+10, fontweight="bold")     
     elif i==2:
-        plt.title(title3)    
+        plt.title(title3, fontsize=fs+10, fontweight="bold")    
     plt.axis('off')   
     
     plt.subplot2grid((5,24), (1,i*8), colspan=6, rowspan=4)  
@@ -133,11 +136,11 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
         plt.scatter(dfg3['l2fc'], dfg3['nr'], marker="|", s=300, c='green')
     else:
        plt.scatter(dfg['l2fc'], dfg['nr'], marker="|", s=300,  c='navy') 
-    plt.xticks(np.arange(xmin, xmax, xticks)) 
+    plt.xticks(np.arange(xmin, xmax, xticks), fontsize=fs) 
     plt.xlim(xmin, xmax) 
-    plt.yticks(np.arange(1,1+len(genes)), genes)
+    plt.yticks(np.arange(1,1+len(genes)), genes, fontsize=fs)
     plt.ylim(len(genes)+0.5,0.5)    
-    plt.xlabel('Log2 fold change')
+    plt.xlabel('Log2 fold change', fontsize=fs)
     plt.axvline(x=0, color='black', linewidth=1.5)
     if geneSubsets==1:
         plt.axhline(y=len(pd.unique(dfg1['GeneSymbol']))+0.5, color='black', linewidth=1.5)
@@ -150,11 +153,11 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
     plt.ylim(len(genes)+0.5,0.5)
     plt.xlim(0,25)
     if rrascore==0:
-        plt.text(0,0,'-Log10 RRA$_{dep}$ score', fontsize=8)
+        plt.text(0,0,'RRA$_{dep}$ score', fontsize=fs)
     elif rrascore==1:
-        plt.text(0,0,'-Log10 RRA$_{enr}$ score', fontsize=8)
+        plt.text(0,0,'RRA$_{enr}$ score', fontsize=fs)
     plt.axis('off') 
-    plt.text(20,len(genes)+0.5, 'red: FDR < 0.1', rotation=-90) 
+    plt.text(20,len(genes)+0.5, 'red: FDR < 0.1', rotation=-90, fontsize=fs) 
     i+=1
 
 plt.subplots_adjust(hspace=0)
