@@ -27,7 +27,7 @@ if (!exists("dataDepMap")) {
   dataDepMap<-read.csv("OmicsExpressionProteinCodingGenesTPMLogp1.csv",stringsAsFactors = F)
   RNAseq<-as.data.frame(t(dataDepMap[,2:ncol(dataDepMap)]))
   colnames(RNAseq)<- dataDepMap$X
-  rownames(RNAseq)<- unlist(lapply(strsplit(as.character(rownames(chronos)),"\\.\\."), "[", 1))
+  rownames(RNAseq)<- unlist(lapply(strsplit(as.character(rownames(RNAseq)),"\\.\\."), "[", 1))
   cells<- read.csv("Model.csv",stringsAsFactors = F)
   UsedIDs<- cells[match(colnames(RNAseq), cells$ModelID),]
   colnames(RNAseq)<- UsedIDs$StrippedCellLineName
