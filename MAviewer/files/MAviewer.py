@@ -333,6 +333,7 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
         if numberofgenes>1:
             dfexpr = dfgenes[dfgenes['hgnc_symbol'].isin(genes)]
             dfexpr.index = dfexpr['hgnc_symbol']
+            dfexpr = dfexpr.loc[genes]
             dfexpr = dfexpr.drop(["ensembl_gene_id",'hgnc_symbol'], axis=1)           
     
             fig, ax = plt.subplots()
@@ -691,17 +692,17 @@ class StartPage(tk.Frame):
         tk.Label(self, text='RNAseq:', bg=colbg, font = tkfont.Font(family='Times New Roman', size=15)).pack(anchor = 'w')
         tk.Radiobutton(self,text='Panel of B cell lines (https://www.ncbi.nlm.nih.gov/sra)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=100, variable=startselected).pack(anchor = 'w')
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
-
-        
-        
-        
+               
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
         tk.Label(self, text="What do you want to visualize?", bg=colbg, font = tkfont.Font(family='Times New Roman', size=15)).pack()
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
         tk.Button(self, text="Genes", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: [controller.show_frame("PageOne" if startselected.get() != 100 else "PageOneHundred"), dataSet(cwd=cwd, dataset=startselected.get())]).pack()
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
-        tk.Button(self, text="Guides", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: [clickedGuides(startselected.get()), dataSet(cwd=cwd, dataset=startselected.get())]).pack()       
-        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=350)).pack()
+        tk.Button(self, text="Guides", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: [clickedGuides(startselected.get()), dataSet(cwd=cwd, dataset=startselected.get())]).pack()   
+        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=50)).pack()
+        tk.Label(self, text="DepMap CRISPR & RNAseq data:", bg=colbg, font = tkfont.Font(family='Times New Roman', size=15)).pack()   
+        tk.Button(self, text="Website", font=('Times New Roman', '15'), fg='white', bg='blue', command=lambda:  webbrowser.open("https://depmap.org/portal/")).pack(side='top')
+        tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=150)).pack()
         tk.Button(self, text="Exit", font=('Times New Roman', '15'), fg='white', bg='red', command=lambda:app.destroy()).pack(side='right')
         
         def clickedGuides(startselected):
@@ -836,7 +837,7 @@ class PageTwenty(tk.Frame):
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack() 
         tk.Button(self, text="Search", font=('Times New Roman', '12'), fg='black', bg='yellow', command=lambda: searchGuideSequence(Tex=Tex, startselected=startselected.get(), gene=e1.get().upper())).pack() 
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=30)).pack()
-        tk.Label(self, text="To order Gibson cloning oligos, copy-paste the right sequences in oligo-ordering", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack() 
+        tk.Label(self, text="BRUNELLO SEQUENCES: To order Gibson cloning oligos, copy-paste the right sequences in oligo-ordering", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack() 
         Tex = tk.Text(self, height=9, width=125, bg='cornsilk') 
         Tex.pack()         
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=30)).pack()
