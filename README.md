@@ -23,7 +23,7 @@ SangerSeq:
 - After performing the CRISPR screen, you might validate the hits. With the Sanger script, you can analyze your Sanger sequences from your CRISPRguide cloning in a few seconds. Apart from Anaconda3, you need to install the Biopython package (Python). 
 
 Synergy:
-- After a synthetic lethality CRISPR screen in which a nice drug is available for the best hits, you can check for synergy with the initial drug. When you have nice S-curves you can use the 4 component fit script. When that one is not working, try the Cubic fit script (R).
+- After a synthetic lethality CRISPR screen in which a nice drug is available for the best hits, you can check for synergy with the initial drug. When you have nice S-curves you can use the 4 component fit script. When that one is not working, try the Cubic fit script (R). For these analyses you use the single drugs and the diagonal combinations. You can use BlissSynergy.R in Rstudio (R) or BlissSynergy.py in Spyder (Python) to calculate the Bliss synergy of a matrix-design.  
 
 OncoPrint:
   - To summarize the CRISPR screen hits for multiple cell lines, you can use the OncoPrint script (R). 
