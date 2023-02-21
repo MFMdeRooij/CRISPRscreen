@@ -1,7 +1,10 @@
 # Use the CRISPRScreenAnalysis.R output files, put this script in the same folder, adjust the settings, and run the script in Rstudio.
 # This script plots all the guides of a particular gene in MA plots of all comparisons (T1/T0, T2/T0, and T2/T1).
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
-###################################################################################################
+################################################################################
+## Install package
+#install.packages("rstudioapi")
+################################################################################
 # Which genes:
 Genes_of_interest<-c(" ", "BTK", "SYK", "PIK3R1")
 
