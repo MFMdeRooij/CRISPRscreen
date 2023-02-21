@@ -1,7 +1,8 @@
-# Use a constant drugs ratio dependent on its IC50's
+# Use a constant drugs ratio dependent on its IC50's, and put the IC50 in the middle of the concentratio ranges.
 # For 2 drugs the best is to use dilution factors of 2
 # Normalize the viability values/number of cells between 0 (0%) and 1 (100%), adjust te settings, and run the script in R studio
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2018, info: m.f.derooij@amsterdamumc.nl
+# You can test this script with "SynergyTestData.csv"
+# Author: M.F.M. de Rooij, PhD, Amsterdam UMC, Spaargaren Lab, 2018, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################################################################
 #                                                       SETTINGS
 
