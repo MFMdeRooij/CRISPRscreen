@@ -22,7 +22,7 @@ colnames(df_data)[1]<-"GeneSymbol"
 NumCells<-ncol(df_data)-1
 
 # Guide ID
-df_Controls <- read.csv("Controls.csv", sep=',', header=TRUE, stringsAsFactors = FALSE)
+df_Controls <- read.csv("CRISPRscreenControls.csv", sep=',', header=TRUE, stringsAsFactors = FALSE)
 
 df_data$Type<- "x"
 df_data[df_data$GeneSymbol %in% df_Controls$Essential[nchar(df_Controls$Essential)>0],"Type"]<- "p"
