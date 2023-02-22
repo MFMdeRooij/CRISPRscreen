@@ -3,7 +3,8 @@
 # Create a CSV file with the gene symbols in the first column and the CRISPR scores in the following columns,and with 
 # the cell line names in the first row.Put Controls.csv in the same folder.
 # rZ': robust Z factor, NP50: CRISPR score in which the essential and non-essential curves cross, so at this point
-# there is 50% chance to be essential. F1: harmonic mean of precision and recall: https://en.wikipedia.org/wiki/F-score
+# there is 50% chance to be essential. F1: harmonic mean of precision and recall: https://en.wikipedia.org/wiki/F-score,
+# in which the NP50 is used as cuttoff.
 # Probability of essentiality: chance to be like an essential (ratio essential/nonessential curve at CRISPR score)
 # Author: M.F.M. de Rooij, PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 #########################################################################################
