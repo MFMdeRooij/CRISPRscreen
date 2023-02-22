@@ -14,7 +14,8 @@ CRISPRScreenPlots:
 - To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python). MAplot_GenesOfInterest.R can be used to make MA plots in Rstudio, and is much faster than the Python script. With the SyntheticLethality_GenesOfInterest.R script, you can get a nice visualization of your synthetic lethal hits (R). 
 
 CRISPRScreenPublic:
-CRISPRscreenAnalysisFromScores.R: Check the quality of lethality screens, of which only CRISPR scores are published, by comparing the distibution of essential and non-essential genes. CRISPRscores_DepMap.R and RNAseq_DepMap.R: Plot CRISPRscreen and RNAseq values from DepMap.org in a PDF file (R).
+- CRISPRscreenAnalysisFromScores.R: Check the quality of lethality screens, of which only CRISPR scores are published, by comparing the distibution of essential and non-essential genes (R). 
+- CRISPRscores_DepMap.R and RNAseq_DepMap.R: Plot CRISPRscreen and RNAseq values from DepMap.org in a PDF file (R).
 
 MAviewer:
 - To interactively view the MA plots, add the output from CRISPRScreenAnalysis.R to the files/DataCRISPR03New folder of MAviewer, and open MAviewer with the sh file (Linux) or bat file (Windows), and discover your screen results (You can add a shortcut to these files for on your desktop. As an example I included the published screens of B cell lymphoma cell lines of Phelan et al, Nature 2018. You can also check the gene expression (RNAseq) of your top hits in a small B cell line panel (derived from the public SRA database, in which most is performed by the Broad Institute). The RNAseq data are in TPM, which are subseqently normalized by median of ratios (DESeq2) between cell lines (Python).
