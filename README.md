@@ -14,14 +14,14 @@ CRISPRScreenPlots:
 - To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python). MAplot_GenesOfInterest.R can be used to make MA plots in Rstudio, and is much faster than the Python script. With the SyntheticLethality_GenesOfInterest.R script, you can get a nice visualization of your synthetic lethal hits (R). 
 
 CRISPRScreenPublic:
-- To check the quality of lethality screens, of which only CRISPR scores are published, by comparing the distibution of essential and non-essential genes, use CRISPRscreenAnalysisFromScores.R and Controls.csv (R). 
+- To check the quality of lethality screens, of which only CRISPR scores are published, by comparing the distibution of essential and non-essential genes, use CRISPRscreenAnalysisFromScores.R script (R). 
 - To plot CRISPRscreen or RNAseq values from DepMap in a PDF file, download the data files from DepMap.org and use CRISPRscores_DepMap.R or RNAseq_DepMap.R (R).
 
 MAviewer:
 - To interactively view the MA plots, add the output from CRISPRScreenAnalysis.R to the files/DataCRISPR03New folder of MAviewer, and open MAviewer with the sh file (Linux) or bat file (Windows), and discover your screen results (You can add a shortcut to these files for on your desktop. As an example I included the published screens of B cell lymphoma cell lines of Phelan et al, Nature 2018. You can also check the gene expression (RNAseq) of your top hits in a small B cell line panel (derived from the public SRA database, in which most is performed by the Broad Institute). The RNAseq data are in TPM, which are subseqently normalized by median of ratios (DESeq2) between cell lines (Python).
 
 OncoPrint:
-  - To summarize the CRISPR screen hits for multiple cell lines, you can use the OncoPrint script (R). 
+  - To summarize the CRISPR screen hits for multiple cell lines, you can use the OncoPrint.R script (R). 
 
 RNAseq:
 - To look at gene expression of your CRISPR targets, you can download RNAseq data from most cell lines from the NCBI-SRA database, and analyze it with GeneExpressionRNAseqHisat2.R and the Bash files. Because this script uses various Linux apps, it does not work on Windows (R/Linux). With the sorted bam files you can also view the read mapping in IGV viewer (e.g. to look at mutations, differential splicing between cell lines, or check CRISPR induced deletions). From the generated count tables you can perform differential expression, make gene level bar/pca plots, or gene family pie plots (R). You can also look at (predicted) cell-cell interactions between different cell types or autocrine factors. Furthermore, you can look at differential splicing of a particular gene.
