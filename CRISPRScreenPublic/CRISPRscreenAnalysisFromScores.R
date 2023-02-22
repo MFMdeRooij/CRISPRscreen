@@ -22,7 +22,7 @@ df_data <- read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALS
 colnames(df_data)[1]<-"GeneSymbol"
 NumCells<-ncol(df_data)-1
 
-# Guide ID
+# Essentials and non-essentials
 df_Controls <- read.csv("CRISPRscreenControls.csv", sep=',', header=TRUE, stringsAsFactors = FALSE)
 
 df_data$Type<- "x"
