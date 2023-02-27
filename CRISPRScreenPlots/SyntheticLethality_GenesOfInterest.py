@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-# Use the CRISPRScreenAnalysis.R output files of a synthetic lethality screen, adjust the settings, and run the script in R studio.
+# Use the CRISPRScreenAnalysis.R output files of a synthetic lethality screen, adjust the settings, and run the script in Spyder.
 # This script can normalize the median log2 fold change to the essential and non-essential genes of a synthetic lethality screen, and plots T1control/T0 against T1treated/T0. 
 # This normalization can improve the comparison treated - control if the treated arm did not have equal cell divisions, however the separation between the essentials and 
 # non-essentials will not be improved. Synthetic lethal genes will be located around the lower half of the vertical 0 axis.
