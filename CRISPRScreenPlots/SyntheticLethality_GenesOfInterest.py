@@ -101,7 +101,7 @@ dfneg = df[df['Type']=='n']
 dfhits = df[df['GeneSymbol'].isin(GenesOfInterest)].reset_index()
 
 if Axlim==0:
-# Custom axes limints:    
+     # Calculate axis limits:      
     xmin, xmax=round(df['Control'].min(),2)-0.3, round(df['Control'].max(),2)+0.3
     ymin, ymax=round(df['Treated'].min(),2)-0.3, round(df['Treated'].max(),2)+0.3
     if XYequal==1:
