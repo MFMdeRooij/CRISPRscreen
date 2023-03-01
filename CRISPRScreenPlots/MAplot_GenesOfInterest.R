@@ -7,81 +7,81 @@
 ################################################################################
 #                       SETTINGS
 # Put this script in the folder where the count tables are located
-folder <- dirname(rstudioapi::getActiveDocumentContext()$path)
+folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
 ## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-#folder <- "H:/BioWin/CRISPRscreen/Namalwa/"
+#folder<- "H:/BioWin/CRISPRscreen/Namalwa/"
 
 # Which genes:
-Genes_of_interest<-c(" ", "BTK", "SYK", "PIK3R1")
+Genes_of_interest<- c(" ", "BTK", "SYK", "PIK3R1")
 
 # Cell line:
-maintitle = 'NAMALWA'
+maintitle<- 'NAMALWA'
 
 # Axes labels for IgM/PMA-induced Adhesion:
-x1title = "Log10 average read counts (input)"
-y1title = "Log2 fold change (PMA/input)"
+x1title<- "Log10 average read counts (input)"
+y1title<- "Log2 fold change (PMA/input)"
 
-x2title = "Log10 average read counts (input)"
-y2title = expression("Log2 fold change ("*alpha*"IgM/input)")
+x2title<- "Log10 average read counts (input)"
+y2title<- expression("Log2 fold change ("*alpha*"IgM/input)")
 
-x3title = "Log10 average read counts (PMA)"
-y3title = expression("Log2 fold change ("*alpha*"IgM/PMA)")
+x3title<- "Log10 average read counts (PMA)"
+y3title<- expression("Log2 fold change ("*alpha*"IgM/PMA)")
 
 # # Axes labels for (synthetic) lethality:
-# x1title = expression("Log10 average read counts (T"[0]*")")
-# y1title = expression("Log2 fold change (T"["1(DMSO)"]*"/T"["0"]*")")
+# x1title<- expression("Log10 average read counts (T"[0]*")")
+# y1title<- expression("Log2 fold change (T"["1(DMSO)"]*"/T"["0"]*")")
 # 
-# x2title = expression("Log10 average read counts (T"[0]*")")
-# y2title = expression("Log2 fold change (T"["1(DRUG)"]*"/T"["0"]*")")
+# x2title<- expression("Log10 average read counts (T"[0]*")")
+# y2title<- expression("Log2 fold change (T"["1(DRUG)"]*"/T"["0"]*")")
 # 
-# x3title = expression("Log10 average read counts (T"["1DMSO"]*")")
-# y3title = expression("Log2 fold change (T"["1(DRUG)"]*"/T"["1(DMSO)"]*")")
+# x3title<- expression("Log10 average read counts (T"["1DMSO"]*")")
+# y3title<- expression("Log2 fold change (T"["1(DRUG)"]*"/T"["1(DMSO)"]*")")
 
 #Axes limit, 0 = automatic, 1: custom
 Axlim<- 0
 if (Axlim==1){
   # Custom axes limits:
-  xmin=0
-  xmax=4.2
-  xticks=1
+  xmin<- 0
+  xmax<- 4.2
+  xticks<- 1
   
-  ymin=-1.25
-  ymax=1
-  yticks=0.25
+  ymin<- -1.25
+  ymax<- 1
+  yticks<- 0.25
 }
 
 # Colors (All guides, positive and negative controls, hits):
-ColAll <- "lightgray"
-ColP <- "lightpink1"
-#ColP <- "red"
-ColN <- "lightskyblue"  
-#ColN <- "blue"
-ColH <- "black"
+ColAll<- "lightgray"
+ColP<- "lightpink1"
+#ColP<- "red"
+ColN<- "lightskyblue"  
+#ColN<- "blue"
+ColH<- "black"
 
 ################################################################################
 setwd(folder) 
-files = list.files(pattern="Guides.csv$")
+files<- list.files(pattern="Guides.csv$")
 n=1
 for (file in files) {
-  df_res <- read.csv(file, stringsAsFactors = F)
+  df_res<- read.csv(file, stringsAsFactors = F)
   df_resx<- df_res[df_res$Type=="x",]
   df_resc<- df_res[df_res$Type!="x",]
   set.seed(101)
-  df_resc <- df_resc[sample(1:nrow(df_resc)),]
+  df_resc<- df_resc[sample(1:nrow(df_resc)),]
   df_res<-rbind(df_resx,df_resc)
   
-  df_res$logBaseMeanA <- log(df_res$BaseMeanA)/log(10)
-  df_res$log2FoldChange <- log(df_res$FoldChange)/log(2)
+  df_res$logBaseMeanA<- log(df_res$BaseMeanA)/log(10)
+  df_res$log2FoldChange<- log(df_res$FoldChange)/log(2)
   
-  df_res$col <- ColAll
-  df_res$col[df_res$Type=="p"] <- ColP
-  df_res$col[df_res$Type=="n"] <- ColN
-  df_res$pch <- 16
+  df_res$col<- ColAll
+  df_res$col[df_res$Type=="p"]<- ColP
+  df_res$col[df_res$Type=="n"]<- ColN
+  df_res$pch<- 16
   df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange<0] <- 25
   df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange>0] <- 24
   
-  df_PC <- df_res[df_res$Type=="p",]
-  df_NC <- df_res[df_res$Type=="n",]
+  df_PC<- df_res[df_res$Type=="p",]
+  df_NC<- df_res[df_res$Type=="n",]
   
   # MA plots
   if (Axlim==0){
@@ -124,10 +124,10 @@ for (file in files) {
     abline(median(df_res$log2FoldChange, na.rm=TRUE),0, col=1, lty=3, untf=TRUE)
     
     # Density plot fold change
-    den_tot<-density(df_res$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
-    den_PC<-density(df_PC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
-    den_NC<-density(df_NC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
-    denMax <- max(c(den_tot$y, den_PC$y, den_NC$y))
+    den_tot<- density(df_res$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    den_PC<- density(df_PC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    den_NC<- density(df_NC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    denMax<- max(c(den_tot$y, den_PC$y, den_NC$y))
     
     par(fig=c(0.64,0.9,0.1,0.8),new=TRUE)
     plot(den_tot$y, den_tot$x, ylim=c(ymin,ymax), xlim=(c(0,denMax)), type='l', axes=FALSE, col=ColAll, xlab="", 
@@ -135,46 +135,46 @@ for (file in files) {
     par(new=TRUE)
     lines(den_PC$y, den_PC$x, col=ColP, lwd=2)
     lines(den_NC$y, den_NC$x, col=ColN, lwd=2)
-    rgb.val <- col2rgb(ColAll)
+    rgb.val<- col2rgb(ColAll)
     polygon(den_tot$y, den_tot$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
-    rgb.val <- col2rgb(ColP)
+    rgb.val<- col2rgb(ColP)
     polygon(den_PC$y, den_PC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
-    rgb.val <- col2rgb(ColN)
+    rgb.val<- col2rgb(ColN)
     polygon(den_NC$y, den_NC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
     
     if (nrow(df_GOI)>1){
       par(new=TRUE)
-      den_GOI<-density(df_GOI$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+      den_GOI<- density(df_GOI$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
       lines(den_GOI$y, den_GOI$x, col=ColH, lwd=2)
-      rgb.val <- col2rgb(ColH)
+      rgb.val<- col2rgb(ColH)
       polygon(den_GOI$y,den_GOI$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
     }
     
     # Density plot read count
-    denX_tot<-density(df_res$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
-    denX_PC<-density(df_PC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
-    denX_NC<-density(df_NC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
-    denXMax <- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
+    denX_tot<- density(df_res$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+    denX_PC<- density(df_PC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+    denX_NC<- density(df_NC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+    denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
     
     par(fig=c(0.1,0.8,0.64,0.9),new=TRUE)
     plot(denX_tot, main = maintitle, cex.main=1.5, xlim=c(xmin, xmax), ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
          ylab="", lwd=2)
     lines(denX_PC, col=ColP, lwd=2)
     lines(denX_NC, col=ColN, lwd=2)
-    rgb.val <- col2rgb(ColAll)
+    rgb.val<- col2rgb(ColAll)
     polygon(denX_tot, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
-    rgb.val <- col2rgb(ColP)
+    rgb.val<- col2rgb(ColP)
     polygon(denX_PC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
-    rgb.val <- col2rgb(ColN)
+    rgb.val<- col2rgb(ColN)
     polygon(denX_NC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
     if (nrow(df_GOI)>1){
       par(new=TRUE)
-      denX_GOI<-density(df_GOI$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+      denX_GOI<- density(df_GOI$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
       lines(denX_GOI, col=1, lwd=2)
-      rgb.val <- col2rgb(ColH)
+      rgb.val<- col2rgb(ColH)
       polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
     }
   }
   dev.off()
-  n<-n+1
+  n<- n+1
 }
