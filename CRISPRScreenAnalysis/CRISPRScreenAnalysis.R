@@ -592,12 +592,7 @@ for (Filename in Filenames) {
     # MA plots
     xrange<-c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
     yrange<-c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
-    
-    den_tot<-density(df_res$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-    den_PC<-density(df_PC$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-    den_NC<-density(df_NC$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-    denMax <- max(c(den_tot$y, den_PC$y, den_NC$y))
-    
+
     if (ConStat==0) {
       # Robust Z prime (median and median absolute deviation)
       Mp<- median(df_PC$log2FoldChange,na.rm=TRUE)
@@ -646,6 +641,11 @@ for (Filename in Filenames) {
       abline(median(df_res$log2FoldChange, na.rm=TRUE),0, col=1, lty=3, untf=TRUE)
       
       # Density plot fold change
+      den_tot<-density(df_res$log2FoldChange, from=yrange[1], to=yrange[2])
+      den_PC<-density(df_PC$log2FoldChange, from=yrange[1], to=yrange[2])
+      den_NC<-density(df_NC$log2FoldChange, from=yrange[1], to=yrange[2])
+      denMax <- max(c(den_tot$y, den_PC$y, den_NC$y))
+      
       par(fig=c(0.75,1,0.1,0.83),new=TRUE)
       plot(den_tot$y, den_tot$x, ylim=range(yrange), xlim=(c(0,denMax)), type='l', axes=FALSE, col="gray", xlab="", 
            ylab="", lwd=2)
@@ -653,34 +653,34 @@ for (Filename in Filenames) {
       lines(den_PC$y, den_PC$x, col="red", lwd=2)
       lines(den_NC$y, den_NC$x, col="blue", lwd=2)
       if (Gene=="Hitlist" && nrow(df_hits_total)>1){
-        den_hits_total<-density(df_hits_total$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
+        den_hits_total<-density(df_hits_total$log2FoldChange, from=yrange[1], to=yrange[2])
         lines(den_hits_total$y, den_hits_total$x, col=1, lwd=2)
       }
       if (nrow(df_GOI)>1){
         par(new=TRUE)
-        den_GOI<-density(df_GOI$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
+        den_GOI<-density(df_GOI$log2FoldChange, from=yrange[1], to=yrange[2])
         lines(den_GOI$y, den_GOI$x, col=1, lwd=2)
       }
+      
       # Density plot read count
-      denX_tot<-density(df_res$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-      denX_PC<-density(df_PC$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-      denX_NC<-density(df_NC$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
+      denX_tot<-density(df_res$logBaseMeanA, from=xrange[1], to=xrange[2])
+      denX_PC<-density(df_PC$logBaseMeanA, from=xrange[1], to=xrange[2])
+      denX_NC<-density(df_NC$logBaseMeanA, from=xrange[1], to=xrange[2])
       denXMax <- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
       
       par(fig=c(0.1,0.83,0.75,1),new=TRUE)
-      denX_tot<-density(df_res$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
       plot(denX_tot$x, denX_tot$y, xlim=range(xrange), ylim=c(0,denXMax), type='l', axes=FALSE, col="gray", xlab="", 
            ylab="", lwd=2)
       lines(denX_PC$x, denX_PC$y, col="red", lwd=2)
       lines(denX_NC$x, denX_NC$y, col="blue", lwd=2)
       if (Gene=="Hitlist" && nrow(df_hits_total)>1){
         par(new=TRUE)
-        denX_hits_total<-density(df_hits_total$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
+        denX_hits_total<-density(df_hits_total$logBaseMeanA, from=xrange[1], to=xrange[2])
         lines(denX_hits_total$x, denX_hits_total$y, col=1, lwd=2)
       }
       if (nrow(df_GOI)>1){
         par(new=TRUE)
-        denX_GOI<-density(df_GOI$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
+        denX_GOI<-density(df_GOI$logBaseMeanA, from=xrange[1], to=xrange[2])
         lines(denX_GOI$x, denX_GOI$y, col=1, lwd=2)
       }
     }
