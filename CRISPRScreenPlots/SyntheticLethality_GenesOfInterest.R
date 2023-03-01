@@ -6,14 +6,16 @@
 ##################################################################################################################################
 #                                                                 SETTINGS
 
-# Folder screen data:
-Workdirectory<- "H:/BioWin/CRISPRscreen"
+# Put this script in the folder where the count tables are located
+folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
+## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
+#folder<- "H:/BioWin/CRISPRscreen/Namalwa/"
 
 # Cell line:
 cellID<- "Namalwa"
 
 # Is there a T1drug/T1control comparison, 0: no, 1: yes
-t2t1com = 1
+t2t1com<- 1
 
 # Genes to emphasize, 0: all significant (from T1drug/T1control comparison), 1: specific genes  
 allsignif<- 0
@@ -43,7 +45,7 @@ NormalizeY<- 1
 Axlim<- 0
 # Equal X and Y axes, 0 = no, 1: yes
 XYequal<- 1
-if (Axlim==1){
+if (Axlim==0){
   # Custom axes limits: 
   xmin<- -0.8
   xmax<- 0.4
@@ -55,37 +57,37 @@ if (Axlim==1){
 }
 
 # Colors:
-call = 'lightgray'
-cpos = 'red'
-cneg = 'blue'
-chit = 'black'
+call<- 'lightgray'
+cpos<- 'red'
+cneg<- 'blue'
+chit<- 'black'
 ##################################################################################################################################
-setwd(Workdirectory)
+setwd(folder)
 
-Control<-read.csv("DESeq2 T0vsT1 Genes.csv", stringsAsFactors=F)
+Control<- read.csv("DESeq2 T0vsT1 Genes.csv", stringsAsFactors=F)
 if (NormalizeX == 0){
   Control$Nmfc<- log2(Control$MedianFoldChange)
 }
 if (NormalizeX == 1){
-  medianCP<-log2(median(Control$MedianFoldChange[Control$Type=='p']))
-  medianCN<-log2(median(Control$MedianFoldChange[Control$Type=='n']))
+  medianCP<- log2(median(Control$MedianFoldChange[Control$Type=='p']))
+  medianCN<- log2(median(Control$MedianFoldChange[Control$Type=='n']))
   Control$Nmfc<- (log2(Control$MedianFoldChange)-medianCN)/abs(medianCP-medianCN)
 }
 ControlG<- Control[,c("GeneSymbol","Type","Nmfc")]
 
-Treated <-read.csv("DESeq2 T0vsT2 Genes.csv", stringsAsFactors=F)
+Treated <- read.csv("DESeq2 T0vsT2 Genes.csv", stringsAsFactors=F)
 if (NormalizeY == 0){
   Treated$Nmfc<- log2(Treated$MedianFoldChange)
 }
 if (NormalizeY == 1){
-  medianTP<-log2(median(Treated$MedianFoldChange[Treated$Type=='p']))
+  medianTP<- log2(median(Treated$MedianFoldChange[Treated$Type=='p']))
   medianTN<- log2(median(Treated$MedianFoldChange[Treated$Type=='n']))
   Treated$Nmfc<- (log2(Treated$MedianFoldChange)-medianTN)/abs(medianTP-medianTN)
 }
 TreatedG<- Treated[,c("GeneSymbol","Nmfc")]
 
 if (t2t1com==1){
-  TC <-read.csv("DESeq2 T1vsT2 Genes.csv", stringsAsFactors=F)
+  TC<- read.csv("DESeq2 T1vsT2 Genes.csv", stringsAsFactors=F)
   TC$Stat<- apply(TC[,c("rhoDepleted","rhoEnriched")], 1, FUN=min)
   TC$fdr<- apply(TC[,c("fdrDepleted","fdrEnriched")], 1, FUN=min)
   TCG<- TC[,c("GeneSymbol","Stat", "fdr")]
@@ -98,9 +100,9 @@ if (t2t1com==1){
   Combi<- merge(Combi, TCG, by="GeneSymbol")
 }
 
-pos<-Combi[Combi$Type=="p",]
-neg<-Combi[Combi$Type=="n",]
-hit<-Combi[Combi$GeneSymbol %in% GenesOfInterest,]
+pos<- Combi[Combi$Type=="p",]
+neg<- Combi[Combi$Type=="n",]
+hit<- Combi[Combi$GeneSymbol %in% GenesOfInterest,]
 
 if (Axlim==0){
   # Calculate axis limits:
@@ -110,19 +112,19 @@ if (Axlim==0){
   ymax<- round(max(Combi$Nmfc.y),2)+0.3
   if (XYequal==1){
     xmin<- min(xmin,ymin)
-    ymin<-min(xmin,ymin)
+    ymin<- min(xmin,ymin)
     xmax<- max(xmax,ymax)
-    ymax<-max(xmax,ymax)
+    ymax<- max(xmax,ymax)
   }
   xticks<- round((xmax-xmin)/5.1,2)
   yticks<- round((ymax-ymin)/5.1,2)
 }
 
-denY_PC<-density(pos$Nmfc.y, from=ymin, to=ymax, na.rm=TRUE)
-denY_NC<-density(neg$Nmfc.y, from=ymin, to=ymax, na.rm=TRUE)
+denY_PC<- density(pos$Nmfc.y, from=ymin, to=ymax, na.rm=TRUE)
+denY_NC<- density(neg$Nmfc.y, from=ymin, to=ymax, na.rm=TRUE)
 denYMax <- max(c(denY_PC$y, denY_NC$y))
-denX_PC<-density(pos$Nmfc.x, from=xmin, to=xmax, na.rm=TRUE)
-denX_NC<-density(neg$Nmfc.x, from=xmin, to=xmax, na.rm=TRUE)
+denX_PC<- density(pos$Nmfc.x, from=xmin, to=xmax, na.rm=TRUE)
+denX_NC<- density(neg$Nmfc.x, from=xmin, to=xmax, na.rm=TRUE)
 denXMax <- max(c(denX_PC$y, denX_NC$y))
 
 pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),7,7)
