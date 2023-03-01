@@ -43,7 +43,7 @@ NormalizeY<- 1
 Axlim<- 0
 # Equal X and Y axes, 0 = no, 1: yes
 XYequal<- 1
-if (Axlim==0){
+if (Axlim==1){
   # Custom axes limits: 
   xmin<- -0.8
   xmax<- 0.4
@@ -103,7 +103,7 @@ neg<-Combi[Combi$Type=="n",]
 hit<-Combi[Combi$GeneSymbol %in% GenesOfInterest,]
 
 if (Axlim==0){
-  # Custom axes limints: 
+  # Calculate axis limits:
   xmin<- round(min(Combi$Nmfc.x),2)-0.3
   xmax<- round(max(Combi$Nmfc.x),2)+0.3
   ymin<- round(min(Combi$Nmfc.y),2)-0.3
