@@ -151,11 +151,21 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),7,7)
   abline(0,1, col="black", lty=2)
   legend(xmin,ymax,legend=c("All genes", "Essentials","Non-essentials"), pch=16, col=c(call,cpos,cneg))
   
+  # Density y axis
   par(fig=c(0.695,1,0.1,0.87),new=TRUE)
   plot(denY_PC$y, denY_PC$x, ylim=c(ymin,ymax), xlim=(c(0,denYMax)), type='l', axes=FALSE, col=2, xlab="", ylab="", lwd=2)
   lines(denY_NC$y, denY_NC$x, col=4, lwd=2)
+  rgb.val<- col2rgb(ColP)
+  polygon(denY_PC$y, denY_PC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
+  rgb.val<- col2rgb(ColN)
+  polygon(denY_NC$y, denY_NC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
   
+  # Density x axis
   par(fig=c(0.1,0.87,0.695,1),new=TRUE)
   plot(denX_PC$x, denX_PC$y, xlim=c(xmin,xmax), ylim=c(0,denXMax), type='l', axes=FALSE, col=2, xlab="", ylab="", lwd=2, main=cellID)
   lines(denX_NC$x, denX_NC$y, col=4, lwd=2)
+  rgb.val<- col2rgb(ColP)
+  polygon(denX_PC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
+  rgb.val<- col2rgb(ColN)
+  polygon(denX_NC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
 dev.off()

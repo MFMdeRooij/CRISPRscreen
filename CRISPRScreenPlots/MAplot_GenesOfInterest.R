@@ -124,30 +124,29 @@ for (file in files) {
     abline(median(df_res$log2FoldChange, na.rm=TRUE),0, col=1, lty=3, untf=TRUE)
     
     # Density plot fold change
-    den_tot<- density(df_res$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
-    den_PC<- density(df_PC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
-    den_NC<- density(df_NC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
-    denMax<- max(c(den_tot$y, den_PC$y, den_NC$y))
+    denY_tot<- density(df_res$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    denY_PC<- density(df_PC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    denY_NC<- density(df_NC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    denYMax<- max(c(denY_tot$y, denY_PC$y, denY_NC$y))
     
     par(fig=c(0.64,0.9,0.1,0.8),new=TRUE)
-    plot(den_tot$y, den_tot$x, ylim=c(ymin,ymax), xlim=(c(0,denMax)), type='l', axes=FALSE, col=ColAll, xlab="", 
+    plot(denY_tot$y, denY_tot$x, ylim=c(ymin,ymax), xlim=(c(0,denMax)), type='l', axes=FALSE, col=ColAll, xlab="", 
          ylab="", lwd=2)
     par(new=TRUE)
-    lines(den_PC$y, den_PC$x, col=ColP, lwd=2)
-    lines(den_NC$y, den_NC$x, col=ColN, lwd=2)
+    lines(denY_PC$y, denY_PC$x, col=ColP, lwd=2)
+    lines(denY_NC$y, denY_NC$x, col=ColN, lwd=2)
     rgb.val<- col2rgb(ColAll)
-    polygon(den_tot$y, den_tot$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
+    polygon(denY_tot$y, denY_tot$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     rgb.val<- col2rgb(ColP)
-    polygon(den_PC$y, den_PC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
+    polygon(denY_PC$y, denY_PC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     rgb.val<- col2rgb(ColN)
-    polygon(den_NC$y, den_NC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
-    
+    polygon(denY_NC$y, denY_NC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     if (nrow(df_GOI)>1){
       par(new=TRUE)
-      den_GOI<- density(df_GOI$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
-      lines(den_GOI$y, den_GOI$x, col=ColH, lwd=2)
+      denY_GOI<- density(df_GOI$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+      lines(denY_GOI$y, denY_GOI$x, col=ColH, lwd=2)
       rgb.val<- col2rgb(ColH)
-      polygon(den_GOI$y,den_GOI$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
+      polygon(denY_GOI$y, denY_GOI$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     }
     
     # Density plot read count
@@ -162,17 +161,17 @@ for (file in files) {
     lines(denX_PC, col=ColP, lwd=2)
     lines(denX_NC, col=ColN, lwd=2)
     rgb.val<- col2rgb(ColAll)
-    polygon(denX_tot, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
+    polygon(denX_tot, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     rgb.val<- col2rgb(ColP)
-    polygon(denX_PC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
+    polygon(denX_PC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     rgb.val<- col2rgb(ColN)
-    polygon(denX_NC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
+    polygon(denX_NC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     if (nrow(df_GOI)>1){
       par(new=TRUE)
       denX_GOI<- density(df_GOI$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
       lines(denX_GOI, col=1, lwd=2)
       rgb.val<- col2rgb(ColH)
-      polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
+      polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     }
   }
   dev.off()
