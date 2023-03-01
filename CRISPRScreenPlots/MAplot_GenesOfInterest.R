@@ -5,6 +5,12 @@
 ## Install package
 #install.packages("rstudioapi")
 ################################################################################
+#                       SETTINGS
+# Put this script in the folder where the count tables are located
+folder <- dirname(rstudioapi::getActiveDocumentContext()$path)
+## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
+#folder <- "H:/BioWin/CRISPRscreen/Namalwa/"
+
 # Which genes:
 Genes_of_interest<-c(" ", "BTK", "SYK", "PIK3R1")
 
@@ -31,14 +37,18 @@ y3title = expression("Log2 fold change ("*alpha*"IgM/PMA)")
 # x3title = expression("Log10 average read counts (T"["1DMSO"]*")")
 # y3title = expression("Log2 fold change (T"["1(DRUG)"]*"/T"["1(DMSO)"]*")")
 
-# X- and Y-axes limits:
-xmin=0
-xmax=4.2
-xticks=1
-
-ymin=-1.25
-ymax=1
-yticks=0.25
+#Axes limit, 0 = automatic, 1: custom
+Axlim<- 0
+if (Axlim==1){
+  # Custom axes limits:
+  xmin=0
+  xmax=4.2
+  xticks=1
+  
+  ymin=-1.25
+  ymax=1
+  yticks=0.25
+}
 
 # Colors (All guides, positive and negative controls, hits):
 ColAll <- "lightgray"
@@ -49,7 +59,6 @@ ColN <- "lightskyblue"
 ColH <- "black"
 
 ################################################################################
-folder <- dirname(rstudioapi::getActiveDocumentContext()$path)
 setwd(folder) 
 files = list.files(pattern="Guides.csv$")
 n=1
@@ -75,17 +84,16 @@ for (file in files) {
   df_NC <- df_res[df_res$Type=="n",]
   
   # MA plots
-  xrange<-c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
-  yrange<-c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
-  
-  xrange<-c(xmin, xmax)
-  yrange<-c(ymin,ymax)
-  
-  den_tot<-density(df_res$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-  den_PC<-density(df_PC$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-  den_NC<-density(df_NC$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-  denMax <- max(c(den_tot$y, den_PC$y, den_NC$y))
-  
+  if (Axlim==0){
+    # Calculate axis limits:
+    xmin<- 0
+    xmax<- round(max(df_res$logBaseMeanA, na.rm=TRUE),2)+0.3
+    ymin<- round(min(df_res$log2FoldChange, na.rm=TRUE),2)-0.3
+    ymax<- round(max(df_res$log2FoldChange, na.rm=TRUE),2)+0.3
+    xticks<- round((xmax-xmin)/5.1,2)
+    yticks<- round((ymax-ymin)/5.1,2)
+  }
+    
   if (n==1){
     xlabel<- x1title
     ylabel<- y1title
@@ -98,14 +106,14 @@ for (file in files) {
     xlabel<- x3title
     ylabel<- y3title
   }
-  pdf(paste0(file,".pdf"), 7,7)
+  pdf(paste0(file,paste(substr(Genes_of_interest, 1,1),collapse=""),".pdf"), 7,7)
   for(Gene in Genes_of_interest){
     df_GOI<-df_res[df_res$GeneSymbol %in% Gene,]
     
     par(mar=c(4.5,4.5,1,1))
     par(fig=c(0.1,0.8,0.1,0.8))
     plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col=df_res$col, bg=df_res$col, cex=1, pch=df_res$pch, xlab=xlabel, 
-         ylab=ylabel, cex.lab=1.3, cex.axis=1.3, xlim=xrange, ylim=yrange, xaxp=c(xmin,xmin+xticks*floor((xmax-xmin)/xticks),
+         ylab=ylabel, cex.lab=1.3, cex.axis=1.3, xlim=c(xmin, xmax), ylim=c(ymin, ymax), xaxp=c(xmin,xmin+xticks*floor((xmax-xmin)/xticks),
               floor((xmax-xmin)/xticks)), yaxp=c(ymin,ymin+yticks*floor((ymax-ymin)/yticks),floor((ymax-ymin)/yticks)))
     if (nrow(df_GOI)>=1){
       points(df_GOI$logBaseMeanA, df_GOI$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1.5, pch=df_GOI$pch)
@@ -116,8 +124,13 @@ for (file in files) {
     abline(median(df_res$log2FoldChange, na.rm=TRUE),0, col=1, lty=3, untf=TRUE)
     
     # Density plot fold change
+    den_tot<-density(df_res$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    den_PC<-density(df_PC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    den_NC<-density(df_NC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    denMax <- max(c(den_tot$y, den_PC$y, den_NC$y))
+    
     par(fig=c(0.64,0.9,0.1,0.8),new=TRUE)
-    plot(den_tot$y, den_tot$x, ylim=range(yrange), xlim=(c(0,denMax)), type='l', axes=FALSE, col=ColAll, xlab="", 
+    plot(den_tot$y, den_tot$x, ylim=c(ymin,ymax), xlim=(c(0,denMax)), type='l', axes=FALSE, col=ColAll, xlab="", 
          ylab="", lwd=2)
     par(new=TRUE)
     lines(den_PC$y, den_PC$x, col=ColP, lwd=2)
@@ -131,20 +144,20 @@ for (file in files) {
     
     if (nrow(df_GOI)>1){
       par(new=TRUE)
-      den_GOI<-density(df_GOI$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
+      den_GOI<-density(df_GOI$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
       lines(den_GOI$y, den_GOI$x, col=ColH, lwd=2)
       rgb.val <- col2rgb(ColH)
       polygon(den_GOI$y,den_GOI$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
     }
+    
     # Density plot read count
-    denX_tot<-density(df_res$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-    denX_PC<-density(df_PC$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-    denX_NC<-density(df_NC$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
+    denX_tot<-density(df_res$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+    denX_PC<-density(df_PC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+    denX_NC<-density(df_NC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
     denXMax <- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
     
     par(fig=c(0.1,0.8,0.64,0.9),new=TRUE)
-    denX_tot<-density(df_res$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-    plot(denX_tot, main = maintitle, cex.main=1.5, xlim=range(xrange), ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
+    plot(denX_tot, main = maintitle, cex.main=1.5, xlim=c(xmin, xmax), ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
          ylab="", lwd=2)
     lines(denX_PC, col=ColP, lwd=2)
     lines(denX_NC, col=ColN, lwd=2)
@@ -156,7 +169,7 @@ for (file in files) {
     polygon(denX_NC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
     if (nrow(df_GOI)>1){
       par(new=TRUE)
-      denX_GOI<-density(df_GOI$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
+      denX_GOI<-density(df_GOI$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
       lines(denX_GOI, col=1, lwd=2)
       rgb.val <- col2rgb(ColH)
       polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3))
