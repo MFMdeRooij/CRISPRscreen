@@ -101,7 +101,7 @@ dfneg = df[df['Type']=='n']
 dfhits = df[df['GeneSymbol'].isin(GenesOfInterest)].reset_index()
 
 if Axlim==0:
-     # Calculate axis limits:      
+    # Calculate axis limits:    
     xmin, xmax=round(df['Control'].min(),2)-0.3, round(df['Control'].max(),2)+0.3
     ymin, ymax=round(df['Treated'].min(),2)-0.3, round(df['Treated'].max(),2)+0.3
     if XYequal==1:
@@ -133,7 +133,11 @@ if len(GenesOfInterest)>0:
         plt.scatter(dfhits['Control'], dfhits['Treated'], marker='o', color=chit,  s=-2*np.log10(dfhits['Stat']))
     for i, txt in enumerate(dfhits['GeneSymbol']):
         plt.annotate(txt, (dfhits['Control'][i]+(xmax-xmin)/100, dfhits['Treated'][i]), rotation=22.5, fontsize=7, color="black", ha='left')  
-plt.legend(('All genes', 'Essentials', 'Non-essentials'), fontsize=8, loc=2)
+
+lgnd = plt.legend(('All genes', 'Essentials', 'Non-essentials'), fontsize=8, loc=2)
+for handle in lgnd.legendHandles:
+    handle.set_sizes([10])
+
 plt.axhline(y=0, color='gray', linestyle='--', linewidth=0.5)
 plt.axvline(x=0, color='gray', linestyle='--', linewidth=0.5)
 plt.plot([-10, 10], [-10, 10], color='gray', linestyle='--', linewidth=0.5)
