@@ -48,6 +48,14 @@ if (MA_all_genes==3){
     BTK, SYK, PIK3CA, PIK3CD, PIK3R1, LYN
   )
 }
+
+# Colors MA plots (All genes, positive and negative controls (for CRISPR screens), hits):
+ColAll<- "lightgray"
+ColP<- "lightpink1"
+  #ColP<- "red"
+ColN<- "lightskyblue"  
+  #ColN<- "blue"
+ColH<- "black"
 ######################################################################################
 setwd(Workdirectory)
 
@@ -81,6 +89,7 @@ if (Paired==0) {
 if (Paired==1) {
   dds <- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Group)
 }  
+dds$Group <- relevel(dds$Group, unique(df_design$Group[1]))
 dds <- DESeq(dds, betaPrior = TRUE)
 
 # Define comparisons
@@ -91,7 +100,7 @@ combi<-as.data.frame(combinations(length(Groups),2,Groups))
 for (i in 1:nrow(combi)){
   con1 <- combi[i,1]
   con2 <- combi[i,2]
-  res <- results(dds, contrast=c("Group",con1,con2), addMLE=TRUE)
+  res <- results(dds, contrast=c("Group",con2,con1), addMLE=TRUE)
   
   # DESeq2 data table
   df_res <- as.data.frame(res)
@@ -143,7 +152,7 @@ for (i in 1:nrow(combi)){
   write.csv(df_res_print, paste0(dirname,"/DESeq2_RNAseq_",con1, "vs",con2,".csv"), row.names = FALSE)
   
   # Write Plots in PDF 
-  pdf(paste0(dirname,"/DESeq2_RNAseq_",con1, "vs",con2,"_Plots.pdf"), width=10, height=10)
+  pdf(paste0(dirname,"/DESeq2_RNAseq_",con1, "vs",con2,"_Plots.pdf"), width=7, height=7)
   
     # DESEq2 plots
     plotDispEsts(dds, main="Dispersion plot")
@@ -162,74 +171,116 @@ for (i in 1:nrow(combi)){
     
     print(plotPCA(rld, intgroup=c("Group", "Rep")))
 
-    # MA plots
+    
+    
+    
+    Genes_of_interest<-c(" ", "Hitlist", if (MA_all_genes==0) {df_hits_A$GeneSymbol}, 
+                         if (MA_all_genes==2) {tophits}, if (MA_all_genes==3) {interestingGenes})
+    
+    # Color and marker information
+    df_res$col<- ColAll
+    df_res$col[df_res$Type=="p"]<- ColP
+    df_res$col[df_res$Type=="n"]<- ColN
+    df_res$pch<- 16
+    df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange<0] <- 25
+    df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange>0] <- 24
+    
+    # Mix essential and non-essential randomly
+    df_resx<- df_res[df_res$Type=="x",]
+    df_resc<- df_res[df_res$Type!="x",]
+    set.seed(101)
+    df_resc<- df_resc[sample(1:nrow(df_resc)),]
+    df_res<-rbind(df_resx,df_resc)
+    
+    # Axes limits
     xrange<-c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
     yrange<-c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
     
-    den_tot<-density(df_res$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-    den_PC<-density(df_PC$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-    den_NC<-density(df_NC$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-    denMax <- max(c(den_tot$y, den_PC$y, den_NC$y))
+    # Density plot fold change
+    denY_tot<-density(df_res$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+    denY_PC<-density(df_PC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+    denY_NC<-density(df_NC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+    denYMax <- max(c(denY_tot$y, denY_PC$y, denY_NC$y))
+    # Density plot read count
+    denX_tot<- density(df_res$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+    denX_PC<- density(df_PC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+    denX_NC<- density(df_NC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+    denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
     
-    
-    Gene_of_interest<-c(" ", "Hitlist", if (MA_all_genes==0) {df_res$hgnc_symbol}, if (MA_all_genes==2) {tophits}, if (MA_all_genes==3) {interestingGenes})
-    for(Gene in Gene_of_interest){
-      df_GOI<-df_res[df_res$hgnc_symbol %in% Gene,]
-      
-      par(mar=c(4,5,2,1))
-      par(fig=c(0.1,0.83,0.1,0.83))
-      plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col="gray", cex=.7, pch=16, xlab="Log10 Average Read Counts (Control)", 
-           ylab="Log2 Fold Change", cex.lab=1.5, cex.axis=1.3, xlim=xrange, ylim=yrange, xaxp = c(0, 10, 10), 
-           yaxp = c(-20, 20, 20))
-  
-      points(df_PC$logBaseMeanA, df_PC$log2FoldChange, type="p", col="red", cex=1, pch=15)
-      points(df_NC$logBaseMeanA, df_NC$log2FoldChange, type="p", col="blue", cex=1, pch=17)
+    # MA plots
+    par(mfrow=c(1,1))
+    for(Gene in Genes_of_interest){
+      df_GOI<- df_res[df_res$hgnc_symbol %in% Gene,]
+      # Main MA plot
+      par(mar=c(4,4,0,0))
+      par(fig=c(0.1,0.7,0.1,0.7))
+      plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col=df_res$col, bg=df_res$col, cex=1, pch=df_res$pch, xlab="Log10 Average Read Counts (Control)", 
+           ylab="Log2 Fold Change", cex.lab=1, cex.axis=1, xlim=xrange, ylim=yrange)
       if (Gene=="Hitlist"&& nrow(GenesDiff)>=1){
-        points(GenesDiff$logBaseMeanA, GenesDiff$log2FoldChange, type="p", col=1, cex=0.7, pch=19)
+        GenesDiff<- df_res[df_res$hgnc_symbol %in% GenesDiff$hgnc_symbol,]
+        points(GenesDiff$logBaseMeanA, GenesDiff$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1, pch=GenesDiff$pch)
       }
       if (nrow(df_GOI)>=1){
-        points(df_GOI$logBaseMeanA, df_GOI$log2FoldChange, type="p", col=1, cex=1.5, pch=19)
+        points(df_GOI$logBaseMeanA, df_GOI$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1.5, pch=df_GOI$pch)
       }
-      legend("topright",legend=c("Total", "Essential", "Non-Essential", if (nchar(Gene)>1 && !is.na(Gene)) {Gene}), cex=1, pch=c(16,15,17,if (nchar(Gene)>1 && !is.na(Gene)) {19}), col=c("gray","red","blue",if (nchar(Gene)>1 && !is.na(Gene)) {1}))
+      legend("bottomleft",legend=c( if (nchar(Gene)>1 && !is.na(Gene)) {Gene}, "All guides", "Essentials","Non-essentials",
+                                    'Significantly enriched', 'Significantly depleted'), cex=0.8, pch=c(if (nchar(Gene)>1 && !is.na(Gene)) 
+                                    {16},16,16,16, 24,25), col=c(if (nchar(Gene)>1 && !is.na(Gene)) {ColH}, ColAll,ColP,ColN, "black", "black"))
       abline(median(df_res$log2FoldChange, na.rm=TRUE),0, col=1, lty=3, untf=TRUE)
-      
-      # Density plot fold change
-      par(fig=c(0.71,1,0.1,0.83),new=TRUE)
-      plot(den_tot$y, den_tot$x, ylim=range(yrange), xlim=(c(0,denMax)), type='l', axes=FALSE, col="gray", xlab="", 
+  
+      # Density fold change
+      par(mar=c(4,0,0,4))
+      par(fig=c(0.7,0.9,0.1,0.7),new=TRUE)
+      plot(denY_tot$y, denY_tot$x, ylim=yrange, xlim=(c(0,denYMax)), type='l', axes=FALSE, col=ColAll, xlab="", 
            ylab="", lwd=2)
       par(new=TRUE)
-      lines(den_PC$y, den_PC$x, col="red", lwd=2)
-      lines(den_NC$y, den_NC$x, col="blue", lwd=2)
+      lines(denY_PC$y, denY_PC$x, col=ColP, lwd=2)
+      lines(denY_NC$y, denY_NC$x, col=ColN, lwd=2)
+      rgb.val<- col2rgb(ColAll)
+      polygon(denY_tot$y, denY_tot$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
+      rgb.val<- col2rgb(ColP)
+      polygon(denY_PC$y, denY_PC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
+      rgb.val<- col2rgb(ColN)
+      polygon(denY_NC$y, denY_NC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
       if (Gene=="Hitlist" && nrow(GenesDiff)>1){
-        den_hits_total<-density(GenesDiff$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-        lines(den_hits_total$y, den_hits_total$x, col=1, lwd=2)
+        denY_hits_total<-density(GenesDiff$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+        lines(denY_hits_total$y, denY_hits_total$x, col=ColH, lwd=2)
+        rgb.val<- col2rgb(ColH)
+        polygon(denY_hits_total$y, denY_hits_total$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
       }
       if (nrow(df_GOI)>1){
         par(new=TRUE)
-        den_GOI<-density(df_GOI$log2FoldChange, from=min(yrange[1]), to=max(yrange[2]), na.rm=TRUE)
-        lines(den_GOI$y, den_GOI$x, col=1, lwd=2)
+        denY_GOI<- density(df_GOI$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+        lines(denY_GOI$y, denY_GOI$x, col=ColH, lwd=2)
+        rgb.val<- col2rgb(ColH)
+        polygon(denY_GOI$y, denY_GOI$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
       }
-      # Density plot read count
-      denX_tot<-density(df_res$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-      denX_PC<-density(df_PC$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-      denX_NC<-density(df_NC$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-      denXMax <- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
       
-      par(fig=c(0.1,0.83,0.71,1),new=TRUE)
-      denX_tot<-density(df_res$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-      plot(denX_tot$x, denX_tot$y, xlim=range(xrange), ylim=c(0,denXMax), type='l', axes=FALSE, col="gray", xlab="", 
+      # Density read counts
+      par(mar=c(0,4,4,0))
+      par(fig=c(0.1,0.7,0.7,0.9),new=TRUE)
+      plot(denX_tot, main="MA plot", cex.main=1.5, xlim=xrange, ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
            ylab="", lwd=2)
-      lines(denX_PC$x, denX_PC$y, col="red", lwd=2)
-      lines(denX_NC$x, denX_NC$y, col="blue", lwd=2)
+      lines(denX_PC, col=ColP, lwd=2)
+      lines(denX_NC, col=ColN, lwd=2)
+      rgb.val<- col2rgb(ColAll)
+      polygon(denX_tot, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
+      rgb.val<- col2rgb(ColP)
+      polygon(denX_PC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
+      rgb.val<- col2rgb(ColN)
+      polygon(denX_NC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
       if (Gene=="Hitlist" && nrow(GenesDiff)>1){
-        par(new=TRUE)
-        denX_hits_total<-density(GenesDiff$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-        lines(denX_hits_total$x, denX_hits_total$y, col=1, lwd=2)
+        denX_hits_total<-density(GenesDiff$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+        lines(denX_hits_total, col=ColH, lwd=2)
+        rgb.val<- col2rgb(ColH)
+        polygon(denX_hits_total, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
       }
       if (nrow(df_GOI)>1){
         par(new=TRUE)
-        denX_GOI<-density(df_GOI$logBaseMeanA, from=min(xrange[1]), to=max(xrange[2]), na.rm=TRUE)
-        lines(denX_GOI$x, denX_GOI$y, col=1, lwd=2)
+        denX_GOI<- density(df_GOI$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+        lines(denX_GOI, col=ColH, lwd=2)
+        rgb.val<- col2rgb(ColH)
+        polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
       }
     }
   dev.off()
