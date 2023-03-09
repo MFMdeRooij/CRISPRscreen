@@ -674,7 +674,7 @@ for (Filename in Filenames) {
         plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col=df_res$col, bg=df_res$col, cex=1, pch=df_res$pch, xlab="Log10 Average Read Counts (Control)", 
              ylab="Log2 Fold Change", cex.lab=1, cex.axis=1, xlim=xrange, ylim=yrange)
         if (Gene=="Hitlist"&& nrow(df_hits_total)>=1){
-          df_hits_total<-df_res[df_res$Guide %in% df_hits_total$GGuide,]
+          df_hits_total<-df_res[df_res$Guide %in% df_hits_total$Guide,]
           points(df_hits_total$logBaseMeanA, df_hits_total$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1, pch=df_hits_total$pch)
         }
         if (nrow(df_GOI)>=1){
