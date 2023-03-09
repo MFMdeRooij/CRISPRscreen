@@ -171,9 +171,7 @@ for (i in 1:nrow(combi)){
     
     print(plotPCA(rld, intgroup=c("Group", "Rep")))
 
-    
-    
-    
+    # MA plots
     Genes_of_interest<-c(" ", "Hitlist", if (MA_all_genes==0) {df_hits_A$GeneSymbol}, 
                          if (MA_all_genes==2) {tophits}, if (MA_all_genes==3) {interestingGenes})
     
@@ -207,7 +205,6 @@ for (i in 1:nrow(combi)){
     denX_NC<- density(df_NC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
     denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
     
-    # MA plots
     par(mfrow=c(1,1))
     for(Gene in Genes_of_interest){
       df_GOI<- df_res[df_res$hgnc_symbol %in% Gene,]
