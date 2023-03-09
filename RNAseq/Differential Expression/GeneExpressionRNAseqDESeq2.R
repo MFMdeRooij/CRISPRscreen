@@ -22,25 +22,25 @@ library("gtools")
 Workdirectory<- "H:/BioWin/RNAseq/"
 
 # Which count table?
-Filename <- "RNAseqCountTableRawProteinCoding.csv"
+Filename<- "RNAseqCountTableRawProteinCoding.csv"
 
 # Fill in the table in RNAseqDesign.csv (Group = tumor-subtypes, Rep = replicates (when paired, this should be matched))
 
 # Round numbers in output table: 0 = Yes, 1 = No
-RoundNumbers <- 0
+RoundNumbers<- 0
 
 # Paired replicates: 0 = Paired, 1 = Unpaired
-Paired <- 1
+Paired<- 1
 
 # Minimal fold change of guides to be a hit: 1 = No minimal fold change,  >1: The minimal fold change (linear scale, 2^abs(l2fc))
-minimalFoldChange <- 1
+minimalFoldChange<- 1
 
 # MA plots of all genes: 0 = Yes, 1 = No, 2 = Top 10, 3 = Genes of interest
-MA_all_genes <- 2
+MA_all_genes<- 2
 
 # Genes of interest
 if (MA_all_genes==3){
-  q <- function(...) {
+  q<- function(...) {
     sapply(match.call()[-1], deparse)
   }
   interestingGenes <-q(
@@ -52,72 +52,72 @@ if (MA_all_genes==3){
 # Colors MA plots (All genes, positive and negative controls (for CRISPR screens), hits):
 ColAll<- "lightgray"
 ColP<- "lightpink1"
-  #ColP<- "red"
+#ColP<- "red"
 ColN<- "lightskyblue"  
-  #ColN<- "blue"
+#ColN<- "blue"
 ColH<- "black"
 ######################################################################################
 setwd(Workdirectory)
 
 # Make a data folder
 dirname2<- paste0(Filename,Sys.time())
-dirname1<-gsub("[[:punct:]]", "", dirname2) 
+dirname1<- gsub("[[:punct:]]", "", dirname2) 
 dirname<- gsub("\\s", "", dirname1) 
 dir.create(dirname)
 
 # Read count table
-df_raw <- read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALSE)
+df_raw<- read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALSE)
 
 # Gene annotation
 df_Gene_ID<- df_raw[,1:2]  
 
 # Sample metadata
-df_design<-read.csv("RNAseqDesign.csv")
-df_colData <- data.frame(Group=df_design$Group, Rep=df_design$Rep) 
-df_colData$Group <- as.factor(df_colData$Group)
-df_colData$Rep <- as.factor(df_colData$Rep)
+df_design<- read.csv("RNAseqDesign.csv")
+df_colData<- data.frame(Group=df_design$Group, Rep=df_design$Rep) 
+df_colData$Group<- as.factor(df_colData$Group)
+df_colData$Rep<- as.factor(df_colData$Rep)
 
 # Count table for DESEq2
-counts <- df_raw[,-1:-2]
-rownames(counts) <- df_raw[,1]
+counts<- df_raw[,-1:-2]
+rownames(counts)<- df_raw[,1]
 counts<-counts[,df_design$Sample]
 
 # DESeq2 pipeline
 if (Paired==0) {
-  dds <- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Rep + Group)
+  dds<- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Rep + Group)
 }
 if (Paired==1) {
-  dds <- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Group)
+  dds<- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Group)
 }  
-dds$Group <- relevel(dds$Group, unique(df_design$Group[1]))
-dds <- DESeq(dds, betaPrior = TRUE)
+dds<- DESeq(dds, betaPrior = TRUE)
 
 # Define comparisons
-Groups<-unique(df_design$Group)
-combi<-as.data.frame(combinations(length(Groups),2,Groups))
+Groups<- unique(df_design$Group)
+combi<- as.data.frame(combinations(length(Groups),2,Groups))
+combi<- combi[nrow(combi):1,ncol(combi):1]
 
 # Analyse comparisons
 for (i in 1:nrow(combi)){
-  con1 <- combi[i,1]
-  con2 <- combi[i,2]
-  res <- results(dds, contrast=c("Group",con2,con1), addMLE=TRUE)
+  con1<- combi[i,1]
+  con2<- combi[i,2]
+  res<- results(dds, contrast=c("Group",con2,con1), addMLE=TRUE)
   
   # DESeq2 data table
-  df_res <- as.data.frame(res)
+  df_res<- as.data.frame(res)
   
-  df_baseMeanPerLvl <- as.data.frame(sapply(levels(dds$Group), function(lvl) rowMeans(counts(dds, normalized=TRUE)[,dds$Group==lvl])))
-  df_res$BaseMeanA <- df_baseMeanPerLvl[[con1]]
-  df_res$logBaseMeanA <- log(df_baseMeanPerLvl[[con1]]+1)/log(10)
-  df_res$BaseMeanB <- df_baseMeanPerLvl[[con2]]
+  df_baseMeanPerLvl<- as.data.frame(sapply(levels(dds$Group), function(lvl) rowMeans(counts(dds, normalized=TRUE)[,dds$Group==lvl])))
+  df_res$BaseMeanA<- df_baseMeanPerLvl[[con1]]
+  df_res$logBaseMeanA<- log(df_baseMeanPerLvl[[con1]]+1)/log(10)
+  df_res$BaseMeanB<- df_baseMeanPerLvl[[con2]]
 
   # GeneIDs
-  df_res$ensembl_gene_id <- rownames(df_res)
-  df_res <- merge(df_Gene_ID, df_res, by='ensembl_gene_id', all.y=T)
-  df_res$log2FoldChange[is.na(df_res$log2FoldChange)] <-0
-  df_res$FoldChange <- 2^df_res$log2FoldChange
+  df_res$ensembl_gene_id<- rownames(df_res)
+  df_res<- merge(df_Gene_ID, df_res, by='ensembl_gene_id', all.y=T)
+  df_res$log2FoldChange[is.na(df_res$log2FoldChange)]<-0
+  df_res$FoldChange<- 2^df_res$log2FoldChange
     
   if (minimalFoldChange > 1) {
-    df_res$padj[!is.na(df_res$padj) & df_res$FoldChange >= (1/minimalFoldChange) & df_res$FoldChange <= minimalFoldChange] <- 1
+    df_res$padj[!is.na(df_res$padj) & df_res$FoldChange >= (1/minimalFoldChange) & df_res$FoldChange <= minimalFoldChange]<- 1
   }
   
   # CRISPR screen controls
@@ -128,17 +128,17 @@ for (i in 1:nrow(combi)){
   df_res$Type<- "x"
   df_res[df_res$hgnc_symbol %in% df_Control[[PC]][nchar(df_Control[[PC]])>0],"Type"]<- "p"
   df_res[df_res$hgnc_symbol %in% df_Control[[NC]][nchar(df_Control[[NC]])>0],"Type"]<- "n"
-  df_PC<-df_res[df_res$Type=="p",]
-  df_NC<-df_res[df_res$Type=="n",]
+  df_PC<- df_res[df_res$Type=="p",]
+  df_NC<- df_res[df_res$Type=="n",]
 
   # Hits
-  GenesDiff<-df_res[!is.na(df_res$padj),]
-  GenesDiff<-GenesDiff[GenesDiff$padj<0.1,]
-  GenesDiffDep<-GenesDiff[order(GenesDiff$log2FoldChange),]
-  GenesDiffDep<-GenesDiffDep[nchar(GenesDiffDep$hgnc_symbol)>0,]
-  GenesDiffEnr<-GenesDiff[order(GenesDiff$log2FoldChange, decreasing = T),]
-  GenesDiffEnr<-GenesDiffEnr[nchar(GenesDiffEnr$hgnc_symbol)>0,]
-  tophits<- c( GenesDiffDep[1:10,2], GenesDiffEnr[1:10,2])
+  GenesDiff<- df_res[!is.na(df_res$padj),]
+  GenesDiff<- GenesDiff[GenesDiff$padj<0.1,]
+  GenesDiffDep<- GenesDiff[order(GenesDiff$log2FoldChange),]
+  GenesDiffDep<- GenesDiffDep[nchar(GenesDiffDep$hgnc_symbol)>0,]
+  GenesDiffEnr<- GenesDiff[order(GenesDiff$log2FoldChange, decreasing = T),]
+  GenesDiffEnr<- GenesDiffEnr[nchar(GenesDiffEnr$hgnc_symbol)>0,]
+  tophits<- c(GenesDiffDep[1:10,2], GenesDiffEnr[1:10,2])
     
   # Write gene table
   
@@ -146,8 +146,8 @@ for (i in 1:nrow(combi)){
   df_res_print<- df_res[,c("hgnc_symbol","ensembl_gene_id","Type","BaseMeanA","BaseMeanB","FoldChange","pvalue","padj")]
   df_res_print<- df_res_print[order(df_res_print$FoldChange),]
   if (RoundNumbers==0){
-    df_res_print[,c("BaseMeanA","BaseMeanB")]<-round(df_res_print[,c("BaseMeanA","BaseMeanB")],0)
-    df_res_print[,c("FoldChange","pvalue","padj")]<-signif(df_res_print[,c("FoldChange","pvalue","padj")],4)
+    df_res_print[,c("BaseMeanA","BaseMeanB")]<- round(df_res_print[,c("BaseMeanA","BaseMeanB")],0)
+    df_res_print[,c("FoldChange","pvalue","padj")]<- signif(df_res_print[,c("FoldChange","pvalue","padj")],4)
   }                                                                                       
   write.csv(df_res_print, paste0(dirname,"/DESeq2_RNAseq_",con1, "vs",con2,".csv"), row.names = FALSE)
   
@@ -159,10 +159,10 @@ for (i in 1:nrow(combi)){
     
     rld<-rlog(dds, blind=FALSE)
     sampleDists<- dist(t(assay(rld)))
-    sampleDistMatrix <- as.matrix(sampleDists)
-    rownames(sampleDistMatrix) <- paste(rld$Group, rld$Rep)
-    colnames(sampleDistMatrix) <- paste(rld$Group, rld$Rep)
-    colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
+    sampleDistMatrix<- as.matrix(sampleDists)
+    rownames(sampleDistMatrix)<- paste(rld$Group, rld$Rep)
+    colnames(sampleDistMatrix)<- paste(rld$Group, rld$Rep)
+    colors<- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
     
     pheatmap(sampleDistMatrix,
              clustering_distance_rows=sampleDists,
@@ -172,7 +172,7 @@ for (i in 1:nrow(combi)){
     print(plotPCA(rld, intgroup=c("Group", "Rep")))
 
     # MA plots
-    Genes_of_interest<-c(" ", "Hitlist", if (MA_all_genes==0) {df_hits_A$GeneSymbol}, 
+    Genes_of_interest<- c(" ", "Hitlist", if (MA_all_genes==0) {df_hits_A$GeneSymbol}, 
                          if (MA_all_genes==2) {tophits}, if (MA_all_genes==3) {interestingGenes})
     
     # Color and marker information
@@ -180,25 +180,25 @@ for (i in 1:nrow(combi)){
     df_res$col[df_res$Type=="p"]<- ColP
     df_res$col[df_res$Type=="n"]<- ColN
     df_res$pch<- 16
-    df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange<0] <- 25
-    df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange>0] <- 24
+    df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange<0]<- 25
+    df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange>0]<- 24
     
     # Mix essential and non-essential randomly
     df_resx<- df_res[df_res$Type=="x",]
     df_resc<- df_res[df_res$Type!="x",]
     set.seed(101)
     df_resc<- df_resc[sample(1:nrow(df_resc)),]
-    df_res<-rbind(df_resx,df_resc)
+    df_res<- rbind(df_resx,df_resc)
     
     # Axes limits
-    xrange<-c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
-    yrange<-c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
+    xrange<- c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
+    yrange<- c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
     
     # Density plot fold change
-    denY_tot<-density(df_res$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
-    denY_PC<-density(df_PC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
-    denY_NC<-density(df_NC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
-    denYMax <- max(c(denY_tot$y, denY_PC$y, denY_NC$y))
+    denY_tot<- density(df_res$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+    denY_PC<- density(df_PC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+    denY_NC<- density(df_NC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+    denYMax<- max(c(denY_tot$y, denY_PC$y, denY_NC$y))
     # Density plot read count
     denX_tot<- density(df_res$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
     denX_PC<- density(df_PC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
@@ -214,7 +214,7 @@ for (i in 1:nrow(combi)){
       plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col=df_res$col, bg=df_res$col, cex=1, pch=df_res$pch, xlab="Log10 Average Read Counts (Control)", 
            ylab="Log2 Fold Change", cex.lab=1, cex.axis=1, xlim=xrange, ylim=yrange)
       if (Gene=="Hitlist"&& nrow(GenesDiff)>=1){
-        GenesDiff<- df_res[df_res$hgnc_symbol %in% GenesDiff$hgnc_symbol,]
+        GenesDiff<- df_res[df_res$ensembl_gene_id %in% GenesDiff$ensembl_gene_id,]
         points(GenesDiff$logBaseMeanA, GenesDiff$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1, pch=GenesDiff$pch)
       }
       if (nrow(df_GOI)>=1){
