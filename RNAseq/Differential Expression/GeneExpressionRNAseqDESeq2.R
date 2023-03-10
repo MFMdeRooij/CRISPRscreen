@@ -171,7 +171,7 @@ for (i in 1:nrow(combi)){
     
     print(plotPCA(rld, intgroup=c("Group", "Rep")))
 
-    # MA plots
+    # Volcano & MA plots
     Genes_of_interest<- c(" ", "Hitlist", if (MA_all_genes==0) {df_hits_A$GeneSymbol}, 
                          if (MA_all_genes==2) {tophits}, if (MA_all_genes==3) {interestingGenes})
     
@@ -190,6 +190,11 @@ for (i in 1:nrow(combi)){
     df_resc<- df_resc[sample(1:nrow(df_resc)),]
     df_res<- rbind(df_resx,df_resc)
     
+    volcano<- df_res
+    volcano$padj[is.na(volcano$padj)]<- 1
+    palette <- colorRampPalette(c("cyan","black"))
+    volcano$col<-palette(100)[100*(log2(volcano$baseMean+2) / log2(max(volcano$baseMean)+2))]
+    
     # Axes limits
     xrange<- c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
     yrange<- c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
@@ -205,6 +210,45 @@ for (i in 1:nrow(combi)){
     denX_NC<- density(df_NC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
     denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
     
+    # Volcano plot
+    
+    # Margins
+    par(mar=c(4,4,4,4))
+    par(fig=c(0.1,0.85,0.1,0.85))
+    par(bty="l")
+    
+    # Empty plot
+    plot(0, pch = '', 
+         main= "Volcano plot",
+         xlab= expression("Log"[2]*" fold change"), 
+         ylab= expression("-Log"[10]*" FDR"),
+         cex.lab=1, cex.axis=1, las=1, xlim=yrange, ylim=c(0,max(-log10(volcano$padj))))
+    
+    # Vertical and horizontal lines
+    abline(v=2.5*(-10:10), lty=3, col="gray")
+    abline(h=5*(0:20), lty=3, col="gray")
+    
+    # Actual plot
+    points(volcano$log2FoldChange, -log10(volcano$padj), type="p", col=volcano$col, bg=volcano$col, cex=1, pch=volcano$pch)
+    
+    # Extra lines
+    abline(v=c(-1,1), lty=2)
+    abline(h=-log10(cutoff), lty=2)
+    
+    # Show gene symbols of tophits
+    df_volcanoGenes<- volcano[volcano$hgnc_symbol %in% tophits,]
+    addTextLabels(df_volcanoGenes$log2FoldChange,-log10(df_volcanoGenes$padj),df_volcanoGenes$hgnc_symbol, avoidPoints = TRUE,
+                  keepLabelsInside = TRUE, col.label="black", cex.label=1)
+    
+    # colorbar
+    par(new=T)
+    par(fig=c(0.75,1,0.2,0.8))
+    x=1
+    y=seq(0,100,len=100)
+    z=matrix(1:100,nrow=1)
+    image(x,( (y/100) * log2(max(volcano$baseMean)+2) ),z,col=palette(100)[y], xaxt='n', xlab="", ylab=expression("Log"[2]*" expression (ave# reads)"))
+    
+    # MA plot
     par(mfrow=c(1,1))
     for(Gene in Genes_of_interest){
       df_GOI<- df_res[df_res$hgnc_symbol %in% Gene,]
@@ -220,7 +264,7 @@ for (i in 1:nrow(combi)){
       if (nrow(df_GOI)>=1){
         points(df_GOI$logBaseMeanA, df_GOI$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1.5, pch=df_GOI$pch)
       }
-      legend("bottomleft",legend=c( if (nchar(Gene)>1 && !is.na(Gene)) {Gene}, "All guides", "Essentials","Non-essentials",
+      legend("bottomleft",legend=c( if (nchar(Gene)>1 && !is.na(Gene)) {Gene}, "All genes", "Essentials","Non-essentials",
                                     'Significantly enriched', 'Significantly depleted'), cex=0.8, pch=c(if (nchar(Gene)>1 && !is.na(Gene)) 
                                     {16},16,16,16, 24,25), col=c(if (nchar(Gene)>1 && !is.na(Gene)) {ColH}, ColAll,ColP,ColN, "black", "black"))
       abline(median(df_res$log2FoldChange, na.rm=TRUE),0, col=1, lty=3, untf=TRUE)
@@ -280,8 +324,9 @@ for (i in 1:nrow(combi)){
         polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
       }
     }
+    
   dev.off()
-  
+
   # Kinome(-like) genes taken from Brunello CRISPR library
   kinome<- unique(df_Gene_IDX$GeneSymbol)
   kinome<-kinome[1:764]
