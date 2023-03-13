@@ -237,7 +237,7 @@ for (i in 1:nrow(combi)){
   
   # Vertical and horizontal lines
   abline(v=2.5*(-10:10), lty=3, col="gray")
-  abline(h=25*(0:10), lty=3, col="gray")
+  abline(h=10*(0:20), lty=3, col="gray")
   
   # Actual plot
   points(volcano$log2FoldChange, -log10(volcano$padj), type="p", col=volcano$col, bg=volcano$col, cex=1, pch=volcano$pch)
