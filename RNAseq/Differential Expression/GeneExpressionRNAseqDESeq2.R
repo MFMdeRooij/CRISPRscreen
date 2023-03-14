@@ -244,7 +244,7 @@ for (i in 1:nrow(combi)){
   
   # Extra lines
   abline(v=c(-1,1), lty=2)
-  abline(h=-log10(cutoff), lty=2)
+  abline(h=-log10(0.1), lty=2)
   
   # Show gene symbols of tophits
   df_volcanoGenes<- volcano[volcano$hgnc_symbol %in% tophitsVolcano,]
