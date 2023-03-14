@@ -259,7 +259,7 @@ for (i in 1:nrow(combi)){
   y=seq(0,100,len=101)
   z=matrix(1:101,nrow=1)
   image(x,( (y/100) * max(volcano$l2bm) ),z,col=palette(100)[y], xaxt='n', xlab="", 
-        ylab=expression("Log"[2]*" average read counts + 2"))
+        ylab=expression("Log"[2]*"(average read counts + 2)"))
   
   # MA plot
   par(mfrow=c(1,1))
