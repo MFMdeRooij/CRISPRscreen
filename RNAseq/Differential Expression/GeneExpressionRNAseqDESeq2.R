@@ -257,7 +257,7 @@ for (i in 1:nrow(combi)){
   par(fig=c(0.75,1,0.2,0.8))
   x=1
   y=seq(0,100,len=101)
-  z=matrix(1:100,nrow=1)
+  z=matrix(1:101,nrow=1)
   image(x,( (y/100) * max(volcano$l2bm) ),z,col=palette(100)[y], xaxt='n', xlab="", 
         ylab=expression("Log"[2]*" average read counts + 2"))
   
