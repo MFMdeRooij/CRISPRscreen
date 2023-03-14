@@ -203,8 +203,9 @@ for (i in 1:nrow(combi)){
   
   volcano<- df_res
   volcano$padj[is.na(volcano$padj)]<- 1
+  volcano$l2bm<- log2(volcano$baseMean+2)
   palette <- colorRampPalette(c("cyan","black"))
-  volcano$col<-palette(100)[100*(log2(volcano$baseMean+2) / log2(max(volcano$baseMean)+2))]
+  volcano$col<-palette(100)[100* volcano$l2bm / max(volcano$l2bm)]
   
   # Axes limits
   xrange<- c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
@@ -255,9 +256,10 @@ for (i in 1:nrow(combi)){
   par(new=T)
   par(fig=c(0.75,1,0.2,0.8))
   x=1
-  y=seq(0,100,len=100)
+  y=seq(0,100,len=101)
   z=matrix(1:100,nrow=1)
-  image(x,( (y/100) * log2(max(volcano$baseMean)+2) ),z,col=palette(100)[y], xaxt='n', xlab="", ylab=expression("Log"[2]*" expression (ave# reads)"))
+  image(x,( (y/100) * max(volcano$l2bm) ),z,col=palette(100)[y], xaxt='n', xlab="", 
+        ylab=expression("Log"[2]*" average read counts + 2"))
   
   # MA plot
   par(mfrow=c(1,1))
