@@ -226,7 +226,7 @@ for (i in 1:nrow(combi)){
   
   # Margins
   par(mar=c(4,4,4,4))
-  par(fig=c(0.1,0.85,0.1,0.85))
+  par(fig=c(0.1,0.8,0.1,0.8))
   par(bty="l")
   
   # Empty plot
