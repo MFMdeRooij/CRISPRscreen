@@ -27,7 +27,7 @@ import warnings
 warnings.filterwarnings('ignore')
 ###############################################################################
 #Option1
-def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1, legend=1, guideID=1, save=1, correlategene=1, log=1):
+def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1, legend=1, guideID=1, correlategene=1, log=1):
     gene = gene.replace(" ", "")
     #View genes in all MA plots
     if re.match('CRISPR', headDir):
@@ -111,7 +111,7 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                                 )
                     if legend==1:
                         plt.legend(('All Guides', 'Essentials', 'Non-Essentials', gene), loc=3)
-                    plt.text(xmin+(xmax-xmin)/2, ymax-0.05*(ymax-ymin), '$\itP$$_{adj}$ = '+padjD2+ r' ($\alpha$RRA$_{dep}$) / $\itP$$_{adj}$ = '+padjE2+ r' ($\alpha$RRA$_{enr}$)', fontsize=6, horizontalalignment='center')
+                    plt.text(xmin+(xmax-xmin)/2, ymax-0.05*(ymax-ymin), '$\it{P}$$_{adj}$ = '+padjD2+ r' ($\alpha$RRA$_{dep}$) / $\it{P}$$_{adj}$ = '+padjE2+ r' ($\alpha$RRA$_{enr}$)', fontsize=6, horizontalalignment='center')
                     plt.axhline(0, color='black', linewidth=1)
                     plt.subplot2grid((3,16), (0,(rep-1)*4+2) if rep < 5 else (1,(rep-5)*4+2) if rep < 9 else (2,(rep-9)*4+2))
                     sns.kdeplot(y=df['l2fc'], linewidth=1, fill=True, color='silver')
@@ -254,15 +254,8 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                         axs[ycoor,xcoor].axis('off')
                         axs[ycoor,xcoor+1].axis('off')
 
-            
-            if save==0:
-                plt.show()
-            elif save==1:
-                if MAorVul==1:
-                    plt.savefig(cwd+'/SavedMAplots/'+headDir+gene+'_MA.pdf', bbox_inches='tight')
-                if MAorVul==2:
-                    plt.savefig(cwd+'/SavedMAplots/'+ 'MA'+headDir+gene+'_VP.pdf', bbox_inches='tight')
-                plt.close()
+            plt.show()
+    
         else:
             messagebox.showwarning("Warning", "This gene annotation is not present in the used CRISPR library.\nCheck your spelling, or check for official HGNC gene symbols.")    
 
@@ -331,6 +324,7 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                 messagebox.showwarning("Warning", "This gene annotation is not present in the human genome (hg38).\nCheck your spelling, or check for official HGNC gene symbols.")   
 
         if numberofgenes>1:
+            genes = pd.Series(genes)[ pd.Series(genes).isin(dfgenes['hgnc_symbol'])]
             dfexpr = dfgenes[dfgenes['hgnc_symbol'].isin(genes)]
             dfexpr.index = dfexpr['hgnc_symbol']
             dfexpr = dfexpr.loc[genes]
@@ -544,12 +538,7 @@ def viewHits(headDir, dirs, rep, tumortype=0, number=25, direction=1, rhoFC=1, s
         dfg['ml2fc'].replace([np.inf, -np.inf], 0, inplace=True)  
         dfg['col']='black' 
         dfg.loc[dfg['Type']=='p', 'col'] = 'red'
-        dfg.loc[dfg['Type']=='n', 'col'] = 'blue' 
-    if re.match('Microarray', headDir):
-        dfg['ml2fc']=dfg['log2MedianFC']
-        dfg['ml2fc'].fillna(0, inplace=True)
-        dfg['ml2fc'].replace([np.inf, -np.inf], 0, inplace=True)  
-        dfg['col']='black'    
+        dfg.loc[dfg['Type']=='n', 'col'] = 'blue'     
     dfg.fillna(1, inplace=True)  
     if rhoFC==1:
         if direction==1:
@@ -570,11 +559,11 @@ def viewHits(headDir, dirs, rep, tumortype=0, number=25, direction=1, rhoFC=1, s
             if direction==1:
                 plt.xlabel(r'Log10 $\rho$ ($\alpha$RRA$_{dep}$)', fontsize=10)
                 rhocutoff = dfg[dfg['fdrDepleted']>=0.1]['rhoDepleted']
-                plt.text(np.log10(min(rhocutoff)), number/2, r'$\itP$$_{adj}$ < 0.1 ($\alpha$RRA$_{dep}$)', rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
+                plt.text(np.log10(min(rhocutoff)), number/2, r'$\it{P}$$_{adj}$ < 0.1 ($\alpha$RRA$_{dep}$)', rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
             elif direction==0:
                 plt.xlabel(r'Log10 $\rho$ ($\alpha$RRA$_{enr}$)', fontsize=10)
                 rhocutoff = dfg[dfg['fdrEnriched']>=0.1]['rhoEnriched']
-                plt.text(np.log10(min(rhocutoff)), number/2, r'$\itP$$_{adj}$ < 0.1 ($\alpha$RRA$_{enr}$)',rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
+                plt.text(np.log10(min(rhocutoff)), number/2, r'$\it{P}$$_{adj}$ < 0.1 ($\alpha$RRA$_{enr}$)',rotation=-90, va= 'center', ha='right', color='red' , fontsize=8)
             plt.axvline(np.log10(min(rhocutoff)), color='red', linewidth=1) 
             plt.title('Gene Top '+str(number)+' ('+dirs[rep-1].split( "csv")[0]+')')   
             plt.show()
@@ -735,9 +724,8 @@ class PageOne(tk.Frame):
         tk.Checkbutton(self, text = "Show guide ID", font=('Times New Roman', '10'), bg=colbg, onvalue=1, offvalue=0, variable=guideID, height=1, width = 20).pack()
         tk.Radiobutton(self,text='Volcano plot (gene level)', bg=colbg, font = tkfont.Font(family='Times New Roman', size=12), value=2, variable=MAorVul).pack()        
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
-        tk.Button(self, text="View Plots", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewGenes(headDir=headDir, dirs=dirs, gene=e1.get().upper(), scale=scale.get(), MAorVul=MAorVul.get(), legend=legend.get(), guideID=guideID.get(), save=0)).pack() 
+        tk.Button(self, text="View Plots", font=('Times New Roman', '15'), fg='black', bg='yellow', command=lambda: viewGenes(headDir=headDir, dirs=dirs, gene=e1.get().upper(), scale=scale.get(), MAorVul=MAorVul.get(), legend=legend.get(), guideID=guideID.get() )).pack() 
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=10)).pack()
-        #tk.Button(self, text="Save MA/VOL plots as PDF", font=('Times New Roman', '12'), fg='black', bg='yellow', command=lambda: viewGenes(headDir=headDir, dirs=dirs, gene=e1.get().upper(), scale=scale.get(), MAorVul=MAorVul.get(), legend=legend.get(), guideID=guideID.get(), save=1)).pack() 
         tk.Label(self, text="You can change titles and axis scales using the edit button\n\nYou can save the figure in any format using the save button", bg=colbg, font = tkfont.Font(family='Times New Roman', size=12)).pack()
         tk.Label(self, text="", bg=colbg, font = tkfont.Font(family='Times New Roman', size=50)).pack()
         tk.Button(self, text="Main Menu", font=('Times New Roman', '15'), fg='white', bg="red", command=lambda: controller.show_frame("StartPage")).pack(side='bottom')          
