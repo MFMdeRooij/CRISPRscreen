@@ -733,8 +733,8 @@ for (Filename in Filenames) {
     }
     
     # Vertical and horizontal lines
-    abline(v=0.2*(-10:10), lty=3, col="gray")
-    abline(h=2*(0:50), lty=3, col="gray")
+    abline(v=0.2*(-100:100), lty=3, col="gray")
+    abline(h=2*(0:100), lty=3, col="gray")
     
     # Actual plot
     points(df_geneRRA$ml2fc, -log10(df_geneRRA$rho), type="p", pch=16, col=alpha(df_geneRRA$col,0.7), cex=0.7)
