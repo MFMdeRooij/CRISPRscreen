@@ -7,14 +7,15 @@
 # - Adjust the settings and run the script
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ######################################################################################
-## Install DESeq2
-#install.packages("BiocManager")
-#install.packages("gtools")
-#BiocManager::install(c("DESeq2", "pheatmap", "RColorBrewer"), dependencies=TRUE)
+## Install DESeq2 and other packages
+#install.packages(c("BiocManager", "pheatmap", "RColorBrewer", "gtools", "scales", "basicPlotteR"))
+#BiocManager::install("DESeq2")
 library("DESeq2")
 library("pheatmap")
 library("RColorBrewer")
 library("gtools")
+library("scales")
+library("basicPlotteR")
 ######################################################################################
 #                                     SETTINGS
 
