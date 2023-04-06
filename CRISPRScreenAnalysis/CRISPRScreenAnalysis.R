@@ -7,8 +7,9 @@
 # The random seeds are different in Windows and Linux R versions, so the p-values on gene level can be different
 ######################################################################################
 ## Install DESeq2
-#install.packages(c("BiocManager", "rstudioapi", "pheatmap", "RColorBrewer", "scales"))
-#BiocManager::install(c("DESeq2","basicPlotteR"))
+#install.packages(c("BiocManager", "devtools", "rstudioapi", "pheatmap", "RColorBrewer", "scales"))
+#BiocManager::install("DESeq2")
+#devtools::install_github("JosephCrispell/basicPlotteR")
 library("DESeq2")
 library("pheatmap")
 library("RColorBrewer")
