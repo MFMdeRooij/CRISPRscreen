@@ -8,8 +8,8 @@
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ######################################################################################
 ## Install DESeq2 and other packages
-#install.packages(c("BiocManager", "pheatmap", "RColorBrewer", "gtools", "scales", "basicPlotteR"))
-#BiocManager::install("DESeq2")
+#install.packages(c("BiocManager", "pheatmap", "RColorBrewer", "gtools", "scales"))
+#BiocManager::install(c("DESeq2","basicPlotteR"))
 library("DESeq2")
 library("pheatmap")
 library("RColorBrewer")
