@@ -17,6 +17,9 @@ cellID<- "Namalwa"
 # Is there a T1drug/T1control comparison, 0: no, 1: yes
 t2t1com<- 1
 
+# Size graph
+size<- 7
+
 # Genes to emphasize, 0: all significant (from T1drug/T1control comparison), 1: specific genes  
 allsignif<- 0
 
@@ -45,7 +48,7 @@ NormalizeY<- 1
 Axlim<- 0
 # Equal X and Y axes, 0 = no, 1: yes
 XYequal<- 1
-if (Axlim==0){
+if (Axlim==1){
   # Custom axes limits: 
   xmin<- -0.8
   xmax<- 0.4
@@ -120,7 +123,7 @@ if (Axlim==0){
   yticks<- round((ymax-ymin)/5.1,2)
 }
 
-pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),7,7)
+pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
   par(mar=c(4,4,0,0))
   par(fig=c(0.1,0.7,0.1,0.7))
   plot(Combi$Nmfc.x, Combi$Nmfc.y, xlab=xlab, ylab=ylab, cex.lab=1, cex.axis=1, 
@@ -139,8 +142,10 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),7,7)
     points(hit$Nmfc.x, hit$Nmfc.y, pch=16, col=chit, cex=if(t2t1com==1){0.3+-0.1*log10(hit$Stat)}else{0.5})
     text(hit$Nmfc.x, hit$Nmfc.y, labels=hit$GeneSymbol, cex=0.8, col="black", adj = c(-0.2,0.5), srt=22.5)
   }
-  abline(v=0, col="black", lty=3)
-  abline(h=0, col="black", lty=3)
+  abline(v=0, col=cneg, lty=3)
+  abline(h=0, col=cneg, lty=3)
+  abline(v=-1, col=cpos, lty=3)
+  abline(h=-1, col=cpos, lty=3)
   abline(0,1, col="black", lty=2)
   legend(xmin,ymax,legend=c("All genes", "Essentials","Non-essentials"), pch=16, cex=0.8, col=c(call,cpos,cneg))
   

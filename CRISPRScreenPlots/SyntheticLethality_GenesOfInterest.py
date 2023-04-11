@@ -18,6 +18,9 @@ cellID = "Namalwa"
 # Is there a T1drug/T1control comparison, 0: no, 1: yes
 t2t1com = 1
 
+# Size graph
+size = 5
+
 # Genes to emphasize, 0: all significant (from T1drug/T1control comparison), 1: specific genes 
 allsignif = 0
 
@@ -112,7 +115,7 @@ if Axlim==0:
 
 
 
-plt.figure(figsize=(5,5))
+plt.figure(figsize=(size,size))
 ax = plt.subplot2grid((5,5), (1,0), colspan=4, rowspan=4)  
 plt.suptitle(cellID, fontweight="bold") 
 if t2t1com==0:
@@ -138,8 +141,10 @@ lgnd = plt.legend(('All genes', 'Essentials', 'Non-essentials'), fontsize=8, loc
 for handle in lgnd.legendHandles:
     handle.set_sizes([10])
 
-plt.axhline(y=0, color='gray', linestyle='--', linewidth=0.5)
-plt.axvline(x=0, color='gray', linestyle='--', linewidth=0.5)
+plt.axhline(y=0, color=cneg, linestyle='--', linewidth=0.5)
+plt.axvline(x=0, color=cneg, linestyle='--', linewidth=0.5)
+plt.axhline(y=-1, color=cpos, linestyle='--', linewidth=0.5)
+plt.axvline(x=-1, color=cpos, linestyle='--', linewidth=0.5)
 plt.plot([-10, 10], [-10, 10], color='gray', linestyle='--', linewidth=0.5)
 plt.xlabel(xlab, fontsize=10)
 plt.ylabel(ylab, fontsize=10)
