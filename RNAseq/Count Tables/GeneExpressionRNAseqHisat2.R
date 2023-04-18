@@ -168,43 +168,66 @@ CountTableNorTPX[,-1:-2]<- as.data.frame(round(t(t(CountTableTPM[,-1:-2])/sf),1)
 write.csv(CountTableNorTPX, "RNAseqCountTableNorTPX.csv", row.names=FALSE)
 
 if (pca==0) {
-  #PCA analysis
-  #install.packages(c("corrplot", "ggplot2", "ggfortify", "factoextra"), dependencies=T)
+  #PCA & UMAP
+  
+  # Add RNAseqDesign.csv in the workdirectory (this should include a column with Sample (Cell line names)
+  # and a culumn with Group (Cell types)
+  
+  #install.packages(c("corrplot", "ggplot2", "ggfortify", "factoextra", "umap", basicPlotteR"))
   library("corrplot")
   library("ggplot2")
   library("ggfortify")
   library("factoextra")
+  library("umap")
+  library("basicPlotteR")
+  
   CountTableNor<- read.csv("RNAseqCountTableNorTPX.csv")
+  df_design<- read.csv("RNAseqDesign.csv")
+  df_design$Color <- rainbow(length(unique(as.factor(df_design$Group))))[as.factor(df_design$Group)]
   
   # Remove low noisy counts
   df_pr<-CountTableNor[3:ncol(CountTableNor)]
   rownames(df_pr)<- CountTableNor$ensembl_gene_id
+  df_pr<- log2(df_pr+1)
   df_pr$meanExpr<- apply(df_pr, 1, FUN=mean)
-  df_prSel <- df_pr[df_pr$meanExpr>10,]
+  df_prSel <- df_pr[df_pr$meanExpr>1,]
   df_prSel$meanExpr<- NULL
   
-  # Z scores
-  df_prSel<- t(scale(t(df_prSel), center=T, scale = T))
-  df_prSel<- df_prSel[which(!is.na(rowMeans(df_prSel))),]
+  # PCA & UMAP
+  res.pca<- prcomp(t(df_prSel))
+  res.ind <- get_pca_ind(res.pca)
+  res.eig<- get_eigenvalue(res.pca)
+  pcaind<- as.data.frame(res.ind$coord)
+  set.seed(100)
+  rna.umap<- umap(t(df_prSel))
   
-  pdf("PCA.pdf", width=10, height=10)
-    cor<- cor(df_prSel, method = "pearson")
-    print(corrplot(cor, method='color', order = "hclust"))
-    res.pca<- prcomp(t(df_prSel))
-    print(fviz_eig(res.pca))                 
-    print(fviz_pca_ind(res.pca,
-                 col.ind = "cos2", # Color by the quality of representation
-                 gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                 repel = TRUE     # Avoid text overlapping
-    ))
-    res.pca<- prcomp((df_prSel))
-    print(fviz_pca_var(res.pca,
-                 col.var = "contrib", # Color by contributions to the PC
-                 gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-                 repel = TRUE     # Avoid text overlapping
-    ))
-    # You can adjust k to the number of groups
-    res<- hcut(t(df_prSel), k = ncol(df_prSel)-1, stand = TRUE)
-    print(fviz_dend(res, rect = TRUE, cex = 0.5))
+  pdf("PCA_UMAP.pdf", width=15, height=10)
+  # Scree plot
+  print(fviz_eig(res.pca))
+  
+  # PCA plot
+  par(mar=c(5,5,5,20), xpd=T)
+  plot(pcaind$Dim.1, pcaind$Dim.2, pch=16, col=df_design$Color, xlab=paste0("PC1 (",round(res.eig$variance.percent[1],1),"%)"), 
+       ylab=paste0("PC2 (",round(res.eig$variance.percent[2],1),"%)"), main = "PCA")
+  addTextLabels(pcaind$Dim.1,pcaind$Dim.2,colnames(df_prSel), avoidPoints = TRUE,
+                keepLabelsInside = TRUE, col.label="gray", cex.label=1)
+  legend("topright", inset=c(-0.3,0), legend=unique(df_design$Group), col=unique(df_design$Color), pch=16, cex=1, title="Cell Type")
+  
+  # UMAP plot
+  par(mar=c(5,5,5,20), xpd=T)
+  plot(rna.umap$layout, pch=16, col=df_design$Color, xlab="UMAP1", ylab="UMAP2", main="UMAP")
+  addTextLabels(rna.umap$layout[,1],rna.umap$layout[,2], colnames(df_prSel), avoidPoints = TRUE,
+                keepLabelsInside = TRUE, col.label="gray", cex.label=1)
+  legend("topright", inset=c(-0.3,0), legend=unique(df_design$Group), col=unique(df_design$Color), pch=16, cex=1, title="Cell Type")
+  
+  # Cor plot
+  par(mar=c(5,5,5,5))
+  cor<- cor(df_prSel, method = "pearson")
+  print(corrplot(cor, method='color', order = "hclust"))
+  
+  # Dendrogram
+  # You can adjust k to the number of groups
+  res<- hcut(t(df_prSel), k = ncol(df_prSel)-1, stand = TRUE)
+  print(fviz_dend(res, rect = TRUE, cex = 0.5))
   dev.off()
 } 
