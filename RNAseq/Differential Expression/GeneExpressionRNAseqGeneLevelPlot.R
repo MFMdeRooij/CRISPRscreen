@@ -44,6 +44,12 @@ interestingGenes <- toupper(q(
 setwd(Workdirectory)
 CountTableNor<-read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALSE)
 
+# Sample metadata
+df_design<-read.csv("RNAseqDesign.csv", stringsAsFactors = F)
+
+# Select samples from design table
+CountTableNor<- CountTableNor[,c("ensembl_gene_id", "hgnc_symbol", colnames(CountTableNor)[colnames(CountTableNor) %in% df_design$Sample])]
+
 # Sample normalize count table
 if (Norm==1){
   library("DESeq2")
@@ -52,24 +58,19 @@ if (Norm==1){
   CountTableNor[,numericColumns]<- as.data.frame(round(t(t(CountTableNor[,numericColumns])/sf),1))
 }
 
-# Sample metadata
-df_design<-read.csv("RNAseqDesign.csv", stringsAsFactors = F)
-
 # PCA analysis
-df_sel<- CountTableNor[3:ncol(CountTableNor)]
-rownames(df_sel)<- CountTableNor$ensembl_gene_id
-df_sel<- df_sel[,df_design$Sample]
-
-# Remove low noisy counts
-df_pr<- df_sel[which(rowMeans(df_sel)>10),]
-df_pr<- as.data.frame(t(scale(t(df_pr), center=T, scale=T)))
-df_pr<- df_pr[which(!is.na(rowMeans(df_pr))),]
+df_pr<-CountTableNor[3:ncol(CountTableNor)]
+rownames(df_pr)<- CountTableNor$ensembl_gene_id
+df_pr<- log2(df_pr+1)
+df_pr$meanExpr<- apply(df_pr, 1, FUN=mean)
+df_prSel <- df_pr[df_pr$meanExpr>1,]
+df_prSel$meanExpr<- NULL
 
 # Generate plots
 interestingGenes<-toupper(interestingGenes)
 for (gene in interestingGenes){
   # data table
-  res.pca<- prcomp(t(df_pr))
+  res.pca<- prcomp(t(df_prSel))
   df_pca<- data.frame(PC1=res.pca$x[,1], PC2=res.pca$x[,2])
   df_gene<- CountTableNor[toupper(CountTableNor$hgnc_symbol)==gene,df_design$Sample]
   if (nrow(df_gene)>1){
@@ -85,7 +86,7 @@ for (gene in interestingGenes){
     df_pca$Rep<-factor(df_design$Rep, levels=unique(df_design$Rep))
     df_pca$Group<-interaction(df_pca$Group,df_pca$Rep, lex.order = T)
   }
-
+  
   pdf(paste0("GE_",gene,".pdf"), width=10, height=10)
     # Barplot
     g<-ggplot(df_pca, aes(x=Group, y=Gene, fill=Group)) + geom_boxplot() + geom_jitter(color=df_pca$color, size=2, alpha=0.9, height = 0) 
