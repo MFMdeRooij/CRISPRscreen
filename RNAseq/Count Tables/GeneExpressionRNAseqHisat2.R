@@ -202,32 +202,32 @@ if (pca==0) {
   rna.umap<- umap(t(df_prSel))
   
   pdf("PCA_UMAP.pdf", width=15, height=10)
-  # Scree plot
-  print(fviz_eig(res.pca))
-  
-  # PCA plot
-  par(mar=c(5,5,5,20), xpd=T)
-  plot(pcaind$Dim.1, pcaind$Dim.2, pch=16, col=df_design$Color, xlab=paste0("PC1 (",round(res.eig$variance.percent[1],1),"%)"), 
-       ylab=paste0("PC2 (",round(res.eig$variance.percent[2],1),"%)"), main = "PCA")
-  addTextLabels(pcaind$Dim.1,pcaind$Dim.2,colnames(df_prSel), avoidPoints = TRUE,
-                keepLabelsInside = TRUE, col.label="gray", cex.label=1)
-  legend("topright", inset=c(-0.3,0), legend=unique(df_design$Group), col=unique(df_design$Color), pch=16, cex=1, title="Cell Type")
-  
-  # UMAP plot
-  par(mar=c(5,5,5,20), xpd=T)
-  plot(rna.umap$layout, pch=16, col=df_design$Color, xlab="UMAP1", ylab="UMAP2", main="UMAP")
-  addTextLabels(rna.umap$layout[,1],rna.umap$layout[,2], colnames(df_prSel), avoidPoints = TRUE,
-                keepLabelsInside = TRUE, col.label="gray", cex.label=1)
-  legend("topright", inset=c(-0.3,0), legend=unique(df_design$Group), col=unique(df_design$Color), pch=16, cex=1, title="Cell Type")
-  
-  # Cor plot
-  par(mar=c(5,5,5,5))
-  cor<- cor(df_prSel, method = "pearson")
-  print(corrplot(cor, method='color', order = "hclust"))
-  
-  # Dendrogram
-  # You can adjust k to the number of groups
-  res<- hcut(t(df_prSel), k = ncol(df_prSel)-1, stand = TRUE)
-  print(fviz_dend(res, rect = TRUE, cex = 0.5))
+    # Scree plot
+    print(fviz_eig(res.pca))
+    
+    # PCA plot
+    par(mar=c(5,5,5,20), xpd=T)
+    plot(pcaind$Dim.1, pcaind$Dim.2, pch=16, col=df_design$Color, xlab=paste0("PC1 (",round(res.eig$variance.percent[1],1),"%)"), 
+         ylab=paste0("PC2 (",round(res.eig$variance.percent[2],1),"%)"), main = "PCA")
+    addTextLabels(pcaind$Dim.1,pcaind$Dim.2,colnames(df_prSel), avoidPoints = TRUE,
+                  keepLabelsInside = TRUE, col.label="gray", cex.label=1)
+    legend("topright", inset=c(-0.3,0), legend=unique(df_design$Group), col=unique(df_design$Color), pch=16, cex=1, title="Cell Type")
+    
+    # UMAP plot
+    par(mar=c(5,5,5,20), xpd=T)
+    plot(rna.umap$layout, pch=16, col=df_design$Color, xlab="UMAP1", ylab="UMAP2", main="UMAP")
+    addTextLabels(rna.umap$layout[,1],rna.umap$layout[,2], colnames(df_prSel), avoidPoints = TRUE,
+                  keepLabelsInside = TRUE, col.label="gray", cex.label=1)
+    legend("topright", inset=c(-0.3,0), legend=unique(df_design$Group), col=unique(df_design$Color), pch=16, cex=1, title="Cell Type")
+    
+    # Cor plot
+    par(mar=c(5,5,5,5))
+    cor<- cor(df_prSel, method = "pearson")
+    print(corrplot(cor, method='color', order = "hclust"))
+    
+    # Dendrogram
+    # You can adjust k to the number of groups
+    res<- hcut(t(df_prSel), k = ncol(df_prSel)-1, stand = TRUE)
+    print(fviz_dend(res, rect = TRUE, cex = 0.5))
   dev.off()
 } 
