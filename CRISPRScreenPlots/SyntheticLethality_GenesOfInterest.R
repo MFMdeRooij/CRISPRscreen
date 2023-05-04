@@ -4,6 +4,11 @@
 # non-essentials will not be improved. Synthetic lethal genes will be located around the lower half of the vertical 0 axis.
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################################################################
+## Install required pacakges once
+#install.packages("devtools)
+#devtools::install_github("JosephCrispell/basicPlotteR")
+library("basicPlotteR")
+##################################################################################################################################
 #                              SETTINGS
 
 # Put this script in the folder where the count tables are located
@@ -140,7 +145,8 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
   points(neg$Nmfc.x, neg$Nmfc.y, pch=16, col=cneg, cex=if(t2t1com==1){0.3+-0.1*log10(neg$Stat)}else{0.5})
   if (length(GenesOfInterest)>0){
     points(hit$Nmfc.x, hit$Nmfc.y, pch=16, col=chit, cex=if(t2t1com==1){0.3+-0.1*log10(hit$Stat)}else{0.5})
-    text(hit$Nmfc.x, hit$Nmfc.y, labels=hit$GeneSymbol, cex=0.8, col="black", adj = c(-0.2,0.5), srt=22.5)
+    addTextLabels(hit$Nmfc.x, hit$Nmfc.y, hit$GeneSymbol, avoidPoints = TRUE,
+                        keepLabelsInside = TRUE, col.label="black", cex.label=1)
   }
   abline(v=0, col=cneg, lty=3)
   abline(h=0, col=cneg, lty=3)
