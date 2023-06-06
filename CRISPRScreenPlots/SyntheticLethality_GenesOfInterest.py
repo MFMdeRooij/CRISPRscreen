@@ -46,7 +46,7 @@ NormalizeY = 1
 
 # Axes limit, 0 = automatic, 1: custom
 Axlim = 0
-# Equal X and Y axes, 0 = no, 1: yes
+# If automatic, Equal X and Y axes, 0 = no, 1: yes
 XYequal = 1
 
 if Axlim==1:
@@ -141,10 +141,12 @@ lgnd = plt.legend(('All genes', 'Essentials', 'Non-essentials'), fontsize=8, loc
 for handle in lgnd.legendHandles:
     handle.set_sizes([10])
 
-plt.axhline(y=0, color=cneg, linestyle='--', linewidth=0.5)
 plt.axvline(x=0, color=cneg, linestyle='--', linewidth=0.5)
-plt.axhline(y=-1, color=cpos, linestyle='--', linewidth=0.5)
-plt.axvline(x=-1, color=cpos, linestyle='--', linewidth=0.5)
+plt.axhline(y=0, color=cneg, linestyle='--', linewidth=0.5)
+if NormalizeX == 1:
+    plt.axvline(x=-1, color=cpos, linestyle='--', linewidth=0.5)
+if NormalizeY == 1:
+    plt.axhline(y=-1, color=cpos, linestyle='--', linewidth=0.5)
 plt.plot([-10, 10], [-10, 10], color='gray', linestyle='--', linewidth=0.5)
 plt.xlabel(xlab, fontsize=10)
 plt.ylabel(ylab, fontsize=10)

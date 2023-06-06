@@ -51,6 +51,9 @@ NormalizeY<- 1
 
 #Axes limit, 0 = automatic, 1: custom
 Axlim<- 0
+# If automatic, Equal X and Y axes, 0 = no, 1: yes
+XYequal<- 1
+
 if (Axlim==1){
   # Custom axes limits: 
   xmin<- -0.8
@@ -61,9 +64,6 @@ if (Axlim==1){
   ymax<- 0.4
   yticks<- 0.2
 }
-
-# Equal X and Y axes, 0 = no, 1: yes
-XYequal<- 1
 
 # Colors:
 call<- 'lightgray'
