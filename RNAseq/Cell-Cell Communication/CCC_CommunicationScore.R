@@ -242,20 +242,20 @@ pdf(paste0("CCC",strsplit(strsplit(LigandReceptorFile,".csv")[[1]][1], "LR")[[1]
   }
 dev.off()
 
-############################################################################################################
-# # Generate LRlists from CellPhoneDB database
-# #
+###########################################################################################################
+# Generate LRlists from CellPhoneDB database
+
 # # Linux: pip install -U cellphonedb
 # #        cellphonedb database download
 # 
-# setwd("H:/BioWin/CCC/LRlist/")
+# setwd("H:/BioWin/CellPhone/")
 # 
 # complex<-read.csv("import/complex_input.csv", stringsAsFactors = F)
 # gene<-read.csv("import/gene_input.csv", stringsAsFactors = F)
 # interaction<-read.csv("import/interaction_input.csv", stringsAsFactors = F)
 # protein<-read.csv("import/protein_input.csv", stringsAsFactors = F)
 # 
-# LR<- interaction[,1:2]
+# LR<- interaction[,c("partner_a","partner_b")]
 # for (c in complex$complex_name){
 #   temp1<-LR[LR$partner_a %in% c,]
 #   if (nrow(temp1)>0){
@@ -307,23 +307,22 @@ dev.off()
 #   }
 # }
 # 
-# doubles<- grep(":", LR$partner_a)
-# for (i in doubles){
-#   temp1<- LR[i,]
-#   LR<-rbind(LR,c(strsplit(temp1[1,1],":")[[1]][1],temp1[1,2]))
-#   LR<-rbind(LR,c(strsplit(temp1[1,1],":")[[1]][2],temp1[1,2]))
-# }
-# LR<-LR[-doubles,]
-# doubles<- grep(":", LR$partner_b)
-# for (i in doubles){
-#   temp1<- LR[i,]
-#   LR<-rbind(LR,c(temp1[1,1],strsplit(temp1[1,2],":")[[1]][1]))
-#   LR<-rbind(LR,c(temp1[1,1],strsplit(temp1[1,2],":")[[1]][2]))
-# }  
-# LR<-LR[-doubles,]
-# LR<-unique(LR)  
+# # doubles<- grep(":", LR$partner_a)
+# # for (i in doubles){
+# #   temp1<- LR[i,]
+# #   LR<-rbind(LR,c(strsplit(temp1[1,1],":")[[1]][1],temp1[1,2]))
+# #   LR<-rbind(LR,c(strsplit(temp1[1,1],":")[[1]][2],temp1[1,2]))
+# # }
+# # LR<-LR[-doubles,]
+# # doubles<- grep(":", LR$partner_b)
+# # for (i in doubles){
+# #   temp1<- LR[i,]
+# #   LR<-rbind(LR,c(temp1[1,1],strsplit(temp1[1,2],":")[[1]][1]))
+# #   LR<-rbind(LR,c(temp1[1,1],strsplit(temp1[1,2],":")[[1]][2]))
+# # }
+# # LR<-LR[-doubles,]
 # 
-# 
+# LR<-unique(LR)
 # LR2<-LR[,c(2,1)]
 # colnames(LR2)<-colnames(LR)
 # LR<-rbind(LR,LR2)
@@ -342,17 +341,19 @@ dev.off()
 #   }
 # }
 # colnames(transmembrane)[1]<-"hgnc_symbol"
-# doubles<- grep(":", transmembrane$hgnc_symbol)
-# for (i in doubles){
-#   temp1<- transmembrane[i,]
-#   tempG<- temp1[1,1]
-#   temp1[1,1]<- strsplit(tempG,":")[[1]][1]
-#   transmembrane<-rbind(transmembrane,temp1)
-#   temp1[1,1]<- strsplit(tempG,":")[[1]][2]
-#   transmembrane<-rbind(transmembrane,temp1)
-# }
-# transmembrane<-transmembrane[-doubles,]
-# transmembrane<-unique(transmembrane) 
+# 
+# # doubles<- grep(":", transmembrane$hgnc_symbol)
+# # for (i in doubles){
+# #   temp1<- transmembrane[i,]
+# #   tempG<- temp1[1,1]
+# #   temp1[1,1]<- strsplit(tempG,":")[[1]][1]
+# #   transmembrane<-rbind(transmembrane,temp1)
+# #   temp1[1,1]<- strsplit(tempG,":")[[1]][2]
+# #   transmembrane<-rbind(transmembrane,temp1)
+# # }
+# # transmembrane<-transmembrane[-doubles,]
+# 
+# transmembrane<-unique(transmembrane)
 # transmembranesOnly<-transmembrane[transmembrane$transmembrane=="True",]
 # LR$transmembraneA<-0
 # LR$transmembraneB<-0
