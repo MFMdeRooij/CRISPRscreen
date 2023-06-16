@@ -62,6 +62,10 @@ T2_Rep1<- 0
 T2_Rep2<- 0
 T2_Rep3<- 0
 
+# If there are no replicates:
+# Number of pseudocounts to calculate fold change (to reduce noise at low counts, minimum = 1)
+pseudocounts <- 10
+
 # Paired replicates: 0 = Paired, 1 = Unpaired
 Paired<- 0
 
@@ -324,7 +328,7 @@ for (Filename in Filenames) {
         df_res$logBaseMeanA<- log(df_res$BaseMeanA+1)/log(10)
         df_res$BaseMeanB<- CountTableNor$T2R1
       } 
-      df_res$FoldChange<- (df_res$BaseMeanB+1)/(df_res$BaseMeanA+1)
+      df_res$FoldChange<- (df_res$BaseMeanB+pseudocounts)/(df_res$BaseMeanA+pseudocounts)
       df_res$log2FoldChange<- log(df_res$FoldChange)/log(2)
       df_res$log2FoldChange[is.na(df_res$log2FoldChange)]<- 0
       df_res$pvalue<- 1
