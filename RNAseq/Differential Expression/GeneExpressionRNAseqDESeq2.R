@@ -214,14 +214,26 @@ for (i in 1:nrow(combi)){
   yrange<- c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
   
   # Density plot fold change
-  denY_tot<- density(df_res$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
-  denY_PC<- density(df_PC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
-  denY_NC<- density(df_NC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+  denY_tot<-density(df_res$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
+  denY_tot$y[1]<- 0
+  denY_tot$y[length(denY_tot$y)]<- 0
+  denY_PC<-density(df_PC$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
+  denY_PC$y[1]<- 0
+  denY_PC$y[length(denY_PC$y)]<- 0
+  denY_NC<-density(df_NC$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
+  denY_NC$y[1]<- 0
+  denY_NC$y[length(denY_NC$y)]<- 0
   denYMax<- max(c(denY_tot$y, denY_PC$y, denY_NC$y))
   # Density plot read count
-  denX_tot<- density(df_res$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
-  denX_PC<- density(df_PC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
-  denX_NC<- density(df_NC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+  denX_tot<- density(df_res$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
+  denX_tot$x[1]<- 0
+  denX_tot$x[length(denX_tot$x)]<- 0
+  denX_PC<- density(df_PC$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
+  denX_PC$x[1]<- 0
+  denX_PC$x[length(denX_PC$x)]<- 0
+  denX_NC<- density(df_NC$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
+  denX_NC$x[1]<- 0
+  denX_NC$x[length(denX_NC$x)]<- 0
   denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
   
   # Volcano plot
@@ -300,6 +312,8 @@ for (i in 1:nrow(combi)){
     polygon(denY_NC$y, denY_NC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     if (Gene=="Hitlist" && nrow(GenesDiff)>1){
       denY_hits_total<-density(GenesDiff$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+      denY_hits_total$y[1]<- 0
+      denY_hits_total$y[length(denY_hits_total$y)]<- 0
       lines(denY_hits_total$y, denY_hits_total$x, col=ColH, lwd=2)
       rgb.val<- col2rgb(ColH)
       polygon(denY_hits_total$y, denY_hits_total$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
@@ -307,6 +321,8 @@ for (i in 1:nrow(combi)){
     if (nrow(df_GOI)>1){
       par(new=TRUE)
       denY_GOI<- density(df_GOI$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+      denY_GOI$y[1]<- 0
+      denY_GOI$y[length(denY_GOI$y)]<- 0
       lines(denY_GOI$y, denY_GOI$x, col=ColH, lwd=2)
       rgb.val<- col2rgb(ColH)
       polygon(denY_GOI$y, denY_GOI$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
@@ -315,7 +331,7 @@ for (i in 1:nrow(combi)){
     # Density read counts
     par(mar=c(0,4,4,0))
     par(fig=c(0.1,0.7,0.7,0.9),new=TRUE)
-    plot(denX_tot, main="MA plot", cex.main=1.5, xlim=xrange, ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
+    plot(denX_tot$x, denX_tot$y, main="MA plot", cex.main=1.5, xlim=xrange, ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
          ylab="", lwd=2)
     lines(denX_PC, col=ColP, lwd=2)
     lines(denX_NC, col=ColN, lwd=2)
@@ -327,6 +343,8 @@ for (i in 1:nrow(combi)){
     polygon(denX_NC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     if (Gene=="Hitlist" && nrow(GenesDiff)>1){
       denX_hits_total<-density(GenesDiff$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+      denX_hits_total$x[1]<- 0
+      denX_hits_total$x[length(denX_hits_total$x)]<- 0
       lines(denX_hits_total, col=ColH, lwd=2)
       rgb.val<- col2rgb(ColH)
       polygon(denX_hits_total, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
@@ -334,6 +352,8 @@ for (i in 1:nrow(combi)){
     if (nrow(df_GOI)>1){
       par(new=TRUE)
       denX_GOI<- density(df_GOI$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+      denX_GOI$x[1]<- 0
+      denX_GOI$x[length(denX_GOI$x)]<- 0
       lines(denX_GOI, col=ColH, lwd=2)
       rgb.val<- col2rgb(ColH)
       polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
