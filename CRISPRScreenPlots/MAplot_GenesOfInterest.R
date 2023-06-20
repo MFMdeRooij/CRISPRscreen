@@ -125,8 +125,14 @@ for (file in files) {
     
     # Density plot fold change
     denY_tot<- density(df_res$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    denY_tot$y[1]<-0
+    denY_tot$y[length(denY_tot$y)]<-0
     denY_PC<- density(df_PC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    denY_PC$y[1]<-0
+    denY_PC$y[length(denY_PC$y)]<-0
     denY_NC<- density(df_NC$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+    denY_NC$y[1]<-0
+    denY_NC$y[length(denY_NC$y)]<-0
     denYMax<- max(c(denY_tot$y, denY_PC$y, denY_NC$y))
     
     par(mar=c(4,0,0,4))
@@ -145,6 +151,8 @@ for (file in files) {
     if (nrow(df_GOI)>1){
       par(new=TRUE)
       denY_GOI<- density(df_GOI$log2FoldChange, from=ymin, to=ymax, na.rm=TRUE)
+      denY_GOI$y[1]<-0
+      denY_GOI$y[length(denY_GOI$y)]<-0
       lines(denY_GOI$y, denY_GOI$x, col=ColH, lwd=2)
       rgb.val<- col2rgb(ColH)
       polygon(denY_GOI$y, denY_GOI$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
@@ -152,13 +160,19 @@ for (file in files) {
     
     # Density plot read count
     denX_tot<- density(df_res$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+    denX_tot$x[1]<-0
+    denX_tot$x[length(denX_tot$x)]<-0
     denX_PC<- density(df_PC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+    denX_PC$x[1]<-0
+    denX_PC$x[length(denX_PC$x)]<-0
     denX_NC<- density(df_NC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+    denX_NC$x[1]<-0
+    denX_NC$x[length(denX_NC$x)]<-0
     denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
     
     par(mar=c(0,4,4,0))
     par(fig=c(0.1,0.7,0.7,0.9),new=TRUE)
-    plot(denX_tot, main = maintitle, cex.main=1.5, xlim=c(xmin, xmax), ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
+    plot(denX_tot$x,denX_tot$y, main = maintitle, cex.main=1.5, xlim=c(xmin, xmax), ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
          ylab="", lwd=2)
     lines(denX_PC, col=ColP, lwd=2)
     lines(denX_NC, col=ColN, lwd=2)
@@ -171,6 +185,8 @@ for (file in files) {
     if (nrow(df_GOI)>1){
       par(new=TRUE)
       denX_GOI<- density(df_GOI$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
+      denX_GOI$x[1]<-0
+      denX_GOI$x[length(denX_GOI$x)]<-0
       lines(denX_GOI, col=1, lwd=2)
       rgb.val<- col2rgb(ColH)
       polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
