@@ -172,7 +172,7 @@ for (file in files) {
     
     par(mar=c(0,4,4,0))
     par(fig=c(0.1,0.7,0.7,0.9),new=TRUE)
-    plot(denX_tot$x,denX_tot$y, main = maintitle, cex.main=1.5, xlim=c(xmin, xmax), ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
+    plot(denX_tot$x, denX_tot$y, main = maintitle, cex.main=1.5, xlim=c(xmin, xmax), ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
          ylab="", lwd=2)
     lines(denX_PC, col=ColP, lwd=2)
     lines(denX_NC, col=ColN, lwd=2)
