@@ -162,7 +162,11 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
   
   # Density y axis
   denY_PC<- density(pos$Nmfc.y, from=ymin, to=ymax, na.rm=TRUE)
+  denY_PC$y[1]<- 0
+  denY_PC$y[length(denY_PC$y)]<- 0
   denY_NC<- density(neg$Nmfc.y, from=ymin, to=ymax, na.rm=TRUE)
+  denY_NC$y[1]<- 0
+  denY_NC$y[length(denY_NC$y)]<- 0
   denYMax <- max(c(denY_PC$y, denY_NC$y))
   par(mar=c(4,0,0,4))
   par(fig=c(0.7,0.9,0.1,0.7),new=TRUE)
@@ -175,7 +179,11 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
   
   # Density x axis
   denX_PC<- density(pos$Nmfc.x, from=xmin, to=xmax, na.rm=TRUE)
+  denX_PC$x[1]<- 0
+  denX_PC$x[length(denX_PC$x)]<- 0
   denX_NC<- density(neg$Nmfc.x, from=xmin, to=xmax, na.rm=TRUE)
+  denX_NC$x[1]<- 0
+  denX_NC$x[length(denX_NC$x)]<- 0
   denXMax <- max(c(denX_PC$y, denX_NC$y))
   
   par(mar=c(0,4,4,0))
