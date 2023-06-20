@@ -214,24 +214,24 @@ for (i in 1:nrow(combi)){
   yrange<- c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
   
   # Density plot fold change
-  denY_tot<-density(df_res$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
+  denY_tot<-density(df_res$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
   denY_tot$y[1]<- 0
   denY_tot$y[length(denY_tot$y)]<- 0
-  denY_PC<-density(df_PC$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
+  denY_PC<-density(df_PC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
   denY_PC$y[1]<- 0
   denY_PC$y[length(denY_PC$y)]<- 0
-  denY_NC<-density(df_NC$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
+  denY_NC<-density(df_NC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
   denY_NC$y[1]<- 0
   denY_NC$y[length(denY_NC$y)]<- 0
   denYMax<- max(c(denY_tot$y, denY_PC$y, denY_NC$y))
   # Density plot read count
-  denX_tot<- density(df_res$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
+  denX_tot<- density(df_res$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
   denX_tot$x[1]<- 0
   denX_tot$x[length(denX_tot$x)]<- 0
-  denX_PC<- density(df_PC$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
+  denX_PC<- density(df_PC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
   denX_PC$x[1]<- 0
   denX_PC$x[length(denX_PC$x)]<- 0
-  denX_NC<- density(df_NC$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
+  denX_NC<- density(df_NC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
   denX_NC$x[1]<- 0
   denX_NC$x[length(denX_NC$x)]<- 0
   denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
