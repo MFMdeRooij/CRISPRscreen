@@ -160,14 +160,14 @@ for (file in files) {
     
     # Density plot read count
     denX_tot<- density(df_res$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
-    denX_tot$x[1]<- 0
-    denX_tot$x[length(denX_tot$x)]<- 0
+    denX_tot$y[1]<- 0
+    denX_tot$y[length(denX_tot$y)]<- 0
     denX_PC<- density(df_PC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
-    denX_PC$x[1]<- 0
-    denX_PC$x[length(denX_PC$x)]<- 0
+    denX_PC$y[1]<- 0
+    denX_PC$y[length(denX_PC$y)]<- 0
     denX_NC<- density(df_NC$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
-    denX_NC$x[1]<- 0
-    denX_NC$x[length(denX_NC$x)]<- 0
+    denX_NC$y[1]<- 0
+    denX_NC$y[length(denX_NC$y)]<- 0
     denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
     
     par(mar=c(0,4,4,0))
@@ -185,8 +185,8 @@ for (file in files) {
     if (nrow(df_GOI)>1){
       par(new=TRUE)
       denX_GOI<- density(df_GOI$logBaseMeanA, from=xmin, to=xmax, na.rm=TRUE)
-      denX_GOI$x[1]<- 0
-      denX_GOI$x[length(denX_GOI$x)]<- 0
+      denX_GOI$y[1]<- 0
+      denX_GOI$y[length(denX_GOI$y)]<- 0
       lines(denX_GOI, col=1, lwd=2)
       rgb.val<- col2rgb(ColH)
       polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
