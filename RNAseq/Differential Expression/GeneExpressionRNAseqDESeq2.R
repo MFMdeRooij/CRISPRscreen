@@ -226,14 +226,14 @@ for (i in 1:nrow(combi)){
   denYMax<- max(c(denY_tot$y, denY_PC$y, denY_NC$y))
   # Density plot read count
   denX_tot<- density(df_res$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
-  denX_tot$x[1]<- 0
-  denX_tot$x[length(denX_tot$x)]<- 0
+  denX_tot$y[1]<- 0
+  denX_tot$y[length(denX_tot$y)]<- 0
   denX_PC<- density(df_PC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
-  denX_PC$x[1]<- 0
-  denX_PC$x[length(denX_PC$x)]<- 0
+  denX_PC$y[1]<- 0
+  denX_PC$y[length(denX_PC$y)]<- 0
   denX_NC<- density(df_NC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
-  denX_NC$x[1]<- 0
-  denX_NC$x[length(denX_NC$x)]<- 0
+  denX_NC$y[1]<- 0
+  denX_NC$y[length(denX_NC$y)]<- 0
   denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
   
   # Volcano plot
@@ -343,8 +343,8 @@ for (i in 1:nrow(combi)){
     polygon(denX_NC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     if (Gene=="Hitlist" && nrow(GenesDiff)>1){
       denX_hits_total<-density(GenesDiff$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
-      denX_hits_total$x[1]<- 0
-      denX_hits_total$x[length(denX_hits_total$x)]<- 0
+      denX_hits_total$y[1]<- 0
+      denX_hits_total$y[length(denX_hits_total$y)]<- 0
       lines(denX_hits_total, col=ColH, lwd=2)
       rgb.val<- col2rgb(ColH)
       polygon(denX_hits_total, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
@@ -352,8 +352,8 @@ for (i in 1:nrow(combi)){
     if (nrow(df_GOI)>1){
       par(new=TRUE)
       denX_GOI<- density(df_GOI$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
-      denX_GOI$x[1]<- 0
-      denX_GOI$x[length(denX_GOI$x)]<- 0
+      denX_GOI$y[1]<- 0
+      denX_GOI$y[length(denX_GOI$y)]<- 0
       lines(denX_GOI, col=ColH, lwd=2)
       rgb.val<- col2rgb(ColH)
       polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
