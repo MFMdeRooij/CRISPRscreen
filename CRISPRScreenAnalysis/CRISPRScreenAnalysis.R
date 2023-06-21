@@ -944,7 +944,7 @@ for (Filename in Filenames) {
         par(new=TRUE)
         denX_GOI<- density(df_GOI$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
         denX_GOI$y[1]<- 0
-        denX_GOI$y[length(denX_GOI$x)]<- 0
+        denX_GOI$y[length(denX_GOI$y)]<- 0
         lines(denX_GOI, col=ColH, lwd=2)
         rgb.val<- col2rgb(ColH)
         polygon(denX_GOI, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
