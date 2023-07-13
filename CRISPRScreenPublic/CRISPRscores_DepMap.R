@@ -1,10 +1,10 @@
 # Plot CRISPR scores of the public CRISPR screens from DepMap.org (Broad Institute)
-# Download CRISPR data (22q4) "CRISPRGeneEffect.csv, and model.csv from https://depmap.org/portal/download/all/
+# Download CRISPR data (23q2) "CRISPRGeneEffect.csv, and model.csv from https://depmap.org/portal/download/all/
 # All cell lines are plotted on page 1, and the lymphoid ones are plotted including labels on page 2
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################
 # Workdirectory (folder where "CRISPR_(DepMap_22Q2_Public+Score,_Chronos).csv" is located)
-setwd("H:/BioWin/DepMap/")
+setwd("G:/divg/Pathologie-ADHESIE/ALL/TheScreeningTeam/DepMap/")
 
 # Genes of interest (add to line 15)
 q <- function(...) {
@@ -26,7 +26,7 @@ library("basicPlotteR")
 if (!exists("dataDepMap")) {
   dataDepMap<-read.csv("CRISPRGeneEffect.csv",stringsAsFactors = F)
   chronos<-as.data.frame(t(dataDepMap[,2:ncol(dataDepMap)]))
-  colnames(chronos)<- dataDepMap$X
+  colnames(chronos)<- dataDepMap$ModelID
   rownames(chronos)<- unlist(lapply(strsplit(as.character(rownames(chronos)),"\\.\\."), "[", 1))
   cells<- read.csv("Model.csv",stringsAsFactors = F)
   UsedIDs<- cells[match(colnames(chronos), cells$ModelID),]
