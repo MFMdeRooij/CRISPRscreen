@@ -41,7 +41,7 @@ while (my $filename = shift) {
   my @allSeqs = ();
   my @countTable = ();
   # Read Fastq file and write reads in the right barcode file
-  open FASTQ, "zcat $filename |" or die "Could not open sequence file $_";
+  open FASTQ, "cat $filename |" or die "Could not open sequence file $_";
   while (<FASTQ>) { 
     my $seq = <FASTQ>; 
     chomp $seq;
