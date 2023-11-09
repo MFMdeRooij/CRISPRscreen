@@ -37,14 +37,17 @@ y3title = r'Log2 fold change ($\alpha$IgM/PMA)'
 # 2 superscript (dutch log style) and 0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
 # greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 
 
-# X- and Y-axis limits:
-xmin=0
-xmax=4.2
-xticks=1
+# X and Y axis limits (Relative median log2 fold change)
 
-ymin=-1.25
-ymax=1
-yticks=0.25
+# Log10 average read count:
+xmin = 0
+xmax = 4.2
+xticks = 1
+
+# Log2 fold change:
+ymin = -1.25
+ymax = 1
+yticks = 0.25
 
 # Font size of X- and Y-axis titles (the main title is 10 bigger)
 fs = 15
