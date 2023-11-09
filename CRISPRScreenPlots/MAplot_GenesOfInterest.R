@@ -42,10 +42,12 @@ y3title<- expression("Log2 fold change ("*alpha*"IgM/PMA)")
 Axlim<- 0
 if (Axlim==1){
   # Custom axes limits:
+  # Log10 average read count:
   xmin<- 0
   xmax<- 4.2
   xticks<- 1
   
+  # Log2 fold change:
   ymin<- -1.25
   ymax<- 1
   yticks<- 0.25
