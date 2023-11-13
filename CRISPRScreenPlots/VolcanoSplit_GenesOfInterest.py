@@ -60,7 +60,7 @@ for file in files:
     dfg['l2mfc'] = np.log2(dfg['MedianFoldChange'])
     dfg['l10rdep'] = np.log10(dfg['rhoDepleted']+10**-15)*-1
     dfg['l10renr'] = np.log10(dfg['rhoEnriched']+10**-15)*-1
-    dfg = dfg[dfg['Type']=='x'].append(dfg[dfg['Type']!='x'].sample(frac=1, random_state=10))
+    dfg = pd.concat([dfg[dfg['Type']=='x'],dfg[dfg['Type']!='x'].sample(frac=1, random_state=10)])
  
     dfgene = dfg[dfg['GeneSymbol'].isin(gene)]
     

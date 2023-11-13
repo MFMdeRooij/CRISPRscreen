@@ -82,7 +82,7 @@ for file in files:
     df['l2fc'].replace([np.inf, -np.inf], 0, inplace=True)
     df.fillna(1, inplace=True) 
        
-    df = df[df['Type']=='x'].append(df[df['Type']!='x'].sample(frac=1, random_state=10))
+    df = pd.concat([df[df['Type']=='x'],df[df['Type']!='x'].sample(frac=1, random_state=10)])
     
     #MA plots
     plt.figure(1, figsize=(10,10))
