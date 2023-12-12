@@ -8,7 +8,7 @@ CRISPRScreenAnalysis:
 - From fastq to count table use FastqToCountTable.pl with a library file and your fastq files (Perl). 
 - If you don't like Perl, you can also use the Python script (FastqToCountTable.py) in Spyder, but this one is much slower than the Perl script (Python).
 - From count table to robust statistics use CRISPRScreenAnalysis.R with CRISPRScreenAnalysisLibraries.csv and your count tables (R).
-- Use GSEA_CRISPRscreen.R to obtain pathway information from the CRISPR screen results.
+- Use GSEA_CRISPRscreen.R to obtain pathway information from the CRISPR screen results (R).
 - To get information about the quality of the read mapping (e.g. how much reads map to the library, contaminations, primerdimers), use Quality.pl + Quality.R (Perl/R). To obtain more information (e.g. mutations in barcodes/guides) use FastqToCountTable.py (Python).
 
 CRISPRScreenPlots:
