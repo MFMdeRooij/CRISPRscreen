@@ -8,6 +8,7 @@ CRISPRScreenAnalysis:
 - From fastq to count table use FastqToCountTable.pl with a library file and your fastq files (Perl). 
 - If you don't like Perl, you can also use the Python script (FastqToCountTable.py) in Spyder, but this one is much slower than the Perl script (Python).
 - From count table to robust statistics use CRISPRScreenAnalysis.R with CRISPRScreenAnalysisLibraries.csv and your count tables (R).
+- GSEA_CRISPRscreen.R can be used to obtain pathway information about the CRISPR screen results.
 - To get information about the quality of the read mapping (e.g. how much reads map to the library, contaminations, primerdimers), use Quality.pl + Quality.R (Perl/R). To obtain more information (e.g. mutations in barcodes/guides) use FastqToCountTable.py (Python).
 
 CRISPRScreenPlots:
@@ -24,7 +25,7 @@ OncoPrint:
   - To summarize the CRISPR screen hits for multiple cell lines, you can use the OncoPrint.R script (R). 
 
 RNAseq:
-- To look at gene expression of your CRISPR targets, you can download RNAseq data from most cell lines from the NCBI-SRA database, and analyze it with GeneExpressionRNAseqHisat2.R and the Bash files. Because this script uses various Linux apps, it does not work on Windows (R/Linux). With the sorted bam files you can also view the read mapping in IGV viewer (e.g. to look at mutations, differential splicing between cell lines, or check CRISPR induced deletions). From the generated count tables you can perform differential expression, make gene level bar/pca plots, or gene family pie plots (R). You can also look at (predicted) cell-cell interactions between different cell types or autocrine factors. Furthermore, you can look at differential splicing of a particular gene.
+- To look at gene expression of your CRISPR targets, you can download RNAseq data from most cell lines from the NCBI-SRA database, and analyze it with GeneExpressionRNAseqHisat2.R and the Bash files. Because this script uses various Linux apps, it does not work on Windows (R/Linux). With the sorted bam files you can also view the read mapping in IGV viewer (e.g. to look at mutations, differential splicing between cell lines, or check CRISPR induced deletions). From the generated count tables you can perform differential expression, gene set enrichment analysis, make gene level bar/PCA plots, or gene family pie plots (R). You can also look at (predicted) cell-cell interactions between different cell types or autocrine factors. Furthermore, you can look at differential splicing of a particular gene.
 
 SangerSeq:
 - After performing the CRISPR screen, you might validate the hits. With the Sanger script, you can analyze your Sanger sequences from your CRISPRguide cloning in a few seconds. Apart from Anaconda3, you need to install the Biopython package (Python). 
