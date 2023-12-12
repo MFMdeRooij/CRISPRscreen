@@ -120,12 +120,13 @@ for (com in comparisons) {
     
     for (i in 1:20){
       print(gseaplot2(GSEAplots, geneSetID = i, title = paste0(com, ": ",GSEAplots$Description[i], " (",GSEAplots@setType,":", GSEAplots$ID[i],")", 
-                                                              "\nES: ", round(GSEAplots$enrichmentScore[i],3), ",",
-                                                              " NES: ", round(GSEAplots$NES[i],3), ",",
-                                                              " pvalue: ", round(GSEAplots$pvalue[i],3), ",",
-                                                              " p.adjust: ", round(GSEAplots$p.adjust[i],3)
-                                                              
-      )))
+                                                               "\nES: ", round(GSEAplots$enrichmentScore[i],3), ",",
+                                                               " NES: ", round(GSEAplots$NES[i],3), ",",
+                                                               " pvalue: ",if (GSEAplots$pvalue[i]>= 0.001) {round(GSEAplots$pvalue[i],3)}
+                                                               else{formatC(GSEAplots$pvalue[i],format = "e", digits = 2)},",",
+                                                               " p.adjust: ",if (GSEAplots$p.adjust[i]>= 0.001) {round(GSEAplots$p.adjust[i],3)}
+                                                               else{formatC(GSEAplots$p.adjust[i],format = "e", digits = 2)},",",
+                                                               " leading edge: (", GSEAplots$leading_edge[i],")" )))
     }
-  dev.off()
+    dev.off()
 }
