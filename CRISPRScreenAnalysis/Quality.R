@@ -1,6 +1,6 @@
 ## CRISPR Screen quality analysis for large fastq files:
 # - We used the screen design of Jastrzebski et al Methods Mol Biol 2016
-# - Use this script in Linux
+# - Use this script in Linux, In Windows you can check the quality with FastqToCountTable.py (python)
 # - Make count tables from FASTQ files with the Perl script FastqToCountTable.pl and a library.csv file
 # - Put Quality.pl in the same folder as the fastq files
 # - The output of this script is a table with the number of read per barcode, and how much reads map to the used library, 
