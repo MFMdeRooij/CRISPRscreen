@@ -3,12 +3,8 @@ use warnings;
 use strict;
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
-# Linux: run in command line: ./Quality.pl *.fastq.gz
-# Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 44) for 'type',
-# and run in command prompt: perl Quality.pl data1.fastq data2.fastq (if you use tab to complete the filename
-# windows will add .\ before the filename (.\data1.fastq), this will give problems in naming the output file, so don't use that
-# After running this code (and FastqToCountTable.pl), go further with the R script (Quality.R)
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
+# Linux: This script is called in Quality.R
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
 #                                            SETTINGS
 
@@ -41,7 +37,7 @@ while (my $filename = shift) {
   my @allSeqs = ();
   my @countTable = ();
   # Read Fastq file and write reads in the right barcode file
-  open FASTQ, "zcat $filename |" or die "Could not open sequence file $_";
+  open FASTQ, "cat $filename |" or die "Could not open sequence file $_";
   while (<FASTQ>) { 
     my $seq = <FASTQ>; 
     chomp $seq;
