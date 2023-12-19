@@ -173,7 +173,7 @@ if (pca==0) {
   # Add RNAseqDesign.csv in the workdirectory (this should include a column with Sample (Cell line names)
   # and a culumn with Group (Cell types)
   
-  #install.packages(c("corrplot", "ggplot2", "ggfortify", "factoextra", "umap", basicPlotteR"))
+  #install.packages(c("corrplot", "ggplot2", "ggfortify", "factoextra", "umap", "basicPlotteR"))
   library("corrplot")
   library("ggplot2")
   library("ggfortify")
