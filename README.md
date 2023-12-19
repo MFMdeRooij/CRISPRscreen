@@ -9,7 +9,7 @@ CRISPRScreenAnalysis:
 - If you don't like Perl, you can also use the Python script (FastqToCountTable.py) in Spyder, but this one is much slower than the Perl script (Python).
 - From count table to robust statistics use CRISPRScreenAnalysis.R with CRISPRScreenAnalysisLibraries.csv and your count tables (R).
 - Use GSEA_CRISPRscreen.R to obtain pathway information from the CRISPR screen results (R).
-- To get information about the quality of the read mapping (e.g. how much reads map to the library, contaminations, primerdimers), use Quality.pl + Quality.R (Perl/R). To obtain more information (e.g. mutations in barcodes/guides) use FastqToCountTable.py (Python).
+- To get information about the quality of the read mapping (e.g. how much reads map to the library, contaminations, primerdimers), use Quality.R + Quality.pl (R). To obtain more information (e.g. mutations in barcodes/guides) use FastqToCountTable.py (Python).
 
 CRISPRScreenPlots:
 - To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python). MAplot_GenesOfInterest.R can be used to make MA plots in Rstudio, and is much faster than the Python script. With the SyntheticLethality_GenesOfInterest.R or .py scripts, you can get a nice visualization of your synthetic lethal hits (R or Python). 
