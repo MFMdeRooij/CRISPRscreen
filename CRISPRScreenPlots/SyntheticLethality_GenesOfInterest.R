@@ -49,6 +49,9 @@ ylab<- "Ibrutinib (Relative log2 median fold change)"
 NormalizeX<- 1
 NormalizeY<- 1
 
+# Normalize to (log)mean or median, 0: mean, 1: median
+meanOrmedian<- 0
+
 #Axes limit, 0 = automatic, 1: custom
 Axlim<- 0
 # If automatic, Equal X and Y axes, 0 = no, 1: yes
@@ -78,9 +81,15 @@ if (NormalizeX == 0){
   Control$Nmfc<- log2(Control$MedianFoldChange)
 }
 if (NormalizeX == 1){
-  medianCP<- log2(median(Control$MedianFoldChange[Control$Type=='p']))
-  medianCN<- log2(median(Control$MedianFoldChange[Control$Type=='n']))
-  Control$Nmfc<- (log2(Control$MedianFoldChange)-medianCN)/abs(medianCP-medianCN)
+  if (meanOrmedian==0){
+    mCP<- mean(log2(Control$MedianFoldChange[Control$Type=='p']))
+    mCN<- mean(log2(Control$MedianFoldChange[Control$Type=='n']))
+  }
+  if (meanOrmedian==1){
+    mCP<- median(log2(Control$MedianFoldChange[Control$Type=='p']))
+    mCN<- median(log2(Control$MedianFoldChange[Control$Type=='n']))
+  }
+  Control$Nmfc<- (log2(Control$MedianFoldChange)-mCN)/abs(mCP-mCN)
 }
 ControlG<- Control[,c("GeneSymbol","Type","Nmfc")]
 
@@ -89,9 +98,15 @@ if (NormalizeY == 0){
   Treated$Nmfc<- log2(Treated$MedianFoldChange)
 }
 if (NormalizeY == 1){
-  medianTP<- log2(median(Treated$MedianFoldChange[Treated$Type=='p']))
-  medianTN<- log2(median(Treated$MedianFoldChange[Treated$Type=='n']))
-  Treated$Nmfc<- (log2(Treated$MedianFoldChange)-medianTN)/abs(medianTP-medianTN)
+  if (meanOrmedian==0){
+    mTP<- mean(log2(Treated$MedianFoldChange[Treated$Type=='p']))
+    mTN<- mean(log2(Treated$MedianFoldChange[Treated$Type=='n']))
+  }
+  if (meanOrmedian==1){
+    mTP<- median(log2(Treated$MedianFoldChange[Treated$Type=='p']))
+    mTN<- median(log2(Treated$MedianFoldChange[Treated$Type=='n']))
+  }
+  Treated$Nmfc<- (log2(Treated$MedianFoldChange)-mTN)/abs(mTP-mTN)
 }
 TreatedG<- Treated[,c("GeneSymbol","Nmfc")]
 
