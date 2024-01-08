@@ -27,7 +27,7 @@ revCompRevPrimerSeq = "GGAATTGGCTCCGGTGCCCGTCAGT"
 for (file in FastqFiles) {
   system(paste0('zcat ', file, ' | split -l 100000000 - PartOf', file))
 }
-system('./Quality4LargeFastq.pl PartOf*')
+system('./Quality.pl PartOf*')
 
 ReadTables <- paste0('ReadTable_PartOf', FastqFiles)
 CountTables <- paste0('CountTable_', FastqFiles, '.csv')
