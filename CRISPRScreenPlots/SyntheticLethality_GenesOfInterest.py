@@ -44,6 +44,9 @@ ylab = "Ibrutinib (Relative log2 median fold change)"
 NormalizeX = 1
 NormalizeY = 1
 
+# Normalize to (log)mean or median, 0: mean, 1: median
+meanOrmedian = 0
+
 # Axes limit, 0 = automatic, 1: custom
 Axlim = 0
 # If automatic, Equal X and Y axes, 0 = no, 1: yes
@@ -76,17 +79,25 @@ df1 = pd.read_csv(folder+'/DESeq2 T0vsT1 Genes.csv', sep=',')
 if NormalizeX == 0:
     df1['Control'] = np.log2(df1['MedianFoldChange'])
 if NormalizeX == 1:
-    medianCP = np.log2(np.median(df1['MedianFoldChange'][df1['Type']=='p']))
-    medianCN = np.log2(np.median(df1['MedianFoldChange'][df1['Type']=='n']))
-    df1['Control'] = (np.log2(df1['MedianFoldChange'])-medianCN)/np.abs(medianCP-medianCN)
+    if meanOrmedian==0:
+        mCP = np.mean(np.log2(df1['MedianFoldChange'][df1['Type']=='p']))
+        mCN = np.mean(np.log2(df1['MedianFoldChange'][df1['Type']=='n']))
+    if meanOrmedian==1:
+        mCP = np.median(np.log2(df1['MedianFoldChange'][df1['Type']=='p']))
+        mCN = np.median(np.log2(df1['MedianFoldChange'][df1['Type']=='n']))
+    df1['Control'] = (np.log2(df1['MedianFoldChange'])-mCN)/np.abs(mCP-mCN)
     
 df2 = pd.read_csv(folder+'/DESeq2 T0vsT2 Genes.csv', sep=',')
 if NormalizeY == 0:
     df2['Treated'] = np.log2(df2['MedianFoldChange'])
 if NormalizeY == 1:
-     medianCP = np.log2(np.median(df2['MedianFoldChange'][df2['Type']=='p']))
-     medianCN = np.log2(np.median(df2['MedianFoldChange'][df2['Type']=='n']))
-     df2['Treated'] = (np.log2(df2['MedianFoldChange'])-medianCN)/np.abs(medianCP-medianCN)
+    if meanOrmedian==0:
+         mCP = np.mean(np.log2(df2['MedianFoldChange'][df2['Type']=='p']))
+         mCN = np.mean(np.log2(df2['MedianFoldChange'][df2['Type']=='n']))
+    if meanOrmedian==1:
+         mCP = np.median(np.log2(df2['MedianFoldChange'][df2['Type']=='p']))
+         mCN = np.median(np.log2(df2['MedianFoldChange'][df2['Type']=='n']))
+    df2['Treated'] = (np.log2(df2['MedianFoldChange'])-mCN)/np.abs(mCP-mCN)
 
 if t2t1com == 1:
     df12 = pd.read_csv(folder+'/DESeq2 T1vsT2 Genes.csv', sep=',')
