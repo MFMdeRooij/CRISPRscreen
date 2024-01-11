@@ -13,7 +13,7 @@
 folder = "H:/BioWin/CRISPRscreen"
 
 # Cell line:
-cellID = "Namalwa"
+cellID = "Z138"
 
 # Is there a T1drug/T1control comparison, 0: no, 1: yes
 t2t1com = 1
@@ -34,7 +34,7 @@ GeneSymbol = 0
 
 # Axes labels:
 xlab = "Control (Relative log2 median fold change)"
-ylab = "Ibrutinib (Relative log2 median fold change)"
+ylab = "Venetoclax (Relative log2 median fold change)"
 
 # # BCR-controlled adhesion screens:  
 # xlab = 'PMA (Log2 median fold change)'
@@ -45,7 +45,7 @@ NormalizeX = 1
 NormalizeY = 1
 
 # Normalize to (log)mean or median of the (non-)essentials, 0: mean, 1: median
-meanOrmedian = 0
+meanOrmedian = 1
 
 # Axes limit, 0 = automatic, 1: custom
 Axlim = 0
