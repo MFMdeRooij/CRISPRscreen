@@ -31,7 +31,7 @@ allsignif<- 0
 GenesOfInterest<- NULL
 if (allsignif==1){
   # If specific genes, Which ones?
-  GenesOfInterest<- c("BTK", "SYK", "PIK3R1")
+  GenesOfInterest<- c("")
 }
 
 # Show all gene symbols, 0: no, 1: yes
@@ -45,27 +45,30 @@ ylab<- "Ibrutinib (Relative log2 median fold change)"
 # xlab<- "PMA (Log2 median fold change)"
 # ylab<- expression(alpha*"IgM (Log2 median fold change)")
 
-# Normalize to essential and non-essentials (only for lethality), 0: no, 1: yes
+# Normalize to essentials and non-essentials (only for lethality), 0: no, 1: yes
 NormalizeX<- 1
 NormalizeY<- 1
 
 # Normalize to (log)mean or median, 0: mean, 1: median
 meanOrmedian<- 0
 
+# Additionally normalize y by linear regression (so y=0+1x of the controls), 0: no, 1: yes
+NormalizeLR<- 1
+
 #Axes limit, 0 = automatic, 1: custom
-Axlim<- 0
+Axlim<- 1
 # If automatic, Equal X and Y axes, 0 = no, 1: yes
 XYequal<- 1
 
 if (Axlim==1){
   # Custom axes limits: 
-  xmin<- -0.8
-  xmax<- 0.4
-  xticks<- 0.2
+  xmin<- -3
+  xmax<- 1
+  xticks<- 1
   
-  ymin<- -0.8
-  ymax<- 0.4
-  yticks<- 0.2
+  ymin<- -3
+  ymax<- 1
+  yticks<- 1
 }
 
 # Colors:
@@ -124,6 +127,12 @@ if (t2t1com==1){
   Combi<- merge(Combi, TCG, by="GeneSymbol")
 }
 
+if (NormalizeLR==1){
+  con<- Combi[Combi$Type!="x",]
+  modelC<- lm(Nmfc.y ~ Nmfc.x, data=con)
+  Combi$Nmfc.y<- (Combi$Nmfc.y-modelC$coefficients[1])/modelC$coefficients[2]
+}
+
 pos<- Combi[Combi$Type=="p",]
 neg<- Combi[Combi$Type=="n",]
 hit<- Combi[Combi$GeneSymbol %in% GenesOfInterest,]
@@ -164,6 +173,23 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
     addTextLabels(hit$Nmfc.x, hit$Nmfc.y, hit$GeneSymbol, avoidPoints = TRUE,
                         keepLabelsInside = TRUE, col.label="black", cex.label=1)
   }
+
+  # Linreg prediction interval from controls
+  con<- rbind(pos,neg)
+  modelC<- lm(Nmfc.y ~ Nmfc.x, data=con)
+  
+  xvalues <- seq(xmin-1, xmax+1, length.out = 10)
+  predictions <- predict(modelC, newdata = data.frame(Nmfc.x = xvalues), 
+                         interval = "prediction", level=0.95)
+  
+  lower_values <- predictions[, "lwr"]
+  upper_values <- predictions[, "upr"]
+  modal_values <- predictions[, "fit"]
+  lines(xvalues, modal_values, col = "purple", lwd = 1)
+  lines(xvalues, lower_values, col = "purple", lty = 2)
+  lines(xvalues, upper_values, col = "purple", lty = 2)
+  
+  # 0 lines
   abline(v=0, col=cneg, lty=3)
   abline(h=0, col=cneg, lty=3)
   if (NormalizeX == 1){
@@ -175,6 +201,7 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
   abline(0,1, col="black", lty=2)
   legend(xmin,ymax,legend=c("All genes", "Essentials","Non-essentials"), pch=16, cex=0.8, col=c(call,cpos,cneg))
   
+
   # Density y axis
   denY_PC<- density(pos$Nmfc.y, from=ymin, to=ymax, na.rm=TRUE)
   denY_PC$y[1]<- 0
