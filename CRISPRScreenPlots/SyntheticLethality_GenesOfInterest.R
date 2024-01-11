@@ -31,7 +31,7 @@ allsignif<- 0
 GenesOfInterest<- NULL
 if (allsignif==1){
   # If specific genes, Which ones?
-  GenesOfInterest<- c("")
+  GenesOfInterest<- c("BTK", "SYK", "PIK3R1")
 }
 
 # Show all gene symbols, 0: no, 1: yes
@@ -56,7 +56,7 @@ meanOrmedian<- 0
 NormalizeLR<- 1
 
 #Axes limit, 0 = automatic, 1: custom
-Axlim<- 1
+Axlim<- 0
 # If automatic, Equal X and Y axes, 0 = no, 1: yes
 XYequal<- 1
 
@@ -200,7 +200,6 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
   }
   abline(0,1, col="black", lty=2)
   legend(xmin,ymax,legend=c("All genes", "Essentials","Non-essentials"), pch=16, cex=0.8, col=c(call,cpos,cneg))
-  
 
   # Density y axis
   denY_PC<- density(pos$Nmfc.y, from=ymin, to=ymax, na.rm=TRUE)
