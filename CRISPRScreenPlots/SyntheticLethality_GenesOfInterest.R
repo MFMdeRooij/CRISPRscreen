@@ -49,7 +49,7 @@ ylab<- "Ibrutinib (Relative log2 median fold change)"
 NormalizeX<- 1
 NormalizeY<- 1
 
-# Normalize to (log)mean or median, 0: mean, 1: median
+# Normalize to (log)mean or median of the (non-)essentials, 0: mean, 1: median
 meanOrmedian<- 0
 
 # Additionally normalize y by linear regression (so y=0+1x of the controls), 0: no, 1: yes

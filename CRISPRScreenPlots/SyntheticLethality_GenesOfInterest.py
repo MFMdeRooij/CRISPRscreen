@@ -40,11 +40,11 @@ ylab = "Ibrutinib (Relative log2 median fold change)"
 # xlab = 'PMA (Log2 median fold change)'
 # ylab = r'$\alpha$IgM (Log2 median fold change)'
 
-# Normalize to essential and non-essentials (only for lethality), 0: no, 1: yes
+# Normalize to essentials and non-essentials (only for lethality), 0: no, 1: yes
 NormalizeX = 1
 NormalizeY = 1
 
-# Normalize to (log)mean or median, 0: mean, 1: median
+# Normalize to (log)mean or median of the (non-)essentials, 0: mean, 1: median
 meanOrmedian = 0
 
 # Axes limit, 0 = automatic, 1: custom
@@ -54,8 +54,8 @@ XYequal = 1
 
 if Axlim==1:
 # Custom axes limits:    
-    xmin, xmax, xticks=-1.5, 0.5, 0.25
-    ymin, ymax, yticks=-1.5, 0.5, 0.25
+    xmin, xmax, xticks=-3, 1, 1
+    ymin, ymax, yticks=-3, 1, 1
 
 # Colors:
 call = 'silver'
