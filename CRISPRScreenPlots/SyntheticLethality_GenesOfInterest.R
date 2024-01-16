@@ -14,7 +14,7 @@ library("basicPlotteR")
 # Put this script in the folder where the count tables are located
 folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
 ## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-#folder<- "H:/BioWin/CRISPRscreen/Namalwa/"
+#folder<- "H:/BioWin/CRISPRscreen/Z138/"
 
 # Cell line:
 cellID<- "Z138"
@@ -25,8 +25,8 @@ t2t1com<- 1
 # Size graph
 size<- 7
 
-# Genes to emphasize, 0: all significant (from T1drug/T1control comparison), 1: specific genes  
-allsignif<- 0
+# Genes to emphasize, 0: all significant (from T1drug/T1control comparison), 1: specific genes, 2 genes outside prediction interval  
+allsignif<- 2
 
 GenesOfInterest<- NULL
 if (allsignif==1){
@@ -131,6 +131,13 @@ if (NormalizeLR==1){
   con<- Combi[Combi$Type!="x",]
   modelC<- lm(Nmfc.y ~ Nmfc.x, data=con)
   Combi$Nmfc.y<- (Combi$Nmfc.y-modelC$coefficients[1])/modelC$coefficients[2]
+}
+
+if (allsignif==2){
+  con<- Combi[Combi$Type!="x",]
+  modelC<- lm(Nmfc.y ~ Nmfc.x, data=con)
+  p1=predict(modelC, newdata = data.frame(Nmfc.x = Combi$Nmfc.x),interval = "prediction", level=0.95)
+  GenesOfInterest<- Combi$GeneSymbol[Combi$Nmfc.y<p1[,2] | Combi$Nmfc.y>p1[,3]]
 }
 
 pos<- Combi[Combi$Type=="p",]
