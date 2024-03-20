@@ -79,7 +79,9 @@ for (pair in c("P","S")){
                           annot.ext="~/HumanGenome/hg38.105.gtf",
                           isGTFAnnotationFile=TRUE,
                           isPairedEnd=TRUE,
-                          strandSpecific=0)
+                          allowMultiMappingReads=T,
+                          strandSpecific=0,
+                          allowMultiOverlap=F)
       } else {
           next
         }
@@ -90,7 +92,9 @@ for (pair in c("P","S")){
                         annot.ext="~/HumanGenome/hg38.105.gtf",
                         isGTFAnnotationFile=TRUE,
                         isPairedEnd=FALSE,
-                        strandSpecific=0)
+                        allowMultiMappingReads=T,
+                        strandSpecific=0,
+                        allowMultiOverlap=F)
     } else {
         break
       }
@@ -182,10 +186,15 @@ if (pca==0) {
   library("basicPlotteR")
   
   CountTableNor<- read.csv("RNAseqCountTableNorTPX.csv")
+  
+  # Sample metadata
   df_design<- read.csv("RNAseqDesign.csv")
   df_design$Color <- rainbow(length(unique(as.factor(df_design$Group))))[as.factor(df_design$Group)]
   
-  # Remove low noisy counts
+  # Select samples from design table
+  CountTableNor<- CountTableNor[,c("ensembl_gene_id", "hgnc_symbol", colnames(CountTableNor)[colnames(CountTableNor) %in% df_design$Sample])]
+  
+  # PCA analysis
   df_pr<-CountTableNor[3:ncol(CountTableNor)]
   rownames(df_pr)<- CountTableNor$ensembl_gene_id
   df_pr<- log2(df_pr+1)
@@ -193,11 +202,12 @@ if (pca==0) {
   df_prSel <- df_pr[df_pr$meanExpr>1,]
   df_prSel$meanExpr<- NULL
   
-  # PCA & UMAP
   res.pca<- prcomp(t(df_prSel))
   res.ind <- get_pca_ind(res.pca)
   res.eig<- get_eigenvalue(res.pca)
   pcaind<- as.data.frame(res.ind$coord)
+  
+  # UMAP
   set.seed(100)
   rna.umap<- umap(t(df_prSel))
   
