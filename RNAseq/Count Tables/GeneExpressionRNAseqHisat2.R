@@ -79,7 +79,7 @@ for (pair in c("P","S")){
                           annot.ext="~/HumanGenome/hg38.105.gtf",
                           isGTFAnnotationFile=TRUE,
                           isPairedEnd=TRUE,
-                          allowMultiMappingReads=T,
+                          countMultiMappingReads=T,
                           strandSpecific=0,
                           allowMultiOverlap=F)
       } else {
@@ -92,7 +92,7 @@ for (pair in c("P","S")){
                         annot.ext="~/HumanGenome/hg38.105.gtf",
                         isGTFAnnotationFile=TRUE,
                         isPairedEnd=FALSE,
-                        allowMultiMappingReads=T,
+                        countMultiMappingReads=T,
                         strandSpecific=0,
                         allowMultiOverlap=F)
     } else {
