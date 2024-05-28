@@ -44,12 +44,12 @@ Guide<- "sgRNA"
 T0Rep1<- "CGTGAT"
 T0Rep2<- "ACATCG"
 T0Rep3<- "GCCTAA"
-T1Rep1<- "GATCTG"
-T1Rep2<- "TCAAGT"
-T1Rep3<- "CTGATC"
-T2Rep1<- "TGGTCA"
-T2Rep2<- "CACTGT"
-T2Rep3<- "ATTGGC"
+T1Rep1<- "TGGTCA"
+T1Rep2<- "CACTGT"
+T1Rep3<- "ATTGGC"
+T2Rep1<- "GATCTG"
+T2Rep2<- "TCAAGT"
+T2Rep3<- "CTGATC"
 
 # Exclude replicates: 0 = Include, 1 = Exclude (you cannot exclude T0 or T1 completely -> change your design)
 T0_Rep1<- 0
@@ -692,6 +692,9 @@ for (Filename in Filenames) {
       recallGene<- truePosGene/posControlsGene
       F1Gene<- 2/(1/precisionGene + 1/recallGene)
     }
+    
+    # Prevent a log-bug when Rho is 0
+    df_geneRRA$rho[df_geneRRA$rho==0]<-10^-15
     
     # Axes limits
     xrangeVOL<- c(min(df_geneRRA$ml2fc, na.rm=TRUE), max(df_geneRRA$ml2fc, na.rm=TRUE))
