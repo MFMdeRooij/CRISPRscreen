@@ -5,7 +5,7 @@ use strict;
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # Nextera PCR primers can be found in 'PCR design Nextera-NovaSeq.xlsx'
 # Linux: run in command line: ./FastqToCountTable.pl LibraryX.csv *.fastq.gz
-# Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 58) for 'type',
+# Windows: Install Strawberry Perl, Unpack fastq.gz file with 7zip, replace 'zcat' (line 59) for 'type',
 # and run in command prompt: perl FastqToCountTable.pl LibraryX.csv data1.fastq data2.fastq
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
