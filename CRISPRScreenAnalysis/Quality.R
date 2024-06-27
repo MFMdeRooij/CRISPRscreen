@@ -1,5 +1,6 @@
 ## CRISPR Screen quality analysis for large fastq files:
 # - We used the screen design of Jastrzebski et al Methods Mol Biol 2016
+# - Nextera PCR primers can be found in 'PCR design Nextera-NovaSeq.xlsx'
 # - Use this script in Linux, In Windows you can check the quality with FastqToCountTable.py (python)
 # - Make count tables from FASTQ files with the Perl script FastqToCountTable.pl and a library.csv file
 # - Put Quality.pl in the same folder as the fastq files

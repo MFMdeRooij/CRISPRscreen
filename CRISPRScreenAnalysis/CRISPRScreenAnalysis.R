@@ -1,5 +1,6 @@
 ## CRISPR Screen analysis:
 # - We used the screen design of Jastrzebski et al Methods Mol Biol 2016
+# - Nextera PCR primers can be found in 'PCR design Nextera-NovaSeq.xlsx'
 # - Make count tables from FASTQ files with the Perl script FastqToCountTable.pl and a libraryX.csv file
 # - Analyze the count tables with this script and the CRISPRScreenAnalysisLibraries.csv file
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl

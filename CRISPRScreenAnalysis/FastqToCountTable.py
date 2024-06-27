@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
+# Nextera PCR primers can be found in 'PCR design Nextera-NovaSeq.xlsx'
 # Apart from anaconda3, install Biopython: command line/Windows Powershell: conda install biopython
 # Open in Spyder, adjust the settings, and run the script
 # To produce count tables keep the 4 variables after line 47 on 0

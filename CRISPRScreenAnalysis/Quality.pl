@@ -3,6 +3,7 @@ use warnings;
 use strict;
 #####################################################################################################
 # We used the screen design of Jastrzebski et al Methods Mol Biol 2016
+# Nextera PCR primers can be found in 'PCR design Nextera-NovaSeq.xlsx'
 # Linux: This script is called in Quality.R
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 #####################################################################################################
