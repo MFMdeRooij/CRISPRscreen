@@ -5,6 +5,7 @@ Open the scripts (as text file) for information how to use them.
 - Install Perl, R, R studio, and Anaconda3 (during installation of Anaconda3, add Python to your path (check the box)).
 
 CRISPRScreenAnalysis:
+- Now (2024) our PCR primers are adapted to de Illumina NextEra design, you can find them in 'PCR design Nextera-NovaSeq.xlsx'
 - From fastq to count table use FastqToCountTable.pl with a library file and your fastq files (Perl). 
 - If you don't like Perl, you can also use the Python script (FastqToCountTable.py) in Spyder, but this one is much slower than the Perl script (Python).
 - From count table to robust statistics use CRISPRScreenAnalysis.R with CRISPRScreenAnalysisLibraries.csv and your count tables (R).
