@@ -8,9 +8,10 @@ CRISPRScreenAnalysis:
 - Recently (in 2024) our PCR primers were adapted to the Illumina NextEra design, you can find them in 'PCR design Nextera-NovaSeq.xlsx'
 - From fastq to count table use FastqToCountTable.pl with a library file and your fastq files (Perl). 
 - If you don't like Perl, you can also use the Python script (FastqToCountTable.py) in Spyder, but this one is much slower than the Perl script (Python).
+- When your FASTQ file is too large, and the computer crashes, you can use CountTable_Large_FASTQfile.R + FastqToCountTable.pl (R/Perl).
 - From count table to robust statistics use CRISPRScreenAnalysis.R with CRISPRScreenAnalysisLibraries.csv and your count tables (R).
 - Use GSEA_CRISPRscreen.R to obtain pathway information from the CRISPR screen results (R).
-- To get information about the quality of the read mapping (e.g. how much reads map to the library, contaminations, primerdimers), use Quality.R + Quality.pl (R). To obtain more information (e.g. mutations in barcodes/guides) use FastqToCountTable.py (Python).
+- To get information about the quality of the read mapping (e.g. how much reads map to the library, contaminations, primerdimers), use Quality.R + Quality.pl (R/Perl). To obtain more information (e.g. mutations in barcodes/guides) use FastqToCountTable.py (Python).
 
 CRISPRScreenPlots:
 - To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python). MAplot_GenesOfInterest.R can be used to make MA plots in Rstudio, and is much faster than the Python script. With the SyntheticLethality_GenesOfInterest.R or .py scripts, you can get a nice visualization of your synthetic lethal hits (R or Python). 
