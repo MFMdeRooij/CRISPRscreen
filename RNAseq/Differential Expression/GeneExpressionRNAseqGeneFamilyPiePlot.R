@@ -5,10 +5,13 @@
 # - Adjust the settings and run the script
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ##########################################################################################################
+#install.packages("RColorBrewer")
+library("RColorBrewer")
+##########################################################################################################
 #                                     SETTINGS
 
 # Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-setwd("H:/BioWin/RNAseq/")
+setwd("C:/BioWin/RNAseq/")
 
 # Which count table?
 CountTableNor<- read.csv(file="RNAseqCountTableNorTPX.csv", sep=",", header=TRUE, stringsAsFactors = FALSE)
@@ -34,6 +37,7 @@ pdf(paste0("PiePlots_", Title,".pdf"),10,20)
   par(mfrow=c(6,3))
   for (cell in colnames(sel)){
     total<-as.numeric(colSums(sel[cell]))
-    pie(sel[[cell]], label=paste0(rownames(sel),  " (", as.numeric(t(sel[cell])),")"), main=cell, sub=paste0("Total counts: ",round(total,0)," nTPX"))
+    pie(sel[[cell]], label=paste0(rownames(sel),  " (", as.numeric(t(sel[cell])),")"), main=cell, 
+        col=brewer.pal(nrow(sel), "Spectral"), sub=paste0("Total counts: ",round(total,0)," nTPX"))
   }
 dev.off()
