@@ -62,15 +62,19 @@ order <- 1
 
 # The first time, make the bash script excutable (chmod 755 MapRNAseqHumanSRA.sh)
 # Search for RNAseq data on https://www.ncbi.nlm.nih.gov/sra/, and fill in the SRR IDs, cell 
-# line ID and a P (paired-end) or S (single-end) separated by commas (SRR8615345,NAMALWA,P), and run the 
+# line ID and a P (paired-end) or S (single-end) separated by commas (SRR8615345,NAMALWA,P) in MapSamples.txt, and run the 
 # script (./MapRNAseqHumanSRA.sh on the command line) 
-# You can also run the bash script here by uncommenting and run the next line:
+# For paired-end fastq.gz files, you can use the MapRNAseqHumanPE.sh script
+# For this script, you should only list de sample names in MapSamples.txt, which correspond to the fastq-file names (without _1.fastq.gz)
+
+# You can also run the bash script here by uncommenting and run one of the next lines:
 #system("bash MapRNAseqHumanSRA.sh")
+#system("bash MapRNAseqHumanPE.sh")
 
 # With the sorted bam files, you can check the read mapping in IGV-viewer
 
 # Make a count table (TPM with DESEq2 normalisation (median of ratios method) to make the read counts comparable between samples (nTPX))
-# Store always the non-normalizered count table to add more samples
+# Store always the non-normalized count table to add more samples
 library("Rsubread")
 library("DESeq2")
 for (pair in c("P","S")){
@@ -103,7 +107,9 @@ for (pair in c("P","S")){
   df_annotation<- as.data.frame(fc[2])
   CountTableRaw<- as.data.frame(fc[1])
   colnames(CountTableRaw)<- unlist(lapply(strsplit(colnames(CountTableRaw), ".sam"), "[[", 1))
-  colnames(CountTableRaw)<- unlist(lapply(strsplit(colnames(CountTableRaw), "_"), "[[", 2))
+  try(
+    colnames(CountTableRaw)<- unlist(lapply(strsplit(colnames(CountTableRaw), "_"), "[[", 2))
+  )
   CountTableRaw$ensembl_gene_id<- rownames(CountTableRaw)
   
   if (file.exists("RNAseqCountTableRawAll.csv")) {
@@ -166,11 +172,13 @@ CountTableTPM[,-1:-2]<- as.data.frame(t(t(CountTableTPM[,-1:-2])/colSums(as.data
 write.csv(CountTableTPM, "RNAseqCountTableTPM.csv", row.names=FALSE)
 
 # Sample normalization (TPM -> between sample normalization -> nTPX)
-#CountTableTPM <- read.csv("RNAseqCountTableTPM.csv", stringsAsFactors = F)
-sf<- estimateSizeFactorsForMatrix(CountTableTPM[,-1:-2])
-CountTableNorTPX<- CountTableTPM
-CountTableNorTPX[,-1:-2]<- as.data.frame(round(t(t(CountTableTPM[,-1:-2])/sf),1))
-write.csv(CountTableNorTPX, "RNAseqCountTableNorTPX.csv", row.names=FALSE)
+if (ncol(CountTableTPM) > 3){
+  #CountTableTPM <- read.csv("RNAseqCountTableTPM.csv", stringsAsFactors = F)
+  sf<- estimateSizeFactorsForMatrix(CountTableTPM[,-1:-2])
+  CountTableNorTPX<- CountTableTPM
+  CountTableNorTPX[,-1:-2]<- as.data.frame(round(t(t(CountTableTPM[,-1:-2])/sf),1))
+  write.csv(CountTableNorTPX, "RNAseqCountTableNorTPX.csv", row.names=FALSE)
+}
 
 if (pca==0) {
   #PCA & UMAP
