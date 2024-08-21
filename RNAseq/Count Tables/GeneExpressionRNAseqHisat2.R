@@ -22,16 +22,17 @@ order <- 1
 # https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?view=software
 
 # Install Linux Tools on command line:
-# sudo apt-get install seqtk
-# sudo apt-get install samtools
-# sudo apt-get install hisat2
+# sudo apt install cutadapt
+# sudo apt install seqtk
+# sudo apt install samtools
+# sudo apt install hisat2
 
-# Build genome
+# Build genome for hisat2
 # Download genome in fasta format from NCBI, UCSC, or Ensembl (hg38.fa.gz), unzip and add in folder ~/HumanGenome
 # cd ~/HumanGenome
 # hisat2-build hg38.fa hg38
 
-# Download GTF file with gene loci from Ensembl download page (Homo_sapiens.GRCh38.105.gtf.gz), unzip, rename to hg38.105.gtf.gz, and add in folder ~/HumanGenome
+# Download GTF file with gene loci from Ensembl download page (Homo_sapiens.GRCh38.105.gtf.gz), unzip, rename to hg38.105.gtf, and add in folder ~/HumanGenome
 # Transform the gtf file into a known splice site text file using the python script delivered with hisat2 (in the bin folder)
 # python hisat2_extract_splice_sites.py hg38.105.gtf > ~/HumanGenome/hg38.105_spliceSites.txt
 
