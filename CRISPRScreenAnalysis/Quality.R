@@ -22,7 +22,7 @@ IndexID<- c("ATCACG", "CGATGT", "TTAGGC")
 # # c("ATCACG", "CGATGT", "TTAGGC", "TGACCA", "ACAGTG", "GCCAAT")
 
 # Reverse-complement of the template part of the reverse primer 
-revCompRevPrimerSeq = "GGAATTGGCTCCGGTGCCCGTCAGT"
+revCompRevPrimerSeq = "GAATTGGCTCCGGTGCCCGTCAGTG"
 
 ############################################################################################################
 for (file in FastqFiles) {
