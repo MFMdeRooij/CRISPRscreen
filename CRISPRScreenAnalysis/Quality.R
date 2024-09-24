@@ -21,7 +21,7 @@ print(FastqFiles)
 IndexID<- c("FASTQ1")
 # # c("FASTQ1", "FASTQ2", "FASTQ3")
 
-# Reverse-complement of the template part of the reverse primer ("GAATTGGCTCCGGTGCCCGTCAGTG"), sometimes a part can be removed by proofreading
+# Reverse-complement of the template part of the reverse primer ("GAATTGGCTCCGGTGCCCGTCAGTG"), and remove first 5nt (sometimes a part can be removed by proofreading)
 revCompRevPrimerSeq = "GGCTCCGGTGCCCGTCAGTG"
 
 ############################################################################################################
