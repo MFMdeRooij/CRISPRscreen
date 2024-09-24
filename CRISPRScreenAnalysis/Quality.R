@@ -16,13 +16,13 @@ setwd("~/BioLin/Screens/")
 FastqFiles <- Sys.glob('*.fastq.gz')
 #FastqFiles <- c("test.fastq.gz.csv", "test2.fastq.gz", "test3.fastq.gz")
 
-# The index barcode ID (in the same order as the order of the fastq files)
+# The index barcode ID or fastq file ID (in the same order as the order of the fastq files)
 print(FastqFiles)
-IndexID<- c("ATCACG", "CGATGT", "TTAGGC")
-# # c("ATCACG", "CGATGT", "TTAGGC", "TGACCA", "ACAGTG", "GCCAAT")
+IndexID<- c("FASTQ1")
+# # c("FASTQ1", "FASTQ2", "FASTQ3")
 
-# Reverse-complement of the template part of the reverse primer 
-revCompRevPrimerSeq = "GAATTGGCTCCGGTGCCCGTCAGTG"
+# Reverse-complement of the template part of the reverse primer ("GAATTGGCTCCGGTGCCCGTCAGTG"), sometimes a part can be removed by proofreading
+revCompRevPrimerSeq = "GGCTCCGGTGCCCGTCAGTG"
 
 ############################################################################################################
 for (file in FastqFiles) {
