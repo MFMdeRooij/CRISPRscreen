@@ -14,7 +14,7 @@ CRISPRScreenAnalysis:
 - To get information about the quality of the read mapping (e.g. how much reads map to the library, contaminations, primerdimers), use Quality.R + Quality.pl (R/Perl). To obtain more information (e.g. mutations in barcodes/guides) use FastqToCountTable.py (Python).
 
 CRISPRScreenPlots:
-- To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python). MAplot_GenesOfInterest.R and VolcanoPlots_GenesOfInterest.R can be used to make MA and Volcano plots in Rstudio (R). With the SyntheticLethality_GenesOfInterest.R or .py scripts, you can get a nice visualization of your synthetic lethal hits (R or Python). 
+- To produce publishing-grade MA plots, split-volcano plots, and guide fold change plots use the MAplot_GeneOfInterest.py, VolcanoSplit_GeneOfInterest.py, and guideFCPlot.py scripts in Spyder (Python). MAplot_GeneOfInterest.R and MA_Volcano_Plots_GenesOfInterest.R can be used to make MA and Volcano plots in Rstudio (R). With the SyntheticLethality_GenesOfInterest.R or .py scripts, you can get a nice visualization of your synthetic lethal hits (R or Python). 
 
 CRISPRScreenPublic:
 - To check the quality of lethality screens, of which only CRISPR scores are published, by comparing the distibution of essential and non-essential genes, use CRISPRscreenAnalysisFromScores.R script (R). 
