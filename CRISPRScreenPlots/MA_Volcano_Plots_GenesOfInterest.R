@@ -84,7 +84,7 @@ for (f in 1:length(filesVOL)){
   tophits[[f]]<- tophitsVolcano
 }
 
-pdf(paste0(CellLine, "_MAplots",as.character(th),".pdf"), width=4*length(filesVOL), height=8)
+pdf(paste0(CellLine, "_MA_VolcanoPlots_",as.character(th),".pdf"), width=4*length(filesVOL), height=8)
   par(mfrow=c(2,length(filesVOL)))
 
   # MA plot
