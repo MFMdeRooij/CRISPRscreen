@@ -11,17 +11,22 @@ library("basicPlotteR")
 ################################################################################
 #                              SETTINGS
 
-# Cell line ID and graph titles
+# Cell line:
 CellLine<- "Z138"
-Titles<- c("Control (T1/T0)","Venetoclax (T1/T0)","Venetoclax/Control")
 
-# Workdirectory
-setwd(paste0("C:/BioWin/MA/", CellLine))
+# Workdirectory:
+# Put this script in the folder where the files of guide and gene statistics are located
+folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
+# # Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
+# folder<- paste0("C:/BioWin/CRISPRscreen/", CellLine)
 
 # Tophits: 0: Best per comparison, 1: Top5 in Synthetic lethal comparison, 2: Genes of interest
 th<- 1
 # If 2, Which genes:
 Genes_of_interest<- c("CSNK2A1", "CSNK2A2", "CSNK2B")
+
+# Graph titles
+Titles<- c("Control (T1/T0)","Venetoclax (T1/T0)","Venetoclax/Control")
 
 # Add guide ID's in MA plot, 0: No, 1: Yes
 guideID<- 0
@@ -30,9 +35,10 @@ guideID<- 0
 ColAll<- "lightgray"
 ColP<- "lightpink1"
 ColN<- "lightskyblue"
-# colors of hits are taken by a color pallete
+# colors of hits are taken by a color palette
 
 ################################################################################
+setwd(folder)
 
 filesMA<- list.files(pattern="Guides.csv$")
 filesVOL<- list.files(pattern="Genes.csv$")
@@ -59,6 +65,7 @@ for (f in 1:length(filesVOL)){
     GenesEnr<- GenesEnr[order(GenesEnr$rhoEnriched),]
     tophitsVolcano<- c(GenesEnr$GeneSymbol[1:5], rev(GenesDep$GeneSymbol[1:5]))
     
+    # # Include best fold changes to tophits
     # GenesDep<- GenesDep[order(GenesDep$l2mfc),]
     # GenesEnr<- GenesEnr[order(GenesEnr$l2mfc, decreasing = T),]
     # tophitsVolcanoB<- c(GenesDep$GeneSymbol[1:5], GenesEnr$GeneSymbol[1:5])

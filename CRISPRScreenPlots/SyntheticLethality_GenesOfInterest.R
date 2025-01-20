@@ -11,13 +11,14 @@ library("basicPlotteR")
 ##################################################################################################################################
 #                              SETTINGS
 
-# Put this script in the folder where the count tables are located
-folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
-## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-#folder<- "H:/BioWin/CRISPRscreen/Z138/"
-
 # Cell line:
 cellID<- "Z138"
+
+# Workdirectory:
+# Put this script in the folder where the files of guide and gene statistics are located
+folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
+# # Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
+# folder<- paste0("C:/BioWin/CRISPRscreen/", CellLine)
 
 # Is there a T1drug/T1control comparison, 0: no, 1: yes
 t2t1com<- 1
