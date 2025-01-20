@@ -21,7 +21,7 @@ from Bio import pairwise2
 #####################################################################################################
 #                                            SETTINGS
 # Workdirectory
-os.chdir("H:/BioWin/Screens/")
+os.chdir("C:/BioWin/CRISPRscreen/")
 
 # FASTQ files
 screens = ("test.fastq.gz",) 
@@ -59,12 +59,12 @@ biopythonGuide = 1 # (Keep in mind that mutations in the guide sequence could be
 RemoveUnID = 1
 
 # Reverse-complement of the template part of the reverse primer 
-revCompRevPrimerSeq = "GGAATTGGCTCCGGTGCCCGTCAGT"
+revCompRevPrimerSeq = "GGCTCCGGTGCCCGTCAGTG"
 # Primerdimer (dependent on primer design, high fidelity polymerases have proofreading (exonuclease activity), in which not nessesary 
 # the 3'ends have to be complementary, so remove the first few nucleotides if no primerdimers can be found)
 
-# Downstream nucleotides after guide sequence (CRISPR: "GTT", shRNA (TRC): "CT")
-downseq = "GTT"
+# Downstream nucleotides after guide sequence (CRISPR: "GTTTT", shRNA (TRC): "CTCGAG")
+downseq = "GTTTT"
 ######################################################################################################   
 # Make dictionary with barcode numbers
 BCnum = dict(zip(barcode, np.arange(12)+1))
@@ -77,7 +77,7 @@ for index, bc in enumerate(barcode, start=1):
 
 # Load library
 Library = pd.read_csv(library)
-Library = pd.DataFrame([["Unidentified"]*len(Library.columns)], columns=Library.columns.tolist()).append(Library,ignore_index=True)
+Library = pd.concat((pd.DataFrame([["Unidentified"]*len(Library.columns)], columns=Library.columns.tolist()),Library), ignore_index=True)
 LibrarySeq = Library["Sequence"].to_numpy()
 
 def barcodeDetermination(seq):
