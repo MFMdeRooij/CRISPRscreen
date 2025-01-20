@@ -10,7 +10,7 @@
 ######################################################################################
 
 # Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-setwd("~/BioLin/Screens/")
+setwd("~/BioLin/CRISPRscreen/")
 
 # Fastq files
 FastqFiles <- Sys.glob('*.fastq.gz')
