@@ -8,10 +8,9 @@
 #install.packages("writexl")
 ################################################################################
 # 
-# Folder and files
-setwd("H:/BioWin/CRISPRscreen/")
-comparisons<- c("DESeq2 T0vsT1 Genes", "DESeq2 T0vsT2 Genes", "DESeq2 T1vsT2 Genes")
-# You can also rename the files to cell line or drug names
+# Workdirectory:
+# Put this script in the folder where the files of  gene statistics are located
+folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
 
 # Minimal size of each geneSet for analyzing, and p.adjust cutoff
 minGSSize<- 10
@@ -28,6 +27,9 @@ library("HGNChelper")
 library("writexl")
 library("pathview")
 library("ggplot2")
+
+setwd(folder)
+comparisons <- list.files(pattern="Genes.csv$")
 
 for (com in comparisons) {
   data <- read.csv(paste0(com,".csv"))
