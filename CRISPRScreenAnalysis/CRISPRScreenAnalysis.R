@@ -27,7 +27,7 @@ library("basicPlotteR")
 # Put this script in the folder where the count tables are located
 Workdirectory<- dirname(rstudioapi::getActiveDocumentContext()$path)
 ## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-#Workdirectory<- "H:/BioWin/Screens/"
+#Workdirectory<- "C:/BioWin/Screens/"
 
 # Count table files: 0 = custom, 1 = all count tables (csv files) in the workdirectory
 Data<- 1
@@ -125,13 +125,6 @@ ColH<- "black"
 # Correlation plots of all samples: 0 = Yes, 1 = No (Only recommended when the replicates are messed up) 
 pairs<- 1
 
-# MAGeCK: 0 = Yes, 1 = No (this does not work in Windows)
-mageck<- 1
-
-# MAGeCK's aRRA with DESeq2 data: 0 = Yes, 1 = No (this does not work in Windows)
-mageckRRA<- 1
-
-# MAGeCK should be installed in linux with all its dependencies, see website: https://sourceforge.net/p/mageck/wiki/Home/
 ######################################################################################
 setwd(Workdirectory)
 if (Data==0){
@@ -443,31 +436,6 @@ for (Filename in Filenames) {
       df_RRA$Guide<-rownames(df_RRA)
       df_RRA<- merge(df_Gene_ID, df_RRA, by='Guide', all.y=T)
       df_RRA<- df_RRA[df_RRA$Guide %in% df_res2$Guide,]
-      
-      # MAGeCK's aRRA with DESeq2 data (in Linux)
-      if (mageckRRA==0){
-        df_RRAmageck<- df_RRA
-        perDep<- nrow(df_RRAmageck[df_RRAmageck$pvalueDepleted < 0.25,])/nrow(df_RRAmageck) 
-        perEnr<- nrow(df_RRAmageck[df_RRAmageck$pvalueEnriched < 0.25,])/nrow(df_RRAmageck) 
-        
-        df_RRAmageckDep<- df_RRAmageck[order(df_RRAmageck$log2fc),]
-        df_RRAmageckDep$listID<- "x"
-        df_RRAmageckDep$pval<-df_RRAmageckDep$pvalueDepleted 
-        df_RRAmageckDep$pvalueDepleted<- NULL
-        df_RRAmageckDep$pvalueEnriched<-NULL
-        df_RRAmageckDep$log2fc<-NULL
-        write.table(df_RRAmageckDep, "/tmp/Dep.txt", row.names=F, sep="\t")
-        system(paste0("~/anaconda3/bin/RRA -i /tmp/Dep.txt -o ", paste0(dirname,"/DESeq2_aRRAmageck_",con,"_Dep.txt"), " -p ",perDep))
-        
-        df_RRAmageckEnr<- df_RRAmageck[order(df_RRAmageck$log2fc, decreasing = T),]
-        df_RRAmageckEnr$listID<- "x"
-        df_RRAmageckEnr$pval<-df_RRAmageckEnr$pvalueEnriched
-        df_RRAmageckEnr$pvalueDepleted<- NULL
-        df_RRAmageckEnr$pvalueEnriched<-NULL
-        df_RRAmageckEnr$log2fc<-NULL           
-        write.table(df_RRAmageckEnr, "/tmp/Enr.txt", row.names=F, sep="\t")
-        system(paste0("~/anaconda3/bin/RRA -i /tmp/Enr.txt -o ", paste0(dirname,"/DESeq2_aRRAmageck_",con,"_Enr.txt"), " -p ",perEnr))
-      }
     }
     if (replicates==1){
       df_RRA <- data.frame(GeneSymbol=df_res$GeneSymbol,
@@ -955,49 +923,5 @@ for (Filename in Filenames) {
       }
     }
     dev.off()
-    
-    if (mageck==0){
-      if (r==1) {
-        df_mageck<- read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALSE)
-        df_mageck$Sequence<-NULL
-        df_mageck$X<-NULL
-        dir.create(paste0(dirname,"/MAGeCK"))
-        setwd(paste0(Workdirectory,"/", dirname, "/MAGeCK"))
-        write.csv(df_mageck, "MAGeCKCountTable.csv", row.names = FALSE, quote = F)
-        system(paste0("mageck test -k MAGeCKCountTable.csv -t ", paste0(if (T1_Rep1==0) {T1Rep1}, if (T1_Rep1==0 & (T1_Rep2==0|T1_Rep3==0)) {","},
-                                                                        if (T1_Rep2==0) {T1Rep2}, if (T1_Rep2==0 & T1_Rep3==0) {","},
-                                                                        if (T1_Rep3==0) {T1Rep3}),
-                      " -c ", paste0(if (T0_Rep1==0) {T0Rep1}, if (T0_Rep1==0 & (T0_Rep2==0|T0_Rep3==0)) {","},
-                                     if (T0_Rep2==0) {T0Rep2}, if (T0_Rep2==0 & T0_Rep3==0) {","},
-                                     if (T0_Rep3==0) {T0Rep3}),
-                      " -n MAGeCK_T0vsT1"))
-        source("MAGeCK_T0vsT1.R")
-        setwd(Workdirectory)
-      }
-      if (r==2) {
-        setwd(paste0(Workdirectory,"/", dirname, "/MAGeCK"))
-        system(paste0("mageck test -k MAGeCKCountTable.csv -t ", paste0(if (T2_Rep1==0) {T2Rep1}, if (T2_Rep1==0 & (T2_Rep2==0|T2_Rep3==0)) {","},
-                                                                        if (T2_Rep2==0) {T2Rep2}, if (T2_Rep2==0 & T2_Rep3==0) {","},
-                                                                        if (T2_Rep3==0) {T2Rep3}),
-                      " -c ", paste0(if (T0_Rep1==0) {T0Rep1}, if (T0_Rep1==0 & (T0_Rep2==0|T0_Rep3==0)) {","},
-                                     if (T0_Rep2==0) {T0Rep2}, if (T0_Rep2==0 & T0_Rep3==0) {","},
-                                     if (T0_Rep3==0) {T0Rep3}),
-                      " -n MAGeCK_T0vsT2"))
-        source("MAGeCK_T0vsT2.R")
-        setwd(Workdirectory)
-      }
-      if (r==3) {
-        setwd(paste0(Workdirectory,"/", dirname, "/MAGeCK"))
-        system(paste0("mageck test -k MAGeCKCountTable.csv -t ", paste0(if (T2_Rep1==0) {T2Rep1}, if (T2_Rep1==0 & (T2_Rep2==0|T2_Rep3==0)) {","},
-                                                                        if (T2_Rep2==0) {T2Rep2}, if (T2_Rep2==0 & T2_Rep3==0) {","},
-                                                                        if (T2_Rep3==0) {T2Rep3}),
-                      " -c ", paste0(if (T1_Rep1==0) {T1Rep1}, if (T1_Rep1==0 & (T1_Rep2==0|T1_Rep3==0)) {","},
-                                     if (T1_Rep2==0) {T1Rep2}, if (T1_Rep2==0 & T1_Rep3==0) {","},
-                                     if (T1_Rep3==0) {T1Rep3}),
-                      " -n MAGeCK_T1vsT2"))
-        source("MAGeCK_T1vsT2.R")
-        setwd(Workdirectory)
-      }
-    }
   }
 }
