@@ -27,7 +27,7 @@ library("basicPlotteR")
 # Put this script in the folder where the count tables are located
 Workdirectory<- dirname(rstudioapi::getActiveDocumentContext()$path)
 ## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-#Workdirectory<- "C:/BioWin/Screens/"
+#Workdirectory<- "C:/BioWin/CRISPRscreen/"
 
 # Count table files: 0 = custom, 1 = all count tables (csv files) in the workdirectory
 Data<- 1
