@@ -32,7 +32,7 @@ setwd(folder)
 comparisons <- list.files(pattern="Genes.csv$")
 
 for (com in comparisons) {
-  data <- read.csv(paste0(com,".csv"))
+  data <- read.csv(com)
   
   # Data
   Hugo <- checkGeneSymbols(data$GeneSymbol, unmapped.as.na=T)
