@@ -8,7 +8,7 @@ Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.dero
 #                                                      SETTINGS
 
 # Copy-paste the required folder (use / instead of \ )
-folder = "H:/BioWin/Screens/Namalwa"
+folder = "C:/BioWin/CRISPRscreen/Namalwa"
 
 # Gene symbols (if there are subset, cluster the subsets)
 genes = ['BTK', 'SYK', 'PIK3R1', 'CSK', 'PRKCE', 'PRKCB', 'ACTR2', 'GUK1', 'MAP2K1', 'MAP2K2', 'AKT1', 'AKT2', 'AKT3', 'LYN']
@@ -31,6 +31,9 @@ if geneSubsets==1:
     subset1 = 5
     subset2 = 3
     subset3 = 6 # For 2 subsets this should be 0
+
+# Cell line
+cellLine = 'Namalwa'
 
 # Titles:
 title1 = 'PMA/input'
@@ -162,4 +165,4 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
 
 plt.subplots_adjust(hspace=0)
 plt.subplots_adjust(wspace=0)
-plt.savefig(folder+'/GuideFCPlotTest.pdf', bbox_inches='tight', transparent=True)
+plt.savefig(folder+'/GuideFCPlot_'+cellLine+'.pdf', bbox_inches='tight', transparent=True)

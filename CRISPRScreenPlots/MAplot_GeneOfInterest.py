@@ -8,7 +8,7 @@ Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.dero
 #                                                 SETTINGS
 
 # Copy-paste the required folder (use / instead of \ )
-folder = "H:/BioWin/Screens/Namalwa"
+folder = "C:/BioWin/CRISPRscreen/Namalwa"
 
 # Which gene:
 gene = 'BTK'

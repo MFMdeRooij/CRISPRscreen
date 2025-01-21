@@ -10,7 +10,7 @@
 ##############################################################################################################
 
 # Folder screen data:
-folder = "H:/BioWin/CRISPRscreen"
+folder = "C:/BioWin/CRISPRscreen/Z138"
 
 # Cell line:
 cellID = "Z138"
@@ -68,6 +68,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import statsmodels.formula.api as smf
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -124,11 +125,22 @@ if Axlim==0:
     xticks=round((xmax-xmin)/5.1,2)
     yticks=round((ymax-ymin)/5.1,2)
 
+# Calculate prediction interval from essentials/non-essentials
+dfcon = pd.concat((dfpos,dfneg))
+model = smf.ols('Treated ~ Control', dfcon)
+results = model.fit()
+regpoints = pd.Series(np.linspace(xmin,xmax,10), name='Control')
+predictions = results.get_prediction(regpoints).summary_frame(.05)
 
-
+# Make figure
 plt.figure(figsize=(size,size))
 ax = plt.subplot2grid((5,5), (1,0), colspan=4, rowspan=4)  
 plt.suptitle(cellID, fontweight="bold") 
+
+plt.fill_between(regpoints, predictions['obs_ci_lower'], predictions['obs_ci_upper'], alpha=.25, label='_nolegend_', color="silver") # pred int
+plt.fill_between(regpoints, predictions['mean_ci_lower'], predictions['mean_ci_upper'], alpha=.15, label='_nolegend_',  color="silver") # conf int
+plt.plot(regpoints, predictions['mean'], label='_nolegend_', color="silver", linestyle='--', linewidth=0.5)
+
 if t2t1com==0:
     plt.scatter(df['Control'], df['Treated'], marker='o', color=call, s=1) 
     plt.scatter(dfpos['Control'], dfpos['Treated'], marker='o', color=cpos, s=1)
