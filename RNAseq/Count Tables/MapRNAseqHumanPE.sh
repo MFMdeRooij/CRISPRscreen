@@ -14,12 +14,12 @@ do
 	# Remove Illumina's TruSeq adapters
 	cutadapt -a AGATCGGAAGAGCACACGTCTGAACTCCAGTCA\
 		 -A AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT\
-		 -o ${s}_1ca.fastq -p ${s}_2ca.fastq\
+		 -o ${s}_1.ca.fastq -p ${s}_2.ca.fastq\
 		    ${s}_1.fastq.gz ${s}_2.fastq.gz
 
 	# Trim low quality bases
-	seqtk trimfq ${s}_1ca.fastq > ${s}_1.fq
-	seqtk trimfq ${s}_2ca.fastq > ${s}_2.fq
+	seqtk trimfq ${s}_1.ca.fastq > ${s}_1.fq
+	seqtk trimfq ${s}_2.ca.fastq > ${s}_2.fq
 
 	# Map to genome
 	hisat2 -x ~/HumanGenome/hg38\
@@ -34,8 +34,8 @@ do
 	
 	#rm ${s}_1.fastq.gz
 	#rm ${s}_2.fastq.gz
-	rm ${s}_1ca.fastq
-	rm ${s}_2ca.fastq
+	rm ${s}_1.ca.fastq
+	rm ${s}_2.ca.fastq
 	rm ${s}_1.fq
 	rm ${s}_2.fq
 done
