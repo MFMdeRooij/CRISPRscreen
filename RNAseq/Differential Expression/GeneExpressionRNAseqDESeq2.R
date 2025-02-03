@@ -21,7 +21,7 @@ library("basicPlotteR")
 #                                     SETTINGS
 
 # Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-Workdirectory<- "H:/BioWin/RNAseq/"
+Workdirectory<- "C:/BioWin/RNAseq/"
 
 # Which count table?
 Filename<- "RNAseqCountTableRawProteinCoding.csv"
@@ -205,10 +205,12 @@ for (i in 1:nrow(combi)){
   
   volcano<- df_res
   volcano$padj[is.na(volcano$padj)]<- 1
-  volcano$padj[volcano$padj==0]<- min(volcano$padj[volcano$padj!=0])
   volcano$l2bm<- log2(volcano$baseMean+1)
   palette <- colorRampPalette(c("cyan","black"))
   volcano$col<-palette(max(volcano$l2bm)*100+1)[volcano$l2bm*100+1]
+
+  # Prevent a log-bug when Rho is 0
+  volcano$padj[volcano$padj==0]<- min(volcano$padj[volcano$padj!=0])/10
   
   # Axes limits
   xrange<- c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
