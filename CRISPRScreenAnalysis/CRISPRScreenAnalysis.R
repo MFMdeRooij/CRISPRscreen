@@ -663,7 +663,7 @@ for (Filename in Filenames) {
     }
     
     # Prevent a log-bug when Rho is 0
-    df_geneRRA$rho[df_geneRRA$rho==0]<-10^-25
+    df_geneRRA$rho[df_geneRRA$rho==0]<- min(df_geneRRA$rho[df_geneRRA$rho!=0])/10
     
     # Axes limits
     xrangeVOL<- c(min(df_geneRRA$ml2fc, na.rm=TRUE), max(df_geneRRA$ml2fc, na.rm=TRUE))
