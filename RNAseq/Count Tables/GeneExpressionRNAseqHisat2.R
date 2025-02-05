@@ -201,8 +201,9 @@ if (pca==0) {
   df_design<- read.csv("RNAseqDesign.csv")
   df_design$Color <- rainbow(length(unique(as.factor(df_design$Group))))[as.factor(df_design$Group)]
   
-  # Select samples from design table
+  # Select samples from design table, and order desgin table
   CountTableNor<- CountTableNor[,c("ensembl_gene_id", "hgnc_symbol", colnames(CountTableNor)[colnames(CountTableNor) %in% df_design$Sample])]
+  df_design<- df_design[match(colnames(CountTableNor)[-1:-2], df_design$Sample),]
   
   # PCA analysis
   df_pr<-CountTableNor[3:ncol(CountTableNor)]
@@ -219,7 +220,7 @@ if (pca==0) {
   
   # UMAP
   set.seed(100)
-  rna.umap<- umap(t(df_prSel))
+  rna.umap<- umap(t(df_prSel),n_neighbors=5)
   
   pdf("PCA_UMAP.pdf", width=15, height=10)
     # Scree plot
