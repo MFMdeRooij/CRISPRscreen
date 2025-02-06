@@ -9,7 +9,7 @@
 ################################################################################
 # 
 # Folder and files
-setwd("H:/BioWin/RNAseq/")
+setwd("C:/BioWin/RNAseq/")
 comparisons<- c("DESeq2_RNAseq_AvsB","DESeq2_RNAseq_AvsC","DESeq2_RNAseq_BvsC")
 # You can also rename the files to cell line or drug names
 
@@ -79,7 +79,7 @@ for (com in comparisons) {
   }
 
   # MSIGDB
-  for (cat in c("H", "C2", "C1")) {
+  for (cat in c("H", "C2", "C3")) {
     sheets[[paste0("GSEA_MSIGDB_",cat)]]<- vector()
     sig <- msigdbr(species="Homo sapiens", category=cat)[,c("gs_name", "entrez_gene")]
     try(sheets[[paste0("GSEA_MSIGDB_",cat)]] <- as.data.frame(setReadable(GSEA(geneList=geneListID, TERM2GENE = sig, minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
