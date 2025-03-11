@@ -7,8 +7,8 @@
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2021
 # info: m.f.derooij@amsterdamumc.nl
 
-mkdir pairedEnd
-mkdir singleEnd
+mkdir -p pairedEnd
+mkdir -p singleEnd
 for line in `cat MapSamples.txt`
 do 
 	s="$(echo $line | cut -d ',' -f 1)"
