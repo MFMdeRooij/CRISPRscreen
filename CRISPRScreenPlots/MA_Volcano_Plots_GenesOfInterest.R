@@ -152,7 +152,7 @@ for (file in filesMA) {
   # Plot axes
   plot(0, pch = '', 
        main= Titles[f], 
-       xlab= "Log10 avergae read counts",
+       xlab= "Log10 average read counts",
        ylab= "Log2 fold change",
        cex.lab=1, cex.axis=1, las=1, xlim=xrangeMA, ylim=yrangeMA, xaxt = "n", yaxt = "n")
   
