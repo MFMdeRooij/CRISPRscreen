@@ -6,9 +6,10 @@
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ######################################################################################
 # # R packages
-#install.packages(c("ggplot2", "factoextra"))
+#install.packages(c("ggplot2", "factoextra","RColorBrewer"))
 library("ggplot2")
 library("factoextra")
+library("RColorBrewer")
 #install.packages("devtools")
 #devtools::install_github("JosephCrispell/basicPlotteR")
 library("basicPlotteR")
@@ -18,7 +19,7 @@ library("basicPlotteR")
 #                                     SETTINGS
 
 # Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-Workdirectory<- "H:/BioWin/RNAseq/"
+Workdirectory<- "L:/Basic/Personal Archive/M/mfderooij/BioWin/"
 
 # Which count table?
 Filename<- "RNAseqCountTableNorTPX.csv"
@@ -80,43 +81,43 @@ for (gene in interestingGenes){
   colnames(df_gene)<-"Gene"
   df_pca<- cbind(df_pca, df_gene)
   df_pca$Group<-factor(df_design$Group, levels=unique(df_design$Group))
-  df_pca$color<- "white"
+  df_pca$color<- brewer.pal(length(unique(df_pca$Group)),"Set2")[as.factor(df_pca$Group)]
   #df_pca$color<- as.numeric(df_pca$Group)
   if (GRC==0){
     df_pca$Rep<-factor(df_design$Rep, levels=unique(df_design$Rep))
     df_pca$Group<-interaction(df_pca$Group,df_pca$Rep, lex.order = T)
   }
   
-  pdf(paste0("GE_",gene,".pdf"), width=10, height=10)
-    # Barplot
-    g<-ggplot(df_pca, aes(x=Group, y=Gene, fill=Group)) + geom_boxplot() + geom_jitter(color=df_pca$color, size=2, alpha=0.9, height = 0) 
-    g<-g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "", y=paste0(gene," expression (nTPX)"))
+  pdf(paste0("GE_",gene,".pdf"), width=7, height=7)
+    # Boxplot
+    g<-ggplot(df_pca, aes(x=Group, y=Gene)) + geom_boxplot(color="snow3") + geom_jitter(color=df_pca$color, size=3, alpha=1, height = 0) 
+    g<-g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "", y=paste0(gene," expression (nTPX)"))+theme_classic()
     set.seed(101)
     print(g + ggtitle(Title) + theme(
-      plot.title = element_text(size = 20, hjust = 0.5),
+      plot.title = element_text(size = 20, hjust = 0.5, face = "bold"),
       axis.title.x = element_text(size = 20),
-      axis.text.x = element_text(size = 20),
+      axis.text.x = element_text(angle=45, , vjust = 1, hjust=1, size = 20),
       axis.title.y = element_text(size = 20),
-      axis.text.y = element_text(size = 20),
-      legend.title=element_text(size=20),
-      legend.text=element_text(size=20))
+      axis.text.y = element_text(size = 20)
+      )
     )
     
     var1<-round(get_eig(res.pca)[1,2],1)
     var2<-round(get_eig(res.pca)[2,2],1)
     
     # PCA plot
-    par(mar=c(4,5,2,1))
-    par(fig=c(0.1,0.83,0.1,0.83))
-    palette <- colorRampPalette(c("blue","red"))
-    plot(df_pca$PC1,df_pca$PC2, pch=16, cex=2, col=palette((max(df_pca$Gene)-min(df_pca$Gene))*100+1)[(df_pca$Gene-min(df_pca$Gene))*100+1],
-         main=paste0(gene, " expression"), xlab=paste0("PC1 (", var1,")"), ylab=paste0("PC2 (", var2,")"))
+    par(mar=c(5,5,5,1))
+    par(bty="l", lwd=2)
+    par(fig=c(0,0.83,0,0.83))
+    palette <- colorRampPalette(c("dodgerblue","red2"))
+    plot(df_pca$PC1,df_pca$PC2, pch=16, cex=1, col=palette((max(df_pca$Gene)-min(df_pca$Gene))*100+1)[(df_pca$Gene-min(df_pca$Gene))*100+1],
+         main=paste0(gene, " expression"), xlab=paste0("PC1 (", var1,")"), ylab=paste0("PC2 (", var2,")"), cex.main=1.6, cex.axis=1.5, cex.lab=1.5)
     addTextLabels(df_pca$PC1,df_pca$PC2,paste0(rownames(df_pca),"\n(", as.character(df_pca$Group),")"), avoidPoints = TRUE,
-                  keepLabelsInside = TRUE, col.label=as.numeric(df_pca$Group), cex.label=0.5)
+                  keepLabelsInside = TRUE, col.label=df_pca$color, cex.label=0.5)
     x=1
     y=seq((min(df_pca$Gene)-min(df_pca$Gene))*100+1,(max(df_pca$Gene)-min(df_pca$Gene))*100+1,len=100)
     z=matrix(1:100,nrow=1)
-    par(fig=c(0.8,0.95,0.1,0.83),new=TRUE)
+    par(fig=c(0.8,1,0,0.83),new=TRUE)
     image(x,((y-1)/100)+min(df_pca$Gene),z,col=palette(max(y))[y], xaxt='n', xlab="",ylab=paste0(gene, " (nTPX)"))
   dev.off()
 }
