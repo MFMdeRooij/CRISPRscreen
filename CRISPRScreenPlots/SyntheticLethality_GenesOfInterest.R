@@ -176,11 +176,6 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
 
   points(pos$Nmfc.x, pos$Nmfc.y, pch=16, col=cpos, cex=if(t2t1com==1){0.3+-0.1*log10(pos$Stat)}else{0.5})
   points(neg$Nmfc.x, neg$Nmfc.y, pch=16, col=cneg, cex=if(t2t1com==1){0.3+-0.1*log10(neg$Stat)}else{0.5})
-  if (length(GenesOfInterest)>0){
-    points(hit$Nmfc.x, hit$Nmfc.y, pch=16, col=chit, cex=if(t2t1com==1){0.3+-0.1*log10(hit$Stat)}else{0.5})
-    addTextLabels(hit$Nmfc.x, hit$Nmfc.y, hit$GeneSymbol, avoidPoints = TRUE,
-                        keepLabelsInside = TRUE, col.label="black", cex.label=1)
-  }
 
   # Linreg prediction interval from controls
   con<- rbind(pos,neg)
@@ -209,6 +204,12 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
   abline(0,1, col="black", lty=2)
   legend(xmin,ymax,legend=c("All genes", "Essentials","Non-essentials"), pch=16, cex=0.8, col=c(call,cpos,cneg))
 
+  if (length(GenesOfInterest)>0){
+    points(hit$Nmfc.x, hit$Nmfc.y, pch=16, col=chit, cex=if(t2t1com==1){0.3+-0.1*log10(hit$Stat)}else{0.5})
+    addTextLabels(hit$Nmfc.x, hit$Nmfc.y, hit$GeneSymbol, avoidPoints = TRUE,
+                  keepLabelsInside = TRUE, col.label="black", cex.label=1, col.background = "yellow")
+  }
+  
   # Density y axis
   denY_PC<- density(pos$Nmfc.y, from=ymin, to=ymax, na.rm=TRUE)
   denY_PC$y[1]<- 0
