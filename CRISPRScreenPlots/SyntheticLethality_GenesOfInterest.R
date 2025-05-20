@@ -27,7 +27,7 @@ t2t1com<- 1
 size<- 7
 
 # Genes to emphasize, 0: all significant (from T1drug/T1control comparison), 1: specific genes, 2 genes outside prediction interval  
-allsignif<- 2
+allsignif<- 0
 
 GenesOfInterest<- NULL
 if (allsignif==1){
