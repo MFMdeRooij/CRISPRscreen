@@ -277,7 +277,7 @@ for (file in filesVOL) {
   
   # Show gene symbols of top hits
   addTextLabels(df_genesh$l2mfc,-log10(df_genesh$rho),df_genesh$GeneSymbol, avoidPoints = TRUE,
-                keepLabelsInside = TRUE, col.label="black", cex.label=0.7)
+                keepLabelsInside = TRUE, col.label="black", cex.label=1, , col.background = "yellow")
   
   # Extra titles
   text(0,yrangeVOL[2], substitute(paste(italic('Depleted    Enriched'))))
