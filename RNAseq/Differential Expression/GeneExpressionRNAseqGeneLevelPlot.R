@@ -77,26 +77,30 @@ for (gene in interestingGenes){
   if (nrow(df_gene)>1){
     df_gene<-df_gene[which.max(rowMeans(df_gene)),]
   }
-  df_gene<-as.data.frame(t(df_gene))
-  colnames(df_gene)<-"Gene"
+  df_gene<- as.data.frame(t(df_gene))
+  colnames(df_gene)<- "Gene"
   df_pca<- cbind(df_pca, df_gene)
-  df_pca$Group<-factor(df_design$Group, levels=unique(df_design$Group))
-  df_pca$color<- brewer.pal(length(unique(df_pca$Group)),"Set2")[as.factor(df_pca$Group)]
-  #df_pca$color<- as.numeric(df_pca$Group)
+  df_pca$Group<- factor(df_design$Group, levels=unique(df_design$Group))
+
   if (GRC==0){
-    df_pca$Rep<-factor(df_design$Rep, levels=unique(df_design$Rep))
-    df_pca$Group<-interaction(df_pca$Group,df_pca$Rep, lex.order = T)
+    df_pca$Rep<- factor(df_design$Rep, levels=unique(df_design$Rep))
+    df_pca$Group<- interaction(df_pca$Group,df_pca$Rep, lex.order = T)
   }
+
+  df_pca$Color<- rep(brewer.pal(8,"Dark2"),100)[df_pca$Group]
+  color<- unique(df_pca[,c("Group", "Color")])
+  colorVec<- as.character(color$Color)
+  names(colorVec) <- color$Group
   
   pdf(paste0("GE_",gene,".pdf"), width=7, height=7)
     # Boxplot
-    g<-ggplot(df_pca, aes(x=Group, y=Gene)) + geom_boxplot(color="snow3") + geom_jitter(color=df_pca$color, size=3, alpha=1, height = 0) 
-    g<-g + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "", y=paste0(gene," expression (nTPX)"))+theme_classic()
+    g<- ggplot(df_pca, aes(x=Group, y=Gene, fill=Group)) + theme_classic() + scale_fill_manual(values = colorVec) + geom_boxplot(color="snow3", alpha=0.05, show.legend = FALSE) + 
+        geom_jitter(color=df_pca$Color, size=3, alpha=1, height = 0, , show.legend = FALSE) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "", y=paste0(gene," expression (nTPX)"))
     set.seed(101)
     print(g + ggtitle(Title) + theme(
       plot.title = element_text(size = 20, hjust = 0.5, face = "bold"),
       axis.title.x = element_text(size = 20),
-      axis.text.x = element_text(angle=45, , vjust = 1, hjust=1, size = 20),
+      axis.text.x = element_text(angle=45, , vjust = 1, hjust=1, size = 20, color = colorVec),
       axis.title.y = element_text(size = 20),
       axis.text.y = element_text(size = 20)
       )
@@ -113,7 +117,7 @@ for (gene in interestingGenes){
     plot(df_pca$PC1,df_pca$PC2, pch=16, cex=1, col=palette((max(df_pca$Gene)-min(df_pca$Gene))*100+1)[(df_pca$Gene-min(df_pca$Gene))*100+1],
          main=paste0(gene, " expression"), xlab=paste0("PC1 (", var1,")"), ylab=paste0("PC2 (", var2,")"), cex.main=1.6, cex.axis=1.5, cex.lab=1.5)
     addTextLabels(df_pca$PC1,df_pca$PC2,paste0(rownames(df_pca),"\n(", as.character(df_pca$Group),")"), avoidPoints = TRUE,
-                  keepLabelsInside = TRUE, col.label=df_pca$color, cex.label=0.5)
+                  keepLabelsInside = TRUE, col.label=df_pca$Color, cex.label=0.5)
     x=1
     y=seq((min(df_pca$Gene)-min(df_pca$Gene))*100+1,(max(df_pca$Gene)-min(df_pca$Gene))*100+1,len=100)
     z=matrix(1:100,nrow=1)
