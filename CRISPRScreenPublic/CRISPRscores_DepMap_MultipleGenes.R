@@ -12,7 +12,7 @@ q <- function(...) {
 }
 interestingGenes <- toupper(q(
   # Which genes?  
-  GRK2,GRK3,GRK5,GRK6
+  MCL1,BCL2L1,BCL2,BCL2L2,BCL2A1
 ))
 
 disease<- "Plasma Cell Myeloma"
