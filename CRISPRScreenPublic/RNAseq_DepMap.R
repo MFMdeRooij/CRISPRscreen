@@ -1,5 +1,5 @@
 # Plot RNAseq data from DepMap.org (Broad Institute)
-# Download RNAseq data (24q4) OmicsExpressionProteinCodingGenesTPMLogp1.csv, and model.csv from https://depmap.org/portal/download/all/
+# Download RNAseq data (25q2) OmicsExpressionProteinCodingGenesTPMLogp1.csv, and model.csv from https://depmap.org/portal/data_page/?tab=allData
 # All cell lines are plotted on page 1, and the lymphoid ones are plotted including labels on page 2
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################

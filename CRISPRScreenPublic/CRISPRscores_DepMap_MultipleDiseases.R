@@ -1,5 +1,5 @@
 # Plot CRISPR scores of the public CRISPR screens from DepMap.org (Broad Institute)
-# Download CRISPR data (24q4) "CRISPRGeneEffect.csv, and model.csv from https://depmap.org/portal/download/all/
+# Download CRISPR data (25q2) "CRISPRGeneEffect.csv, and model.csv from https://depmap.org/portal/data_page/?tab=allData
 # All cell lines are plotted on page 1, and the lymphoid ones are plotted including labels on page 2
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################
