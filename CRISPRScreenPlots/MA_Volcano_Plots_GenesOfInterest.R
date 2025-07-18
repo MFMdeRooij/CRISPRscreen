@@ -101,7 +101,7 @@ par(mfrow=c(2,length(filesVOL)))
 f<- 1
 for (file in filesMA) {
   df_res<- read.csv(file, stringsAsFactors = F)
-  df_res$logBaseMeanA<- log(df_res$BaseMeanA)/log(10)
+  df_res$logBaseMeanA<- log(df_res$BaseMeanA+1)/log(10)
   df_res$log2FoldChange<- log(df_res$FoldChange)/log(2)
   
   # Give NA a number
@@ -177,7 +177,7 @@ for (file in filesMA) {
   if (guideID==1){
     addTextLabels(df_res$logBaseMeanA[df_res$GeneSymbol %in% tophitsVolcano], df_res$log2FoldChange[df_res$GeneSymbol %in% tophitsVolcano],
                   unlist(lapply(strsplit(as.character(df_res$Guide[df_res$GeneSymbol %in% tophitsVolcano]),"-"), "[", 2)), avoidPoints = TRUE,
-                  keepLabelsInside = TRUE, col.label="black", cex.label=1)
+                  keepLabelsInside = TRUE, col.label="black", cex.label=1, col.background = "white")
   }
   
   # 0 line
@@ -275,12 +275,13 @@ for (file in filesVOL) {
   # 0 line
   abline(v=0, lty=2)
   
-  # Show gene symbols of top hits
-  addTextLabels(df_genesh$l2mfc,-log10(df_genesh$rho),df_genesh$GeneSymbol, avoidPoints = TRUE,
-                keepLabelsInside = TRUE, col.label="black", cex.label=1, , col.background = "yellow")
-  
   # Extra titles
   text(0,yrangeVOL[2], substitute(paste(italic('Depleted    Enriched'))))
+  
+  # Show gene symbols of top hits
+  addTextLabels(df_genesh$l2mfc,-log10(df_genesh$rho),df_genesh$GeneSymbol, avoidPoints = TRUE,
+                keepLabelsInside = TRUE, col.label="black", cex.label=1, col.background = "white")
+  
   f<- f+1
 }
 dev.off()
