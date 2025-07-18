@@ -74,7 +74,7 @@ for (file in files) {
   df_resc<- df_resc[sample(1:nrow(df_resc)),]
   df_res<-rbind(df_resx,df_resc)
   
-  df_res$logBaseMeanA<- log(df_res$BaseMeanA)/log(10)
+  df_res$logBaseMeanA<- log(df_res$BaseMeanA+1)/log(10)
   df_res$log2FoldChange<- log(df_res$FoldChange)/log(2)
   
   df_res$col<- ColAll
