@@ -671,8 +671,8 @@ for (Filename in Filenames) {
     df_geneRRA$rho[df_geneRRA$rho==0]<- min(df_geneRRA$rho[df_geneRRA$rho!=0])/10
     
     # Axes limits
-    xrangeVOL<- c(min(df_geneRRA$ml2fc, na.rm=TRUE), max(df_geneRRA$ml2fc, na.rm=TRUE))
-    yrangeVOL<- c(0, max(-log10(df_geneRRA$rho), na.rm=TRUE))
+    xrangeVOL<- c(floor(min(df_geneRRA$ml2fc, na.rm=TRUE)), ceiling(max(df_geneRRA$ml2fc, na.rm=TRUE)))
+    yrangeVOL<- c(0, ceiling(max(-log10(df_geneRRA$rho)*1.2, na.rm=TRUE)))
     
     # MA plots
     Genes_of_interest<-c(" ", "Hitlist", if (MA_all_genes==0) {df_geneRRA$GeneSymbol}, 
