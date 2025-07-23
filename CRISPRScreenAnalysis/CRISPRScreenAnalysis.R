@@ -439,6 +439,7 @@ for (Filename in Filenames) {
     }
     if (replicates==1){
       df_RRA <- data.frame(GeneSymbol=df_res$GeneSymbol,
+                           BaseMeanB = df_res$BaseMeanB,
                            log2fc = df_res$log2FoldChange,
                            pvalueDepleted = 1,
                            pvalueEnriched = 1,
@@ -470,6 +471,10 @@ for (Filename in Filenames) {
       # Apply alpha criterion based on rank
       df_RRA$scoreDepleted[df_RRA$scoreDepleted > 0.25]<- 1
       df_RRA$scoreEnriched[df_RRA$scoreEnriched > 0.25]<- 1
+      if (r != 3 & Type_of_Screen==1){
+        df_RRA$scoreDepleted[df_RRA$BaseMeanB == 0]<- 1
+        df_RRA$scoreEnriched[df_RRA$BaseMeanB == 0]<- 1
+      }
     }
     
     if (minimalFoldChange > 1) {
@@ -808,7 +813,7 @@ for (Filename in Filenames) {
          main= "Volcano plot",
          xlab= "Log2 median fold change",
          ylab= "RRA score",
-         cex.lab=1, cex.axis=1, las=1, xlim=xrangeVOL, ylim=yrangeVOL)
+         cex.lab=1, cex.axis=1, las=1, xlim=xrangeVOL, ylim=yrangeVOL, xaxt = "n", yaxt = "n")
     if (ConStat==0) {
       mtext(side=3, line=0.5, at=mean(xrangeVOL), cex=0.7, 
             paste0("(F1: ", format(round(F1Gene,2),nsmall = 2), " (Pre: ", format(round(precisionGene,2),nsmall = 2), 
@@ -816,8 +821,20 @@ for (Filename in Filenames) {
     }
     
     # Vertical and horizontal lines
-    abline(v=0.2*(-100:100), lty=3, col="gray")
-    abline(h=2*(0:100), lty=3, col="gray")
+    xrange<- xrangeVOL[2]-xrangeVOL[1]
+    xticks<- 2
+    if (xrange < 8){xticks<- 1}
+    if (xrange <= 3){xticks<- 0.5}
+    
+    yrange<- yrangeVOL[2]-yrangeVOL[1]
+    yticks<- 10
+    if (yrange < 35){yticks<- 5}
+    if (yrange <= 14){yticks<- 2}
+    
+    axis(1, at = seq(xrangeVOL[1], xrangeVOL[2], by = xticks))
+    axis(2, at = seq(yrangeVOL[1], yrangeVOL[2], by = yticks))
+    abline(v=seq(xrangeVOL[1], xrangeVOL[2], by = xticks), lty=3, col="gray")
+    abline(h=seq(yrangeVOL[1], yrangeVOL[2], by = yticks), lty=3, col="gray")
     
     # Actual plot
     points(df_geneRRA$ml2fc, -log10(df_geneRRA$rho), type="p", pch=16, col=alpha(df_geneRRA$col,0.7), cex=0.7)
