@@ -168,8 +168,8 @@ for (file in filesMA) {
   
   axis(1, at = seq(xrangeMA[1], xrangeMA[2], by = xticks))
   axis(2, at = seq(yrangeMA[1], yrangeMA[2], by = yticks))
-  abline(v=xticks*(-100:100), lty=3, col="gray")
-  abline(h=yticks*(-100:100), lty=3, col="gray")
+  abline(v=seq(xrangeMA[1], xrangeMA[2], by = xticks), lty=3, col="gray")
+  abline(h=seq(yrangeMA[1], yrangeMA[2], by = yticks), lty=3, col="gray")
   
   # Actual points
   points(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", pch=df_res$pch, bg=alpha(df_res$col,df_res$alpha), col=alpha(df_res$col2,df_res$alpha), cex=df_res$cex, lwd=0.5)
@@ -266,8 +266,8 @@ for (file in filesVOL) {
   
   axis(1, at = seq(xrangeVOL[1], xrangeVOL[2], by = xticks))
   axis(2, at = seq(yrangeVOL[1], yrangeVOL[2], by = yticks))
-  abline(v=xticks*(-100:100), lty=3, col="gray")
-  abline(h=yticks*(0:100), lty=3, col="gray")
+  abline(v=seq(xrangeVOL[1], xrangeVOL[2], by = xticks), lty=3, col="gray")
+  abline(h=seq(yrangeVOL[1], yrangeVOL[2], by = yticks), lty=3, col="gray")
   
   # Actual points
   points(df_genes$l2mfc, -log10(df_genes$rho), type="p", pch=df_genes$pch, bg=alpha(df_genes$col,df_genes$alpha), col=alpha(df_genes$col2,df_genes$alpha), cex=df_genes$cex, lwd=0.5)
