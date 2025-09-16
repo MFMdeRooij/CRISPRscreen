@@ -32,29 +32,39 @@ library("ggplot2")
 for (com in comparisons) {
   data <- read.csv(paste0(com,".csv"))
   
-  # Data
+  # Hugo symbols
   Hugo <- checkGeneSymbols(data$hgnc_symbol, unmapped.as.na=T)
   data$Hugo <- Hugo$Suggested.Symbol
   data$EntrezID <- as.character(mapIds(org.Hs.eg.db, keys = data$Hugo, column = "ENTREZID", keytype = "SYMBOL"))
   data<- data[!is.na(data$EntrezID),]
   data<- data[data$EntrezID!="NULL",]
   
+  # Remove duplicate Hugo symbols, take the one with highest expression  
+  duplicates<- data.frame(h=data$Hugo, n=1)
+  duplicates<- aggregate(duplicates$n, by=list(duplicates$h), FUN=sum)
+  duplicates<- duplicates[duplicates$x>1,]
+  dataDupl<- data[data$Hugo %in% duplicates$Group.1,]
+  
+  data<- data[!data$Hugo %in% duplicates$Group.1,]
+  for (g in unique(dataDupl$Hugo)){
+    temp<- dataDupl[dataDupl$Hugo==g,]
+    temp$counts<- temp$BaseMeanA+temp$BaseMeanB
+    idmax<- temp$ensembl_gene_id[temp$count==max(temp$count)][1]
+    data<- rbind(data, dataDupl[dataDupl$ensembl_gene_id==idmax,])
+  }
+  
   # Gene list with gene symbols
   geneList<- log2(data$FoldChange)
   names(geneList)<- data$Hugo
   geneList<- geneList[order(geneList, decreasing=T)]
-  # To prevent a bug
-  geneList[geneList==0]<- 10^-10
   
   # Gene list with entrez ids
   geneListID<- log2(data$FoldChange)
   names(geneListID)<- data$EntrezID
   geneListID<- geneListID[order(geneListID, decreasing=T)]
-  # To prevent a bug
-  geneList[geneList==0]<- 10^-10
+  
   
   sheets<- list()
-  
   set.seed(211081)
   
   # KEGG

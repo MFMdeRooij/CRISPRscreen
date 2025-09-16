@@ -96,7 +96,7 @@ dds<- DESeq(dds, betaPrior = TRUE)
 # Define comparisons
 Groups<- unique(df_design$Group)
 combi<- as.data.frame(combinations(length(Groups),2,Groups))
-combi<- combi[nrow(combi):1,ncol(combi):1]
+#combi<- combi[nrow(combi):1,ncol(combi):1]
 
 # Analyse comparisons
 for (i in 1:nrow(combi)){
