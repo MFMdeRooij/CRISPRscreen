@@ -3,7 +3,7 @@
 # - Nextera PCR primers can be found in 'PCR design Nextera-NovaSeq.xlsx'
 # - Use this script in Linux
 # - Replace 'zcat' for 'cat' in FastqToCountTable.pl (line 59)
-# - Put the FastqToCountTable.pl and library.csv files in the same folder as the fastq.gz file
+# - Put the FastqToCountTable.pl and libraryX.csv files in the same folder as the fastq.gz file
 # This script cuts the fastq file in pieces, make count tables, and counts them up
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2024, info: m.f.derooij@amsterdamumc.nl
 ######################################################################################
@@ -16,10 +16,10 @@ FastqFile <- "test.fastq.gz"
 
 ############################################################################################################
 # Cut FASTQ file in pieces
-system(paste0('zcat ', file, ' | split -l 100000000 - PartOf', file))
+system(paste0('zcat ', FastqFile, ' | split -l 100000000 - PartOf', FastqFile))
 
 # Make Count tables
-system('./FastqToCountTable.pl PartOf*')
+system('./FastqToCountTable.pl libraryX.csv PartOf*')
 
 # Count them up
 CountTables<- Sys.glob('CountTable_PartOf*')
