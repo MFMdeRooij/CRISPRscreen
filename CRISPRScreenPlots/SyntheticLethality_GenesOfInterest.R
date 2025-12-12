@@ -205,9 +205,11 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
   legend(xmin,ymax,legend=c("All genes", "Essentials","Non-essentials"), pch=16, cex=0.8, col=c(call,cpos,cneg))
 
   if (length(GenesOfInterest)>0){
+    hit$color<- "green"
+    hit$color[hit$Nmfc.x < hit$Nmfc.y]<- "yellow"
     points(hit$Nmfc.x, hit$Nmfc.y, pch=16, col=chit, cex=if(t2t1com==1){0.3+-0.1*log10(hit$Stat)}else{0.5})
     addTextLabels(hit$Nmfc.x, hit$Nmfc.y, hit$GeneSymbol, avoidPoints = TRUE,
-                  keepLabelsInside = TRUE, col.label="black", cex.label=1, col.background = "yellow")
+                  keepLabelsInside = TRUE, col.label="black", cex.label=1, col.background = hit$color)
   }
   
   # Density y axis
