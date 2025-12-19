@@ -1,7 +1,7 @@
 ## CRISPR Screen analysis:
 # - We used the screen design of Jastrzebski et al Methods Mol Biol 2016
 # - Nextera PCR primers can be found in 'PCR design Nextera-NovaSeq.xlsx'
-# - Make count tables from FASTQ files with the Perl script FastqToCountTable.pl and a libraryX.csv file
+# - Make count tables from FASTQ files with the Perl script FastqToCountTable.pl and a LibraryX.csv file
 # - Analyze the count tables with this script and the CRISPRScreenAnalysisLibraries.csv file
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
 # A small part (aRRA) is adapted from Thomas Kuilman PhD, NKI Amsterdam, Peeper Lab (https://github.com/PeeperLab?tab=repositories)
@@ -645,7 +645,7 @@ for (Filename in Filenames) {
     df_geneRRA$col[df_geneRRA$Type=="p"]<- ColP
     df_geneRRA$col[df_geneRRA$Type=="n"]<- ColN
     df_geneRRA$col[df_geneRRA$GeneSymbol %in% tophits]<- ColH
-    df_geneRRA$pch<- 16
+    df_geneRRA$pch<- 21
     df_geneRRA$pch[df_geneRRA$fdr < 0.1 & df_geneRRA$ml2fc < 0]<- 25
     df_geneRRA$pch[df_geneRRA$fdr < 0.1 & df_geneRRA$ml2fc > 0]<- 24
     
@@ -667,7 +667,8 @@ for (Filename in Filenames) {
       F1Gene<- 2/(1/precisionGene + 1/recallGene)
     }
     
-    # Prevent a log-bug when Rho is 0
+    # Prevent a log-bug when Rho is 0, and remove non-targeting (due to high number of NT-guides, extreme statictical values)
+    df_geneRRA<- df_geneRRA[df_geneRRA$GeneSymbol!="NonTargetingControlGuideForHuman",]
     df_geneRRA$rho[df_geneRRA$rho==0]<- min(df_geneRRA$rho[df_geneRRA$rho!=0])/10
     
     # Axes limits
@@ -683,7 +684,7 @@ for (Filename in Filenames) {
     df_res$col<- ColAll
     df_res$col[df_res$Type=="p"]<- ColP
     df_res$col[df_res$Type=="n"]<- ColN
-    df_res$pch<- 16
+    df_res$pch<- 21
     df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange<0]<- 25
     df_res$pch[df_res$padj<0.1 & df_res$log2FoldChange>0]<- 24
     
@@ -808,6 +809,7 @@ for (Filename in Filenames) {
     par(mar=c(4,4,4,4))
     par(fig=c(0.1,0.9,0.1,0.9))
     par(bty="l")
+    
     # Plot axes
     plot(0, pch = '', 
          main= "Volcano plot",
@@ -837,7 +839,7 @@ for (Filename in Filenames) {
     abline(h=seq(yrangeVOL[1], yrangeVOL[2], by = yticks), lty=3, col="gray")
     
     # Actual plot
-    points(df_geneRRA$ml2fc, -log10(df_geneRRA$rho), type="p", pch=16, col=alpha(df_geneRRA$col,0.7), cex=0.7)
+    points(df_geneRRA$ml2fc, -log10(df_geneRRA$rho), type="p", pch=df_geneRRA$pch, col=df_geneRRA$col, bg=df_geneRRA$col, cex=0.7)
     
     # lines
     abline(v=0, lty=2)
