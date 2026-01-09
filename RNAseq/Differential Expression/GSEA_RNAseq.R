@@ -86,7 +86,7 @@ for (com in comparisons) {
   hitsUp<- data$Hugo[data$logFC > 1 & data$fdr < 0.1 & !is.na(data$fdr)]
   hits<- c(hitsDown,hitsUp)
   hitsDown50<- data$Hugo[order(data$FoldChange)][1:50]
-  hitsUpn50<- data$Hugo[order(data$FoldChange, decreasing = T)][1:50]
+  hitsUp50<- data$Hugo[order(data$FoldChange, decreasing = T)][1:50]
 
   string_db <- STRINGdb$new(version="12.0", species=9606, score_threshold=400, input_directory="")
   example1_mapped = string_db$map(data, "Hugo", removeUnmappedRows = TRUE)
