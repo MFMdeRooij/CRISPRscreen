@@ -81,7 +81,7 @@ for (com in comparisons) {
   names(geneListID)<- data$EntrezID
   geneListID<- geneListID[order(geneListID, decreasing=T)]
   # To prevent a bug
-  geneList[geneList==0]<- 10^-10
+  geneListID[geneListID==0]<- 10^-10
 
   # STRING
   data$logFC<- log2(data$MedianFoldChange)
@@ -182,7 +182,7 @@ for (com in comparisons) {
 
     print(emapplot(pairwise_termsim(GSEAplots))+ggtitle("Enrichment map"))
 
-    print(cnetplot(GSEAplots, color.params=list(foldChange=geneList, edge=T))+ggtitle("CNET plot"))
+    print(cnetplot(GSEAplots, foldChange=geneList)+ggtitle("CNET plot"))
 
     print(heatplot(GSEAplots, foldChange=geneList, showCategory=20)+ggtitle("Heatplot"))
 
