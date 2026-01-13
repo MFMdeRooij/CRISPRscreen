@@ -141,6 +141,7 @@ for (i in 1:nrow(combi)){
   GenesDiffEnr<- GenesDiff[order(GenesDiff$log2FoldChange, decreasing = T),]
   tophitsEnr<- GenesDiffEnr$hgnc_symbol[nchar(GenesDiffEnr$hgnc_symbol)>0]
   tophits<- c(tophitsDep[1:10], tophitsEnr[1:10])
+  tophits<- unique(tophits[!is.na(tophits)])
   
   # Top hits volcano (5 best FC & padj - Dep & Enr)
   tophitsVolcanoA<- c(tophitsDep[1:5], tophitsEnr[1:5])
@@ -151,7 +152,8 @@ for (i in 1:nrow(combi)){
   GenesDiffEnr<- GenesDiffEnr[order(GenesDiffEnr$padj),] 
   tophitsEnr<- GenesDiffEnr$hgnc_symbol[nchar(GenesDiffEnr$hgnc_symbol)>0]
   tophitsVolcanoB<- c(tophitsDep[1:5], tophitsEnr[1:5])
-  tophitsVolcano<- unique(c(tophitsVolcanoA,tophitsVolcanoB))
+  tophitsVolcano<- c(tophitsVolcanoA,tophitsVolcanoB)
+  tophitsVolcano<- unique(tophitsVolcano[!is.na(tophitsVolcano)])
   
   # Write gene table
   
