@@ -4,8 +4,8 @@
 ################################################################################
 ## Install package
 #install.packages("BiocManager")
-#BiocManager::install(c("clusterProfiler","msigdbr","enrichplot","org.Hs.eg.db","AnnotationDbi","ReactomePA","HGNChelper","pathview", "STRINGdb"))
-#install.packages("writexl")
+#BiocManager::install(c("clusterProfiler","msigdbr","enrichplot","org.Hs.eg.db","AnnotationDbi","ReactomePA","HGNChelper","pathview", "STRINGdb","ggtree"))
+#install.packages("writexl","ggridges")
 ################################################################################
 
 # Put this script in the folder where the files of  gene statistics are located
@@ -27,6 +27,8 @@ library("writexl")
 library("pathview")
 library("ggplot2")
 library("STRINGdb")
+library("ggridges")
+library("ggtree")
 
 setwd(folder)
 dir.create("GSEA_STRING")
@@ -140,7 +142,7 @@ for (com in comparisons) {
   # MSIGDB
   for (cat in c("H", "C1", "C2", "C3")) {
     sheets[[paste0("GSEA_MSIGDB_",cat)]]<- vector()
-    sig <- msigdbr(species="Homo sapiens", category=cat)[,c("gs_name", "entrez_gene")]
+    sig <- msigdbr(species="Homo sapiens", collection=cat)[,c("gs_name", "ncbi_gene")]
     try(sheets[[paste0("GSEA_MSIGDB_",cat)]] <- as.data.frame(setReadable(GSEA(geneList=geneListID, TERM2GENE = sig, minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
   }
 
@@ -152,8 +154,7 @@ for (com in comparisons) {
   }
   write_xlsx(sheets, paste0("GSEA_STRING/GSEA_ClusterProfiler_", com,".xlsx"))
 
-  sig <- msigdbr(species="Homo sapiens", category="H") %>%
-    dplyr::select(gs_name, entrez_gene)
+  sig <- msigdbr(species="Homo sapiens", collection="H")[,c("gs_name", "ncbi_gene")]
   GSEAplots <- setReadable(GSEA(geneList=geneListID, TERM2GENE = sig, minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')
 
   if (GSEAplots@setType=="KEGG"){
@@ -174,7 +175,7 @@ for (com in comparisons) {
 
     print(ridgeplot(GSEAplots, showCategory=20)+ggtitle("Ridgeplot")+xlab("Log2 fold change")+ theme(aspect.ratio = 2))
 
-    print(treeplot(pairwise_termsim(GSEAplots), cluster.params = list(method = "average"))+ggtitle("Treeplot"))
+    print(treeplot(pairwise_termsim(GSEAplots), cladelab_offset=8, tiplab_offset=.3, fontsize_cladelab=5)+hexpand(.1)+ggtitle("Treeplot"))
 
     print(emapplot(pairwise_termsim(GSEAplots))+ggtitle("Enrichment map"))
 
