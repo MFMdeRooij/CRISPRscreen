@@ -20,10 +20,11 @@ library("readxl")
 #                                   VARIABLES
 
 # Workdirectory (put in this folder the excel files (.xlsx or csv) from the cell lines)
-setwd("H:/BioWin/Bliss/")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+#setwd("H:/BioWin/Bliss/")
 
 # Format data file 0: .csv, 1: .xlsx (Data matrix in upperleft corner)
-format<- 0
+format<- 1
 
 # Find files automatically (Name the files after the cells)
 if (format==0){
@@ -33,7 +34,7 @@ if (format==0){
     cells<- unlist(strsplit(list.files(pattern=".xlsx"), ".xlsx"))
   } 
 }
-# Or manual:
+# Or manual (and this will be the order):
 #cells <- c("Cell1", "Cell2")
 
 # Drug names and concentrations:
@@ -45,17 +46,23 @@ xlab <- c(0,0.5,1,2,4)
 yname <- expression("Drug2 ("*mu*"M)")
 ylab <- c(0,1,2,4,8)
 
+# Viability or cell number
+ViabilityOrCellNumber<- "Relative Viability"
 #################################################################################
+cellNumber<- 1
 for (cell in cells){
   # Read files
   if (format==0){
-  AB <- read.csv(paste0(cell,".csv"), sep=",", header=FALSE)/100
+    AB <- read.csv(paste0(cell,".csv"), sep=",", header=FALSE)/100
   } else {
-      if (format==1){
-        AB <- read_excel(paste0(cell,".xlsx"), col_names=F)/100
-      }
+    if (format==1){
+      AB <- read_excel(paste0(cell,".xlsx"), col_names=F)/100
+    }
   }
-
+  
+  # Normalize control to 100%
+  AB<- AB/AB[1,1]
+  
   # Caluculate expected, delta Bliss, and relative Bliss values
   expectedMat<- as.matrix(AB)[,1] %*% t(as.matrix(AB)[1,])
   dblissMat<- expectedMat-as.matrix(AB)
@@ -68,11 +75,11 @@ for (cell in cells){
   matInhY<- as.data.frame(t(t(AB)/t(AB)[,1]))
   matInhY$c<- 1:nrow(matInhY)
   colnames(matInhY)<-c(xlab,"c")
-
+  
   rmatInhX <- as.data.frame(rblissMat)
   rmatInhX$c<- 1:nrow(rmatInhX)
   colnames(rmatInhX)<-c(xlab,"c")
- 
+  
   rmatInhY <- as.data.frame(t(rblissMat))
   rmatInhY$c<- 1:nrow(rmatInhY)
   colnames(rmatInhY)<-c(ylab,"c")   
@@ -93,12 +100,12 @@ for (cell in cells){
       k<-k+1
     }
   }
-
+  
   # Make graphs
   g1<-ggplot(Combo, aes(x=c, y=r, label=(round(pgrowth*100, digits=0)))) +
     geom_tile(aes(fill=pgrowth, height=1, width=1)) +
     scale_fill_gradient2(label=percent,
-                         name="Viability",
+                         name=ViabilityOrCellNumber,
                          midpoint=0.5,
                          limits=c(0,1),
                          low="red", mid="darkred", high="midnightblue", na.value="midnightblue") +
@@ -109,9 +116,12 @@ for (cell in cells){
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
           plot.title=element_text(size=30, face="bold", hjust = 0.5),
-          plot.margin = unit(c(1, 1, 0, 1), "cm")
-    )
- 
+          plot.margin = unit(c(1, 2, 0, 1), "cm"),
+          legend.title = element_text(vjust = 2),
+          legend.position = c(1.03, 0.5),
+          legend.justification = c(0, 0.5)
+    ) + guides(fill = guide_colourbar(label.hjust = 1))
+  
   g2<-ggplot(Combo, aes(x=c, y=r, label=(round(dbliss*100, digits=0)))) +
     geom_tile(aes(fill=dbliss, height=1, width=1)) +
     scale_fill_gradient2(label=percent,
@@ -125,14 +135,16 @@ for (cell in cells){
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
           plot.title=element_text(size=30, face="bold", hjust = 0.5),
-          plot.margin = unit(c(0, 1, 2, 1), "cm")
-    )+
-    guides(fill = guide_colourbar(label.hjust = 1))
-
+          plot.margin = unit(c(0, 2, 2, 1), "cm"),
+          legend.title = element_text(vjust = 2),
+          legend.position = c(1.03, 0.5),
+          legend.justification = c(0, 0.5)
+    ) + guides(fill = guide_colourbar(label.hjust = 1))
+  
   g3<-ggplot(Combo, aes(x=c, y=r, label=(round(rbliss*100, digits=0)))) +
     geom_tile(aes(fill=rbliss, height=1, width=1)) +
     scale_fill_gradient2(label=percent,
-                         name="Relative Bliss",
+                         name=ViabilityOrCellNumber,
                          midpoint=1,
                          limits=c(0,2),
                          low="red4", mid="lightgray", high="green3", na.value="green3") +
@@ -143,9 +155,11 @@ for (cell in cells){
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
           plot.title=element_text(size=30, face="bold", hjust = 0.5),
-          plot.margin = unit(c(0, 1, 2, 1), "cm")
-    )+
-    guides(fill = guide_colourbar(label.hjust = 1))
+          plot.margin = unit(c(0, 2, 1, 1), "cm"),
+          legend.title = element_text(vjust = 2),
+          legend.position = c(1.03, 0.5),
+          legend.justification = c(0, 0.5)
+    ) + guides(fill = guide_colourbar(label.hjust = 1))
   
   
   fc <- colorRampPalette(c("lightblue", "darkblue"))
@@ -153,81 +167,84 @@ for (cell in cells){
   colx<-c("red", fc(length(xlab)-1))
   
   l1<- ggplot(melt(matInhX,id = "c"), aes(x=c, y=value*100, group=variable, colour=variable)) +
-    geom_line(lwd=1.5) + ylab("Relative Viability (%)")+
-    scale_x_discrete(xname, limits=as.character(xlab))+
+    geom_line(lwd=1.5) + ylab(paste0(ViabilityOrCellNumber," (%)")) +
+    scale_x_discrete(xname, limits=as.character(xlab)) +
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
           plot.title=element_text(size=30, face="bold", hjust = 0.5),
-          plot.margin = unit(c(0, 1, 2, 1), "cm")
-    )+scale_color_manual(values=coly, name = yname)+
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-            panel.background = element_blank(), axis.line = element_line(colour = "black"))+
-    expand_limits(y = 0)
+          plot.margin = unit(c(0, 1, 2, 1), "cm"),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black"),
+          legend.justification = c(0, 0.5)
+    ) + scale_color_manual(values=coly, name = yname) + expand_limits(y = 0)
   
   l2<- ggplot(melt(matInhY,id = "c"), aes(x=c, y=value*100, group=variable, colour=variable)) +
-    geom_line(lwd=1.5) + ylab("Relative Viability (%)")+
-    scale_x_discrete(yname, limits=as.character(ylab))  +
+    geom_line(lwd=1.5) + ylab(paste0(ViabilityOrCellNumber," (%)")) +
+    scale_x_discrete(yname, limits=as.character(ylab)) +
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
           plot.title=element_text(size=30, face="bold", hjust = 0.5),
-          plot.margin = unit(c(0, 1, 2, 1), "cm")
-    )+scale_color_manual(values=colx, name = xname)+
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-          panel.background = element_blank(), axis.line = element_line(colour = "black"))+
-    expand_limits(y = 0)
-
+          plot.margin = unit(c(0, 1, 2, 1), "cm"),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black"),
+          legend.justification = c(0, 0.5)
+    ) + scale_color_manual(values=colx, name = xname) + expand_limits(y = 0)
+  
   l3<- ggplot(melt(rmatInhY,id = "c"), aes(x=c, y=value*100, group=variable, colour=variable)) +
-    geom_line(lwd=1.5) + ylab("Relative Viability (%)")+
-    scale_x_discrete(xname, limits=as.character(xlab))+
+    geom_line(lwd=1.5) + ylab(paste0(ViabilityOrCellNumber," (%)")) +
+    scale_x_discrete(xname, limits=as.character(xlab)) +
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
           plot.title=element_text(size=30, face="bold", hjust = 0.5),
-          plot.margin = unit(c(0, 1, 2, 1), "cm")
-    )+scale_color_manual(values=coly, name = yname)+
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-          panel.background = element_blank(), axis.line = element_line(colour = "black"))+
-    expand_limits(y = 0)
+          plot.margin = unit(c(0, 1, 2, 1), "cm"),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black"),
+          legend.justification = c(0, 0.5)
+    ) + scale_color_manual(values=coly, name = yname) + expand_limits(y = 0)
   
   l4<- ggplot(melt(rmatInhX,id = "c"), aes(x=c, y=value*100, group=variable, colour=variable)) +
-    geom_line(lwd=1.5) + ylab("Realtive Viability (%)")+
-    scale_x_discrete(yname, limits=as.character(ylab))+
+    geom_line(lwd=1.5) + ylab(paste0(ViabilityOrCellNumber," (%)")) +
+    scale_x_discrete(yname, limits=as.character(ylab)) +
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
           plot.title=element_text(size=30, face="bold", hjust = 0.5),
-          plot.margin = unit(c(0, 1, 2, 1), "cm")
-    )+scale_color_manual(values=colx, name = xname)+
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-          panel.background = element_blank(), axis.line = element_line(colour = "black"))+
-    expand_limits(y = 0)#+scale_color_manual(values=col)
+          plot.margin = unit(c(0, 1, 2, 1), "cm"),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black"),
+          legend.justification = c(0, 0.5)
+    ) + scale_color_manual(values=colx, name = xname) + expand_limits(y = 0)
   
   # Store all graphs in a variable
-  assign(paste0("plotgraph1", cell), g1)
-  assign(paste0("plotgraph2", cell), g2)
-  assign(paste0("plotgraph3", cell), g3)
-  assign(paste0("plotgraph4", cell), l1)
-  assign(paste0("plotgraph5", cell), l2)
-  assign(paste0("plotgraph6", cell), l3)
-  assign(paste0("plotgraph7", cell), l4)
+  assign(paste0("plotgraph1", cellNumber, cell), g1)
+  assign(paste0("plotgraph2", cellNumber, cell), g2)
+  assign(paste0("plotgraph3", cellNumber, cell), g3)
+  assign(paste0("plotgraph4", cellNumber, cell), l1)
+  assign(paste0("plotgraph5", cellNumber, cell), l2)
+  assign(paste0("plotgraph6", cellNumber, cell), l3)
+  assign(paste0("plotgraph7", cellNumber, cell), l4)
+  
+  cellNumber<- cellNumber+1
 }
-  # List all graphs
-  plotlist1 <- lapply(ls(pattern="plotgraph1"), function(x) {get(x)})
-  plotlist2 <- lapply(ls(pattern="plotgraph2"), function(x) {get(x)})
-  plotlist3 <- lapply(ls(pattern="plotgraph3"), function(x) {get(x)})
-  plotlist4 <- lapply(ls(pattern="plotgraph4"), function(x) {get(x)})
-  plotlist5 <- lapply(ls(pattern="plotgraph5"), function(x) {get(x)})
-  plotlist6 <- lapply(ls(pattern="plotgraph6"), function(x) {get(x)})
-  plotlist7 <- lapply(ls(pattern="plotgraph7"), function(x) {get(x)})
-  plotlist<- append(plotlist1,  plotlist2)
-  plotlist<- append(plotlist,  plotlist4)
-  plotlist<- append(plotlist,  plotlist5)
-  plotlist<- append(plotlist,  plotlist3)
-  plotlist<- append(plotlist,  plotlist6)
-  plotlist<- append(plotlist,  plotlist7)
-  
-  # Plot all graphs in PDF file
-  pdf(file=paste0("BlissSynergyR.pdf"), width=10*length(cells), height=48)
-    print(plot_grid(plotlist=plotlist, nrow=7, ncol=length(cells), align="v"))
-  dev.off()
-  
+
+# List all graphs
+plotlist1 <- lapply(ls(pattern="plotgraph1"), function(x) {get(x)})
+plotlist2 <- lapply(ls(pattern="plotgraph2"), function(x) {get(x)})
+plotlist3 <- lapply(ls(pattern="plotgraph3"), function(x) {get(x)})
+plotlist4 <- lapply(ls(pattern="plotgraph4"), function(x) {get(x)})
+plotlist5 <- lapply(ls(pattern="plotgraph5"), function(x) {get(x)})
+plotlist6 <- lapply(ls(pattern="plotgraph6"), function(x) {get(x)})
+plotlist7 <- lapply(ls(pattern="plotgraph7"), function(x) {get(x)})
+plotlist<- append(plotlist1,  plotlist2)
+plotlist<- append(plotlist,  plotlist4)
+plotlist<- append(plotlist,  plotlist5)
+plotlist<- append(plotlist,  plotlist3)
+plotlist<- append(plotlist,  plotlist6)
+plotlist<- append(plotlist,  plotlist7)
+
+# Plot all graphs in PDF file
+pdf(file=paste0("BlissSynergyR.pdf"), width=10*length(cells), height=48)
+  print(plot_grid(plotlist=plotlist, nrow=7, ncol=length(cells), align="v"))
+dev.off()
+
 # Remove all variables (To prevent plotting older graphs)
 rm(list = ls())
