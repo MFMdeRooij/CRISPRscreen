@@ -48,6 +48,7 @@ ylab <- c(0,1,2,4,8)
 
 # Viability or cell number
 ViabilityOrCellNumber<- "Relative Viability"
+# ViabilityOrCellNumber<- "Relative Cell Number"
 #################################################################################
 cellNumber<- 1
 for (cell in cells){
