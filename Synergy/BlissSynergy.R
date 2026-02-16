@@ -1,7 +1,7 @@
 # If one or both drug are not toxic you cannot use Chou-Talalay, but you can use Bliss. However, due to that most drug-concentration curves are S-curves, 
-# you can also find Biss-synergy with combinations of the same drug.
-# Combine 2 drugs in different concentrations in a matrix format, normalize the control (no drugs) to 100%, and save it to a CSV file. 
-# Omit the drug names and concentration from the CSV file, but fill them in the variable here below. The number of concentrations of drug 1 and 2 should 
+# you can also find Bliss-synergy with combinations of the same drug.
+# Combine 2 drugs in different concentrations in a matrix format, and save the viability or cell number values in a CSV or Excel file. 
+# Omit the drug names and concentrations from the CSV file, but enter them in the variables below. The number of concentrations of drug 1 and 2 should 
 # match with the number of columns and row in the CSV file. 
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 #################################################################################
@@ -64,7 +64,7 @@ for (cell in cells){
   # Normalize control to 100%
   AB<- AB/AB[1,1]
   
-  # Caluculate expected, delta Bliss, and relative Bliss values
+  # Calculate expected, delta Bliss, and relative Bliss values
   expectedMat<- as.matrix(AB)[,1] %*% t(as.matrix(AB)[1,])
   dblissMat<- expectedMat-as.matrix(AB)
   rblissMat<- as.matrix(AB)/expectedMat
