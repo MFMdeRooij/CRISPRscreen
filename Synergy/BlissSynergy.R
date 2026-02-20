@@ -16,6 +16,9 @@ library("scales")
 library("cowplot")
 library("reshape2")
 library("readxl")
+
+# Remove all variables (To prevent plotting older graphs)
+rm(list = ls())
 #################################################################################
 #                                   VARIABLES
 
@@ -34,8 +37,8 @@ if (format==0){
     cells<- unlist(strsplit(list.files(pattern=".xlsx"), ".xlsx"))
   } 
 }
-# Or manual (and this will be the order):
-#cells <- c("Cell1", "Cell2")
+# # Or manual (and this will be the order):
+# cells <- c("Cell1", "Cell2")
 
 # Drug names and concentrations:
 # Drug1 = Columns
@@ -44,36 +47,53 @@ xlab <- c(0,0.5,1,2,4)
 
 # Drug2 = Rows
 yname <- expression("Drug2 ("*mu*"M)")
-ylab <- c(0,1,2,4,8)
+ylab <- c(0,0.5,1,2,4)
 
-# Viability or cell number
-ViabilityOrCellNumber<- "Relative Viability"
-# ViabilityOrCellNumber<- "Relative Cell Number"
+# Viability or cell Number: 0 = Viability, 1 = Cell Number
+VoCN<- 0
+
+if (VoCN==0){
+  ViabilityOrCellNumber<- "Viability"
+}
+if (VoCN==1){
+  ViabilityOrCellNumber<- "Cell Number"
+}
+
 #################################################################################
 cellNumber<- 1
 for (cell in cells){
   # Read files
   if (format==0){
-    AB <- read.csv(paste0(cell,".csv"), sep=",", header=FALSE)/100
+    RawValues <- read.csv(paste0(cell,".csv"), sep=",", header=FALSE)/100
   } else {
     if (format==1){
-      AB <- read_excel(paste0(cell,".xlsx"), col_names=F)/100
+      RawValues <- read_excel(paste0(cell,".xlsx"), col_names=F)/100
     }
   }
   
-  # Normalize control to 100%
-  AB<- AB/AB[1,1]
+  if (VoCN==0){
+    if (max(RawValues) < 1){
+      RawValues<- RawValues*100
+    }
+  }
+  
+  if (VoCN==1){
+    RawValues<- RawValues*100
+  }
+  
+  # Normalize control to 1
+  NormValues<- RawValues/RawValues[1,1]
   
   # Calculate expected, delta Bliss, and relative Bliss values
-  expectedMat<- as.matrix(AB)[,1] %*% t(as.matrix(AB)[1,])
-  dblissMat<- expectedMat-as.matrix(AB)
-  rblissMat<- as.matrix(AB)/expectedMat
+  expectedMat<- as.matrix(NormValues)[,1] %*% t(as.matrix(NormValues)[1,])
+  dblissMat<- expectedMat-as.matrix(NormValues)
+  rblissMat<- as.matrix(NormValues)/expectedMat
   
-  matInhX<- as.data.frame(t(AB/AB[,1]))
+  matInhX<- as.data.frame(t(NormValues/NormValues[,1]))
   matInhX$c<- 1:nrow(matInhX)
   colnames(matInhX)<-c(ylab,"c")
   
-  matInhY<- as.data.frame(t(t(AB)/t(AB)[,1]))
+  matInhY<- as.data.frame(t(t(NormValues)/t(NormValues)[,1]))
   matInhY$c<- 1:nrow(matInhY)
   colnames(matInhY)<-c(xlab,"c")
   
@@ -86,15 +106,16 @@ for (cell in cells){
   colnames(rmatInhY)<-c(ylab,"c")   
   
   # Collect the data
-  Combo <- data.frame(matrix(nrow=length(xlab)*length(ylab),ncol=6))
-  colnames(Combo) <- c("c", "r", "pgrowth", "pr.inh", "dbliss", "rbliss")  
+  Combo <- data.frame(matrix(nrow=length(xlab)*length(ylab),ncol=7))
+  colnames(Combo) <- c("c", "r", "raw", "pgrowth", "pr.inh", "dbliss", "rbliss")  
   # Fill the columns with data
   k=1
   for (j in 1:length(xlab)){
     for (i in 1:length(ylab)){
       Combo$c[k] <- j
       Combo$r[k] <- length(ylab)+1-i
-      Combo$pgrowth[k] <- AB[i,j]
+      Combo$raw[k] <- RawValues[i,j]
+      Combo$pgrowth[k] <- NormValues[i,j]
       Combo$pr.inh[k] <- expectedMat[i,j]
       Combo$dbliss[k] <- dblissMat[i,j]
       Combo$rbliss[k] <- rblissMat[i,j]
@@ -103,10 +124,54 @@ for (cell in cells){
   }
   
   # Make graphs
+  if (VoCN==0){
+    g0<-ggplot(Combo, aes(x=c, y=r, label=(round(raw*100, digits=0)))) +
+      geom_tile(aes(fill=raw, height=1, width=1)) +
+      scale_fill_gradient2(label=percent,
+                           name=ViabilityOrCellNumber,
+                           midpoint=0.5,
+                           limits=c(0,1),
+                           low="darkred", mid="yellow", high="forestgreen", na.value="forestgreen") +
+      geom_text(size=9, colour="white") +
+      scale_x_discrete(xname, limits=as.character(xlab), position = "top" ) +
+      scale_y_discrete(yname, limits=rev(as.character(ylab))) +
+      ggtitle(cell) +
+      theme(text=element_text(size=25),
+            axis.text=element_text(size=25, colour="black"),
+            plot.title=element_text(size=30, face="bold", hjust = 0.5),
+            plot.margin = unit(c(1, 2, 0, 1), "cm"),
+            legend.title = element_text(vjust = 2),
+            legend.position = c(1.03, 0.5),
+            legend.justification = c(0, 0.5)
+      ) + guides(fill = guide_colourbar(label.hjust = 1))
+  }
+  if (VoCN==1){
+    g0<-ggplot(Combo, aes(x=c, y=r, label=(round(raw, digits=0)))) +
+      geom_tile(aes(fill=raw, height=1, width=1)) +
+      scale_fill_gradient2(label=number,
+                           name=ViabilityOrCellNumber,
+                           midpoint=max(RawValues)/2,
+                           limits=c(0,max(RawValues)),
+                           low="darkred", mid="yellow", high="forestgreen", na.value="forestgreen") +
+      geom_text(size=9, colour="white") +
+      scale_x_discrete(xname, limits=as.character(xlab), position = "top" ) +
+      scale_y_discrete(yname, limits=rev(as.character(ylab))) +
+      ggtitle(cell) +
+      theme(text=element_text(size=25),
+            axis.text=element_text(size=25, colour="black"),
+            plot.title=element_text(size=30, face="bold", hjust = 0.5),
+            plot.margin = unit(c(1, 2, 0, 1), "cm"),
+            legend.title = element_text(vjust = 2),
+            legend.position = c(1.03, 0.5),
+            legend.justification = c(0, 0.5)
+      ) + guides(fill = guide_colourbar(label.hjust = 1))
+  }
+  
+  # Make graphs
   g1<-ggplot(Combo, aes(x=c, y=r, label=(round(pgrowth*100, digits=0)))) +
     geom_tile(aes(fill=pgrowth, height=1, width=1)) +
     scale_fill_gradient2(label=percent,
-                         name=ViabilityOrCellNumber,
+                         name=paste0("Relative ", ViabilityOrCellNumber),
                          midpoint=0.5,
                          limits=c(0,1),
                          low="red", mid="darkred", high="midnightblue", na.value="midnightblue") +
@@ -145,7 +210,7 @@ for (cell in cells){
   g3<-ggplot(Combo, aes(x=c, y=r, label=(round(rbliss*100, digits=0)))) +
     geom_tile(aes(fill=rbliss, height=1, width=1)) +
     scale_fill_gradient2(label=percent,
-                         name=ViabilityOrCellNumber,
+                         name=paste0("Relative ", ViabilityOrCellNumber),
                          midpoint=1,
                          limits=c(0,2),
                          low="red4", mid="lightgray", high="green3", na.value="green3") +
@@ -168,7 +233,7 @@ for (cell in cells){
   colx<-c("red", fc(length(xlab)-1))
   
   l1<- ggplot(melt(matInhX,id = "c"), aes(x=c, y=value*100, group=variable, colour=variable)) +
-    geom_line(lwd=1.5) + ylab(paste0(ViabilityOrCellNumber," (%)")) +
+    geom_line(lwd=1.5) + ylab(paste0("Relative ", ViabilityOrCellNumber," (%)")) +
     scale_x_discrete(xname, limits=as.character(xlab)) +
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
@@ -180,7 +245,7 @@ for (cell in cells){
     ) + scale_color_manual(values=coly, name = yname) + expand_limits(y = 0)
   
   l2<- ggplot(melt(matInhY,id = "c"), aes(x=c, y=value*100, group=variable, colour=variable)) +
-    geom_line(lwd=1.5) + ylab(paste0(ViabilityOrCellNumber," (%)")) +
+    geom_line(lwd=1.5) + ylab(paste0("Relative ", ViabilityOrCellNumber," (%)")) +
     scale_x_discrete(yname, limits=as.character(ylab)) +
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
@@ -192,7 +257,7 @@ for (cell in cells){
     ) + scale_color_manual(values=colx, name = xname) + expand_limits(y = 0)
   
   l3<- ggplot(melt(rmatInhY,id = "c"), aes(x=c, y=value*100, group=variable, colour=variable)) +
-    geom_line(lwd=1.5) + ylab(paste0(ViabilityOrCellNumber," (%)")) +
+    geom_line(lwd=1.5) + ylab(paste0("Relative ", ViabilityOrCellNumber," (%)")) +
     scale_x_discrete(xname, limits=as.character(xlab)) +
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
@@ -204,7 +269,7 @@ for (cell in cells){
     ) + scale_color_manual(values=coly, name = yname) + expand_limits(y = 0)
   
   l4<- ggplot(melt(rmatInhX,id = "c"), aes(x=c, y=value*100, group=variable, colour=variable)) +
-    geom_line(lwd=1.5) + ylab(paste0(ViabilityOrCellNumber," (%)")) +
+    geom_line(lwd=1.5) + ylab(paste0("Relative ", ViabilityOrCellNumber," (%)")) +
     scale_x_discrete(yname, limits=as.character(ylab)) +
     theme(text=element_text(size=25),
           axis.text=element_text(size=25, colour="black"),
@@ -216,6 +281,7 @@ for (cell in cells){
     ) + scale_color_manual(values=colx, name = xname) + expand_limits(y = 0)
   
   # Store all graphs in a variable
+  assign(paste0("plotgraph0", cellNumber, cell), g0)
   assign(paste0("plotgraph1", cellNumber, cell), g1)
   assign(paste0("plotgraph2", cellNumber, cell), g2)
   assign(paste0("plotgraph3", cellNumber, cell), g3)
@@ -228,6 +294,7 @@ for (cell in cells){
 }
 
 # List all graphs
+plotlist0 <- lapply(ls(pattern="plotgraph0"), function(x) {get(x)})
 plotlist1 <- lapply(ls(pattern="plotgraph1"), function(x) {get(x)})
 plotlist2 <- lapply(ls(pattern="plotgraph2"), function(x) {get(x)})
 plotlist3 <- lapply(ls(pattern="plotgraph3"), function(x) {get(x)})
@@ -235,7 +302,8 @@ plotlist4 <- lapply(ls(pattern="plotgraph4"), function(x) {get(x)})
 plotlist5 <- lapply(ls(pattern="plotgraph5"), function(x) {get(x)})
 plotlist6 <- lapply(ls(pattern="plotgraph6"), function(x) {get(x)})
 plotlist7 <- lapply(ls(pattern="plotgraph7"), function(x) {get(x)})
-plotlist<- append(plotlist1,  plotlist2)
+plotlist<- append(plotlist0,  plotlist1)
+plotlist<- append(plotlist,  plotlist2)
 plotlist<- append(plotlist,  plotlist4)
 plotlist<- append(plotlist,  plotlist5)
 plotlist<- append(plotlist,  plotlist3)
@@ -243,9 +311,6 @@ plotlist<- append(plotlist,  plotlist6)
 plotlist<- append(plotlist,  plotlist7)
 
 # Plot all graphs in PDF file
-pdf(file=paste0("BlissSynergyR.pdf"), width=10*length(cells), height=48)
-  print(plot_grid(plotlist=plotlist, nrow=7, ncol=length(cells), align="v"))
+pdf(file=paste0("BlissSynergyR_",VoCN,".pdf"), width=10*length(cells), height=53)
+  print(plot_grid(plotlist=plotlist, nrow=8, ncol=length(cells), align="v"))
 dev.off()
-
-# Remove all variables (To prevent plotting older graphs)
-rm(list = ls())
