@@ -72,7 +72,7 @@ for (cell in cells){
   }
   
   if (VoCN==0){
-    if (max(RawValues) < 1){
+    if (max(RawValues) <= 1/100){
       RawValues<- RawValues*100
     }
   }
