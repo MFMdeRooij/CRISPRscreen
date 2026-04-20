@@ -102,18 +102,18 @@ for (com in comparisons) {
   payload_id = string_db$post_payload(example1_mapped_fdr$STRING_id, colors=example1_mapped_fdr$color)
   
   pdf(paste0("GSEA_STRING/STRING_",com,".pdf"),10,10)
-    if (length(hits)>0){
+    if (length(hits)>0){try({
       string_db$plot_network(hits, payload_id=payload_id)
       title(main = "Hits All", adj = 0, cex.main = 1.5, col.main = "black")
-    }
-    if (length(hitsDown)>0){
+    })}
+    if (length(hitsDown)>0){try({
       string_db$plot_network(hitsDown, payload_id=payload_id)
       title(main = "Hits Down", adj = 0, cex.main = 1.5, col.main = "black")
-    }
-    if (length(hitsUp)>0){
+    })}
+    if (length(hitsUp)>0){try({
       string_db$plot_network(hitsUp, payload_id=payload_id)
       title(main = "Hits Up", adj = 0, cex.main = 1.5, col.main = "black")
-    }
+    })}
     string_db$plot_network(hitsDown50, payload_id=payload_id)
     title(main = "Down 50", adj = 0, cex.main = 1.5, col.main = "black")
     string_db$plot_network(hitsUp50, payload_id=payload_id)
