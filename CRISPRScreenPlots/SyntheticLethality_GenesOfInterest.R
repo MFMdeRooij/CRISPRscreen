@@ -20,14 +20,15 @@ folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
 # # Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
 # folder<- paste0("C:/BioWin/CRISPRscreen/", CellLine)
 
-# Is there a T1drug/T1control comparison, 0: no, 1: yes
-t2t1com<- 1
-
 # Size graph
 size<- 7
 
-# Genes to emphasize, 0: all significant (from T1drug/T1control comparison), 1: specific genes, 2 genes outside prediction interval  
-allsignif<- 0
+# Is there a T1drug/T1control comparison, 0: no, 1: yes
+t2t1com<- 1
+
+# Genes to emphasize, 0: all significant (from T1drug/T1control comparison), 1: specific genes, 
+#                                       2: genes outside prediction interval, 3: top 10 up and down (from T1drug/T1control comparison) 
+allsignif<- 3
 
 GenesOfInterest<- NULL
 if (allsignif==1){
@@ -38,23 +39,26 @@ if (allsignif==1){
 # Show all gene symbols, 0: no, 1: yes
 GeneSymbol<- 0
 
-# Axes labels:
-xlab<- "Control (Relative log2 median fold change)"
-ylab<- "Venetoclax (Relative log2 median fold change)"
+# Axes labels: ( (Relative) log2 median fold change, will we added )
+xlabel<- "Control"
+ylabel<- "Venetoclax"
 
 # # BCR-controlled adhesion screens:   
-# xlab<- "PMA (Log2 median fold change)"
-# ylab<- expression(alpha*"IgM (Log2 median fold change)")
+# xlab<- "PMA"
+# ylab<- expression(alpha*"IgM")
 
 # Normalize to essentials and non-essentials (only for lethality), 0: no, 1: yes
 NormalizeX<- 1
 NormalizeY<- 1
 
 # Normalize to (log)mean or median of the (non-)essentials, 0: mean, 1: median
-meanOrmedian<- 1
+meanOrmedian<- 0
 
 # Additionally normalize y by linear regression (so y=0+1x of the controls), 0: no, 1: yes
 NormalizeLR<- 1
+
+# Add lineair regression line with 95% prediction interval based on (non)essentials: no, 1: yes
+LinReg<- 1
 
 #Axes limit, 0 = automatic, 1: custom
 Axlim<- 0
@@ -79,6 +83,20 @@ cneg<- 'blue'
 chit<- 'black'
 ##################################################################################################################################
 setwd(folder)
+
+if (NormalizeX==0){
+  xlab<- paste0(xlabel, " (Log2 median fold change)")
+} 
+if (NormalizeX==1){
+  xlab<- paste0(xlabel, " (Relative log2 median fold change)")
+} 
+if (NormalizeY==0){
+  ylab<- paste0(ylabel, " (Log2 median fold change)")
+}
+if (NormalizeY==1){
+  ylab<- paste0(ylabel, " (Relative log2 median fold change)")
+}
+
 
 Control<- read.csv("DESeq2 T0vsT1 Genes.csv", stringsAsFactors=F)
 if (NormalizeX == 0){
@@ -122,6 +140,11 @@ if (t2t1com==1){
   if (allsignif==0){
     GenesOfInterest<- TCG$GeneSymbol[TCG$fdr<0.1]
   }
+  if (allsignif==3){
+    GenesOfInterest<-c(
+      TC$GeneSymbol[order(TC$rhoDepleted)][1:10],
+      TC$GeneSymbol[order(TC$rhoEnriched)][1:10])
+  }
 }
 Combi<- merge(ControlG, TreatedG, by="GeneSymbol")
 if (t2t1com==1){
@@ -147,21 +170,21 @@ hit<- Combi[Combi$GeneSymbol %in% GenesOfInterest,]
 
 if (Axlim==0){
   # Calculate axis limits:
-  xmin<- round(min(Combi$Nmfc.x),2)-0.3
-  xmax<- round(max(Combi$Nmfc.x),2)+0.3
-  ymin<- round(min(Combi$Nmfc.y),2)-0.3
-  ymax<- round(max(Combi$Nmfc.y),2)+0.3
+  xmin<- floor(min(Combi$Nmfc.x))
+  xmax<- ceiling(max(Combi$Nmfc.x))
+  ymin<- floor(min(Combi$Nmfc.y))
+  ymax<- ceiling(max(Combi$Nmfc.y))
   if (XYequal==1){
     xmin<- min(xmin,ymin)
     ymin<- min(xmin,ymin)
     xmax<- max(xmax,ymax)
     ymax<- max(xmax,ymax)
   }
-  xticks<- round((xmax-xmin)/5.1,2)
-  yticks<- round((ymax-ymin)/5.1,2)
+  xticks<- round((xmax-xmin)/5.1,0)
+  yticks<- round((ymax-ymin)/5.1,0)
 }
 
-pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
+pdf(paste0("CRISPR_SL_",cellID,"_R", allsignif,".pdf"),size,size)
   par(mar=c(4,4,0,0))
   par(fig=c(0.1,0.7,0.1,0.7))
   plot(Combi$Nmfc.x, Combi$Nmfc.y, xlab=xlab, ylab=ylab, cex.lab=1, cex.axis=1, 
@@ -188,9 +211,11 @@ pdf(paste0("CRISPR_SL_",cellID,"_R.pdf"),size,size)
   lower_values <- predictions[, "lwr"]
   upper_values <- predictions[, "upr"]
   modal_values <- predictions[, "fit"]
-  lines(xvalues, modal_values, col = "purple", lwd = 1)
-  lines(xvalues, lower_values, col = "purple", lty = 2)
-  lines(xvalues, upper_values, col = "purple", lty = 2)
+  if (LinReg == 1){
+    lines(xvalues, modal_values, col = "purple", lwd = 1)
+    lines(xvalues, lower_values, col = "purple", lty = 2)
+    lines(xvalues, upper_values, col = "purple", lty = 2)
+  }
   
   # 0 lines
   abline(v=0, col=cneg, lty=3)
