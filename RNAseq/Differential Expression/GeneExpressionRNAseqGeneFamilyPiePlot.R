@@ -1,8 +1,7 @@
-## RNAseq gene level plots:
+## RNAseq gene familiy pie plot:
 # - Make count tables with the GeneExpressionRNAseqHisat2.R script
-# - Perform DESeq2 analysis with the GeneExpressionRNAseqDESeq2.R script 
-# - Use the NormalizedCounts_rlog.csv table derived from the DESeq2 script
-# - Fill in the Design table in RNAseqDesign.csv
+# - Use the RNAseqCountTableTPM.csv (or RNAseqCountTableNorTPX.csv) count table
+#   (It is important that the counts are adjusted for gene length!!)
 # - Adjust the settings and run the script
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ##########################################################################################################
