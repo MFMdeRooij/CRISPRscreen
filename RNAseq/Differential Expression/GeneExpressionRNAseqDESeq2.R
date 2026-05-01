@@ -20,8 +20,10 @@ library("basicPlotteR")
 ######################################################################################
 #                                     SETTINGS
 
-# Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-Workdirectory<- "C:/BioWin/RNAseq/"
+# Put this script in the folder where the count tables are located
+Workdirectory<- dirname(rstudioapi::getActiveDocumentContext()$path)
+## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
+#Workdirectory<- "C:/BioWin/RNAseq/"
 
 # Which count table?
 Filename<- "RNAseqCountTableRawProteinCoding.csv"
@@ -173,6 +175,14 @@ for (i in 1:nrow(combi)){
   plotDispEsts(dds, main="Dispersion plot")
   
   rld<-rlog(dds, blind=FALSE)
+  
+  if(i==1){
+    rlog<- as.data.frame(assay(rld))
+    rlog$ensembl_gene_id<- rownames(rlog)
+    rlog<- merge(df_Gene_ID, rlog, by="ensembl_gene_id", all.y=T)
+    write.csv(rlog, "NormalizedCounts_rlog.csv", row.names=F, quote = F)
+  }
+  
   sampleDists<- dist(t(assay(rld)))
   sampleDistMatrix<- as.matrix(sampleDists)
   rownames(sampleDistMatrix)<- paste(rld$Group, rld$Rep)
@@ -211,32 +221,35 @@ for (i in 1:nrow(combi)){
   palette <- colorRampPalette(c("cyan","black"))
   volcano$col<-palette(max(volcano$l2bm)*100+1)[volcano$l2bm*100+1]
 
-  # Prevent a log-bug when Rho is 0
+  # Prevent a log-bug when FDR is 0
   volcano$padj[volcano$padj==0]<- min(volcano$padj[volcano$padj!=0])/10
   
   # Axes limits
-  xrange<- c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
-  yrange<- c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
+  xrangeVOL<- c(floor(min(volcano$log2FoldChange, na.rm=TRUE)), ceiling(max(volcano$log2FoldChange, na.rm=TRUE)))
+  yrangeVOL<- c(0, ceiling(max(-log10(volcano$pad)*1.2, na.rm=TRUE)))
+  
+  xrangeMA<- c(min(df_res$logBaseMeanA, na.rm=TRUE)-0.5, max(df_res$logBaseMeanA, na.rm=TRUE)+0.5)
+  yrangeMA<- c(min(df_res$log2FoldChange, na.rm=TRUE)-0.5, max(df_res$log2FoldChange, na.rm=TRUE)+0.5)
   
   # Density plot fold change
-  denY_tot<-density(df_res$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+  denY_tot<-density(df_res$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
   denY_tot$y[1]<- 0
   denY_tot$y[length(denY_tot$y)]<- 0
-  denY_PC<-density(df_PC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+  denY_PC<-density(df_PC$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
   denY_PC$y[1]<- 0
   denY_PC$y[length(denY_PC$y)]<- 0
-  denY_NC<-density(df_NC$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+  denY_NC<-density(df_NC$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
   denY_NC$y[1]<- 0
   denY_NC$y[length(denY_NC$y)]<- 0
   denYMax<- max(c(denY_tot$y, denY_PC$y, denY_NC$y))
   # Density plot read count
-  denX_tot<- density(df_res$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+  denX_tot<- density(df_res$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
   denX_tot$y[1]<- 0
   denX_tot$y[length(denX_tot$y)]<- 0
-  denX_PC<- density(df_PC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+  denX_PC<- density(df_PC$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
   denX_PC$y[1]<- 0
   denX_PC$y[length(denX_PC$y)]<- 0
-  denX_NC<- density(df_NC$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+  denX_NC<- density(df_NC$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
   denX_NC$y[1]<- 0
   denX_NC$y[length(denX_NC$y)]<- 0
   denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
@@ -253,11 +266,23 @@ for (i in 1:nrow(combi)){
        main= "Volcano plot",
        xlab= expression("Log"[2]*" fold change"), 
        ylab= expression("-Log"[10]*" FDR"),
-       cex.lab=1, cex.axis=1, las=1, xlim=yrange, ylim=c(0,max(-log10(volcano$padj))))
+       cex.lab=1, cex.axis=1, las=1, xlim=xrangeVOL, ylim=yrangeVOL, xaxt = "n", yaxt = "n")
   
   # Vertical and horizontal lines
-  abline(v=2.5*(-10:10), lty=3, col="gray")
-  abline(h=10*(0:20), lty=3, col="gray")
+  xrange<- xrangeVOL[2]-xrangeVOL[1]
+  xticks<- 2
+  if (xrange < 8){xticks<- 1}
+  if (xrange <= 3){xticks<- 0.5}
+  
+  yrange<- yrangeVOL[2]-yrangeVOL[1]
+  yticks<- 50
+  if (yrange < 101){yticks<- 25}
+  if (yrange <= 50){yticks<- 10}
+  
+  axis(1, at = seq(xrangeVOL[1], xrangeVOL[2], by = xticks))
+  axis(2, at = seq(yrangeVOL[1], yrangeVOL[2], by = yticks))
+  abline(v=seq(xrangeVOL[1], xrangeVOL[2], by = xticks), lty=3, col="gray")
+  abline(h=seq(yrangeVOL[1], yrangeVOL[2], by = yticks), lty=3, col="gray")
   
   # Actual plot
   points(volcano$log2FoldChange, -log10(volcano$padj), type="p", col=volcano$col, bg=volcano$col, cex=1, pch=volcano$pch)
@@ -288,7 +313,7 @@ for (i in 1:nrow(combi)){
     par(mar=c(4,4,0,0))
     par(fig=c(0.1,0.7,0.1,0.7))
     plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col=df_res$col, bg=df_res$col, cex=1, pch=df_res$pch, xlab="Log10 Average Read Counts (Control)", 
-         ylab="Log2 Fold Change", cex.lab=1, cex.axis=1, xlim=xrange, ylim=yrange)
+         ylab="Log2 Fold Change", cex.lab=1, cex.axis=1, xlim=xrangeMA, ylim=yrangeMA)
     if (Gene=="Hitlist"&& nrow(GenesDiff)>=1){
       GenesDiff<- df_res[df_res$ensembl_gene_id %in% GenesDiff$ensembl_gene_id,]
       points(GenesDiff$logBaseMeanA, GenesDiff$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1, pch=GenesDiff$pch)
@@ -304,7 +329,7 @@ for (i in 1:nrow(combi)){
     # Density fold change
     par(mar=c(4,0,0,4))
     par(fig=c(0.7,0.9,0.1,0.7),new=TRUE)
-    plot(denY_tot$y, denY_tot$x, ylim=yrange, xlim=(c(0,denYMax)), type='l', axes=FALSE, col=ColAll, xlab="", 
+    plot(denY_tot$y, denY_tot$x, ylim=yrangeMA, xlim=(c(0,denYMax)), type='l', axes=FALSE, col=ColAll, xlab="", 
          ylab="", lwd=2)
     par(new=TRUE)
     lines(denY_PC$y, denY_PC$x, col=ColP, lwd=2)
@@ -316,7 +341,7 @@ for (i in 1:nrow(combi)){
     rgb.val<- col2rgb(ColN)
     polygon(denY_NC$y, denY_NC$x, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     if (Gene=="Hitlist" && nrow(GenesDiff)>1){
-      denY_hits_total<-density(GenesDiff$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+      denY_hits_total<-density(GenesDiff$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
       denY_hits_total$y[1]<- 0
       denY_hits_total$y[length(denY_hits_total$y)]<- 0
       lines(denY_hits_total$y, denY_hits_total$x, col=ColH, lwd=2)
@@ -325,7 +350,7 @@ for (i in 1:nrow(combi)){
     }
     if (nrow(df_GOI)>1){
       par(new=TRUE)
-      denY_GOI<- density(df_GOI$log2FoldChange, from=yrange[1], to=yrange[2], na.rm=T)
+      denY_GOI<- density(df_GOI$log2FoldChange, from=yrangeMA[1], to=yrangeMA[2], na.rm=T)
       denY_GOI$y[1]<- 0
       denY_GOI$y[length(denY_GOI$y)]<- 0
       lines(denY_GOI$y, denY_GOI$x, col=ColH, lwd=2)
@@ -336,7 +361,7 @@ for (i in 1:nrow(combi)){
     # Density read counts
     par(mar=c(0,4,4,0))
     par(fig=c(0.1,0.7,0.7,0.9),new=TRUE)
-    plot(denX_tot$x, denX_tot$y, main="MA plot", cex.main=1.5, xlim=xrange, ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
+    plot(denX_tot$x, denX_tot$y, main="MA plot", cex.main=1.5, xlim=xrangeMA, ylim=c(0,denXMax), type='l', axes=FALSE, col=ColAll, xlab="", 
          ylab="", lwd=2)
     lines(denX_PC, col=ColP, lwd=2)
     lines(denX_NC, col=ColN, lwd=2)
@@ -347,7 +372,7 @@ for (i in 1:nrow(combi)){
     rgb.val<- col2rgb(ColN)
     polygon(denX_NC, col=rgb(rgb.val[1]/255,rgb.val[2]/255,rgb.val[3]/255,alpha=0.3), lwd=0.1)
     if (Gene=="Hitlist" && nrow(GenesDiff)>1){
-      denX_hits_total<-density(GenesDiff$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+      denX_hits_total<-density(GenesDiff$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
       denX_hits_total$y[1]<- 0
       denX_hits_total$y[length(denX_hits_total$y)]<- 0
       lines(denX_hits_total, col=ColH, lwd=2)
@@ -356,7 +381,7 @@ for (i in 1:nrow(combi)){
     }
     if (nrow(df_GOI)>1){
       par(new=TRUE)
-      denX_GOI<- density(df_GOI$logBaseMeanA, from=xrange[1], to=xrange[2], na.rm=T)
+      denX_GOI<- density(df_GOI$logBaseMeanA, from=xrangeMA[1], to=xrangeMA[2], na.rm=T)
       denX_GOI$y[1]<- 0
       denX_GOI$y[length(denX_GOI$y)]<- 0
       lines(denX_GOI, col=ColH, lwd=2)
