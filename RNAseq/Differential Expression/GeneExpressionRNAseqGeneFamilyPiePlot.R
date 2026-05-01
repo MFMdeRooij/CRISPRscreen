@@ -1,7 +1,8 @@
-## RNAseq gene familiy pie plot:
+## RNAseq gene level plots:
 # - Make count tables with the GeneExpressionRNAseqHisat2.R script
-# - Use the RNAseqCountTableNorTPX.csv (or RNAseqCountTableTPM.csv) count table
-#   (It is important that the counts are adjusted for gene length!!)
+# - Perform DESeq2 analysis with the GeneExpressionRNAseqDESeq2.R script 
+# - Use the NormalizedCounts_rlog.csv table derived from the DESeq2 script
+# - Fill in the Design table in RNAseqDesign.csv
 # - Adjust the settings and run the script
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ##########################################################################################################
@@ -10,11 +11,13 @@ library("RColorBrewer")
 ##########################################################################################################
 #                                     SETTINGS
 
-# Workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
-setwd("C:/BioWin/RNAseq/")
+# Put this script in the folder where the count tables are located
+Workdirectory<- dirname(rstudioapi::getActiveDocumentContext()$path)
+## Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
+#Workdirectory<- "C:/BioWin/RNAseq/"
 
 # Which count table?
-CountTableNor<- read.csv(file="RNAseqCountTableNorTPX.csv", sep=",", header=TRUE, stringsAsFactors = FALSE)
+CountTableNor<- read.csv(file="RNAseqCountTableTPM.csv", sep=",", header=TRUE, stringsAsFactors = FALSE)
 
 # Title gene family
 Title<- "ChemokineReceptors"
@@ -26,6 +29,9 @@ sel<- rbind(sel,CountTableNor[grep("^CCR[0-9]{1,}$", toupper(CountTableNor$hgnc_
 # # Select genes from a file (Make a csv file with gene symbols in the first column with Gene as colname)
 # GeneList<- read.csv("GeneList.csv", sep=",", header=TRUE, stringsAsFactors = FALSE)
 # Genes<- toupper(GeneList$Gene)
+# # Custom genes:
+# Genes<- c("BCL2", "MCL1", "BCL2L1", "BCL2L2", "BCL2A1")
+#
 # sel<- CountTableNor[toupper(CountTableNor$hgnc_symbol) %in% Genes,]
 
 ##########################################################################################################
@@ -37,7 +43,7 @@ pdf(paste0("PiePlots_", Title,".pdf"),10,20)
   par(mfrow=c(6,3))
   for (cell in colnames(sel)){
     total<-as.numeric(colSums(sel[cell]))
-    pie(sel[[cell]], label=paste0(rownames(sel),  " (", as.numeric(t(sel[cell])),")"), main=cell, 
-        col=brewer.pal(nrow(sel), "Spectral"), sub=paste0("Total counts: ",round(total,0)," nTPX"))
+    pie(sel[[cell]], label=paste0(rownames(sel),  " (", round(as.numeric(t(sel[cell])),0),")"), main=cell, 
+        col=brewer.pal(nrow(sel), "Spectral"), sub=paste0("Total transcripts: ",round(total,0)," TPM"))
   }
 dev.off()
