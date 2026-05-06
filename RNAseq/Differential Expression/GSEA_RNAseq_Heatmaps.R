@@ -74,7 +74,7 @@ colLabels<- do.call(paste, c(RNAseqDesign[-1], sep = "_"))
 # Make colorbars from design table
 target_cols <- colnames(RNAseqDesign)[-1]
 for (col in target_cols){
-  assign(paste0("Sample_", col), as.numeric(factor(RNAseqDesign[[col]])))
+  assign(paste0("Sample_", col), as.numeric(factor(RNAseqDesign[[col]], levels= unique(RNAseqDesign[[col]]))))
   assign(paste0("col_funGroupSample_", col), 
          colorRamp2(c(1, max(get(paste0("Sample_", col)))), c("oldlace", "dodgerblue3")))
 }
