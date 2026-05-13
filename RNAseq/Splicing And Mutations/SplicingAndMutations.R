@@ -208,7 +208,9 @@ for (i in 1:nrow(dfID)){
   # Read densities
   df<-GOI
   df<-df[,c("pos","count")]
-  df<-aggregate(df$count, by=list(df$pos), FUN=sum)
+  try(
+    df<-aggregate(df$count, by=list(df$pos), FUN=sum)
+  )
   colnames(df)<-c("pos","count")
   dfs<-splice_GOI
   if (nrow(dfs)>0){
