@@ -1,5 +1,5 @@
 # With this script you can look at splicing and mutations, of human CD44 which has constant and variable exon usage, 
-# or CXCL12 which has different isoforms
+# or CXCL12 which has different isoforms, or XBP1 which is spliced upon ER stress
 # Follow the lines with hastag signs in R studio
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2022, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################################################################
@@ -40,7 +40,9 @@ MutminCoverage<- 0
 
 # For other genes, you can find in Ensembl the exon loci (or in the GTF file), which you can put in hgeneX.csv, and 
 # also adjust the most upstream and downstream loci in SplicingAndMutationsHg38.sh
-# cxcl12 <- gtf[grep("CXCL12", gtf$V34),]
+# To obtain exon loci from gtf file:
+# gtf<-read.table("~/HumanGenome/hg38.105.gtf", sep="\t")
+# cxcl12 <- gtf[grep("gene_name CXCL12", gtf$V9),]
 # write.csv(cxcl12,"cxcl12.csv", row.names=F, quote=F)
 # Adjust this table to the example (hgeneX.csv)
 
@@ -326,6 +328,19 @@ for (i in 1:nrow(dfID)){
         text(((GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures2$exon[i]]+GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures2$exon[i]])/2), ylimMax/5*0.15, dfFeatures2$feature[i], col="gray", cex=0.3, srt=45)
       }    
     }    
+    
+    # Special features for XBP1
+    if (toupper(GeneSymbol)=="XBP1"){
+      dfFeatures<-data.frame(
+        feature=c("ER stress"),
+        start=c("ERstress"),
+        end=c("ERstress")
+      )
+      for (i in 1:nrow(dfFeatures)) {
+        text(((GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures$start[i]]+GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures$end[i]])/2), ylimMax/5*0.15, dfFeatures$feature[i], font=2, cex=0.3, adj=0.5)
+        segments(GeneStructure_GOI$Start[GeneStructure_GOI$Exon==dfFeatures$start[i]],	ylimMax/5*0.3, GeneStructure_GOI$End[GeneStructure_GOI$Exon==dfFeatures$end[i]], ylimMax/5*0.3, lwd=0.5, col="black", lend=1)
+      }
+    }  
     
     # Actin as control gene
     df<-actb

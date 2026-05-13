@@ -98,6 +98,8 @@ do
 	samtools faidx ~/HumanGenome/hg38.fa "chr10:44370165-44385092" > hcxcl12.fa
 	samtools view -b ${s}_${c}.sort.bam "chr11:35139171-35232402" > ${s}_${c}/${s}_${c}.hcd44.bam
 	samtools faidx ~/HumanGenome/hg38.fa "chr11:35139171-35232402" > hcd44.fa
+	samtools view -b ${s}.sort.bam "chr22:28794555-28800597" > ${s}/${s}.hxbp1.bam	
+	samtools faidx ~/HumanGenome/hg38.fa "chr22:28794555-28800597" > hxbp1.fa
 	samtools view -b ${s}_${c}.sort.bam "chr7:5527147-5530601" > ${s}_${c}/${s}_${c}.hactb.bam
 	samtools faidx ~/HumanGenome/hg38.fa "chr7:5527147-5530601" > hactb.fa
 
