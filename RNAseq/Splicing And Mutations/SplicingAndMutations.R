@@ -5,8 +5,9 @@
 ##################################################################################################################################
 #                                                         SETTINGS
 
-# Workdirectory Linux (This R script works also in Windows, but the mapping should be in Linux)
-wd <- "~/BioLin/RNAseq/"
+# Workdirectory Linux (This R script works also in Windows, but the mapping should be in Linux).
+wd<- dirname(rstudioapi::getActiveDocumentContext()$path)
+#wd<- "~/BioLin/RNAseq/"
 
 # Gene structure file (the first letter determines the species followed by gene symbol)
 GeneStructure<- "hcxcl12.csv"
@@ -126,8 +127,12 @@ if (GeneStructure_GOI$Start[1]>GeneStructure_GOI$Start[nrow(GeneStructure_GOI)])
 }
 
 for (i in 1:nrow(dfID)){
-  ID<-paste0(dfID[i,1], "_", dfID[i,2])
-  setwd(paste0(wd,ID))
+  if (ncol(dfID)>1){
+    ID<-paste0(dfID[i,1], "_", dfID[i,2])
+  } else {
+      ID<-dfID[i,1]
+    }
+  setwd(paste0(wd,"/",ID))
   GeneSymbol<- sub(".", "", strsplit(GeneStructure, ".csv")[[1]][1])
   GOI<-data.frame(seqnames=0,pos=0,count=0)
   splice_GOI<-data.frame(seqnames=0,pos=0,count=0)
