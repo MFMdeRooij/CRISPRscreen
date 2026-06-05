@@ -1,6 +1,6 @@
 # Use the CRISPRScreenAnalysis.R output files, put this script in the same folder, adjust the settings, and run the script in Rstudio.
-# This script plots all the guides of a particular gene in MA plots of all comparisons (T1/T0, T2/T0, and T2/T1).
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
+# This script plots all the sgRNAs of a particular gene in MA plots of all comparisons (T1/T0, T2/T0, and T2/T1).
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023-2026, info: m.f.derooij@amsterdamumc.nl
 ################################################################################
 ## Install package
 #install.packages("rstudioapi")
@@ -11,7 +11,7 @@
 maintitle<- 'Namalwa'
 
 # Workdirectory:
-# Put this script in the folder where the files of guide and gene statistics are located
+# Put this script in the folder where the files of sgRNA and gene statistics are located
 folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
 # # Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
 # folder<- paste0("C:/BioWin/CRISPRscreen/", CellLine)
@@ -54,7 +54,7 @@ if (Axlim==1){
   yticks<- 0.25
 }
 
-# Colors (All guides, positive and negative controls, hits):
+# Colors (All sgRNAs, positive and negative controls, hits):
 ColAll<- "lightgray"
 ColP<- "lightpink1"
 #ColP<- "red"
@@ -121,7 +121,7 @@ for (file in files) {
     if (nrow(df_GOI)>=1){
       points(df_GOI$logBaseMeanA, df_GOI$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1.5, pch=df_GOI$pch)
     }
-    legend("bottomleft",legend=c( if (nchar(Gene)>1 && !is.na(Gene)) {Gene}, "All guides", "Essentials","Non-essentials", 
+    legend("bottomleft",legend=c( if (nchar(Gene)>1 && !is.na(Gene)) {Gene}, "All sgRNAs", "Essentials","Non-essentials", 
           'Significantly enriched', 'Significantly depleted'), cex=0.8, pch=c(if (nchar(Gene)>1 && !is.na(Gene)) {16},16,16,16, 24,25), 
           col=c(if (nchar(Gene)>1 && !is.na(Gene)) {ColH}, ColAll,ColP,ColN, "black", "black"))
     abline(median(df_res$log2FoldChange, na.rm=TRUE),0, col=1, lty=3, untf=TRUE)

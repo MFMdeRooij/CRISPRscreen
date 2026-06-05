@@ -2,9 +2,9 @@
 # This script can normalize the median log2 fold change to the essential and non-essential genes of a synthetic lethality screen, and plots T1control/T0 against T1treated/T0. 
 # This normalization can improve the comparison treated - control if the treated arm did not have equal cell divisions, however the separation between the essentials and 
 # non-essentials will not be improved. Synthetic lethal genes will be located around the lower half of the vertical 0 axis.
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023-2026, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################################################################
-## Install required pacakges once
+## Install required packages once
 #install.packages("devtools)
 #devtools::install_github("JosephCrispell/basicPlotteR")
 library("basicPlotteR")
@@ -15,7 +15,7 @@ library("basicPlotteR")
 cellID<- "Z138"
 
 # Workdirectory:
-# Put this script in the folder where the files of guide and gene statistics are located
+# Put this script in the folder where the files of sgRNA and gene statistics are located
 folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
 # # Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
 # folder<- paste0("C:/BioWin/CRISPRscreen/", CellLine)
@@ -39,7 +39,7 @@ if (allsignif==1){
 # Show all gene symbols, 0: no, 1: yes
 GeneSymbol<- 0
 
-# Axes labels: ( (Relative) log2 median fold change, will we added )
+# Axes labels: ( (Relative) median log2 fold change, will we added )
 xlabel<- "Control"
 ylabel<- "Venetoclax"
 
@@ -85,18 +85,17 @@ chit<- 'black'
 setwd(folder)
 
 if (NormalizeX==0){
-  xlab<- paste0(xlabel, " (Log2 median fold change)")
+  xlab<- paste0(xlabel, " (Median log2 fold change)")
 } 
 if (NormalizeX==1){
-  xlab<- paste0(xlabel, " (Relative log2 median fold change)")
+  xlab<- paste0(xlabel, " (Relative median log2 fold change)")
 } 
 if (NormalizeY==0){
-  ylab<- paste0(ylabel, " (Log2 median fold change)")
+  ylab<- paste0(ylabel, " (Median log2 fold change)")
 }
 if (NormalizeY==1){
-  ylab<- paste0(ylabel, " (Relative log2 median fold change)")
+  ylab<- paste0(ylabel, " (Relative median log2 fold change)")
 }
-
 
 Control<- read.csv("DESeq2 T0vsT1 Genes.csv", stringsAsFactors=F)
 if (NormalizeX == 0){

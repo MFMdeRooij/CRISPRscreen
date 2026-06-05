@@ -1,6 +1,6 @@
 # Use the CRISPRScreenAnalysis.R output files, put this script in the same folder, adjust the settings, and run the script in Rstudio.
-# This script plots all the guides or genes of max 11 genes if interest in MA and Volcano plots of all comparisons (T1/T0, T2/T0, and T2/T1).
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2024, info: m.f.derooij@amsterdamumc.nl
+# This script plots all the sgRNAs or genes of max 11 genes if interest in MA and Volcano plots of all comparisons (T1/T0, T2/T0, and T2/T1).
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2024-2026, info: m.f.derooij@amsterdamumc.nl
 ################################################################################
 ## Install package
 #install.packages(c("rstudioapi", "scales", "RColorBrewer","devtools"))
@@ -15,7 +15,7 @@ library("basicPlotteR")
 CellLine<- "Z138"
 
 # Workdirectory:
-# Put this script in the folder where the files of guide and gene statistics are located
+# Put this script in the folder where the files of sgRNA and gene statistics are located
 folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
 # # Fill in workdirectory (folder in which the count tables are located, use always slash (/) instead of backslash)
 # folder<- paste0("C:/BioWin/CRISPRscreen/", CellLine)
@@ -28,8 +28,11 @@ Genes_of_interest<- c("CSNK2A1", "CSNK2A2", "CSNK2B")
 # Graph titles
 Titles<- c("Control (T1/T0)","Venetoclax (T1/T0)","Venetoclax/Control")
 
-# Add guide ID's in MA plot, 0: No, 1: Yes
+# Add sgRNA ID's in MA plot, 0: No, 1: Yes
 guideID<- 0
+
+# Use MLE or  median fold change for volcano plots, 0 : MLE, 1: median
+GeneScore<- 1
 
 # Colors (All genes, positive and negative controls):
 ColAll<- "lightgray"
@@ -49,9 +52,11 @@ for (f in 1:length(filesVOL)){
   if (th==0){
     df_genes<- read.csv(filesVOL[f], stringsAsFactors = FALSE)
     df_genes<- df_genes[df_genes$GeneSymbol!="NonTargetingControlGuideForHuman",]
-    
-    df_genes$l2mfc<- log2(df_genes$MedianFoldChange)
-    
+    if (GeneScore==0){
+      df_genes$l2mfc<- df_genes$Log2FoldChangeMLE
+    } else if (GeneScore==1){
+      df_genes$l2mfc<- log2(df_genes$MedianFoldChange)
+    }
     # Give NA a number
     df_genes$l2mfc[is.na(df_genes$l2mfc)]<- 0
     df_genes$rhoDepleted[is.na(df_genes$rhoDepleted)]<- 1
@@ -75,7 +80,12 @@ for (f in 1:length(filesVOL)){
   if (th==1){
     GenesHits<- read.csv(filesVOL[3], stringsAsFactors = FALSE)
     GenesHits<- GenesHits[GenesHits$GeneSymbol!="NonTargetingControlGuideForHuman",]
-    GenesHits$l2mfc<- log2(GenesHits$MedianFoldChange)
+    if (GeneScore==0){
+      GenesHits$l2mfc<- GenesHits$Log2FoldChangeMLE
+    } else if (GeneScore==1){
+        GenesHits$l2mfc<- log2(GenesHits$MedianFoldChange)
+      }
+   
     # Give NA a number
     GenesHits$l2mfc[is.na(GenesHits$l2mfc)]<- 0
     GenesHits$rhoDepleted[is.na(GenesHits$rhoDepleted)]<- 1
@@ -176,7 +186,7 @@ for (file in filesMA) {
   
   if (guideID==1){
     addTextLabels(df_res$logBaseMeanA[df_res$GeneSymbol %in% tophitsVolcano], df_res$log2FoldChange[df_res$GeneSymbol %in% tophitsVolcano],
-                  unlist(lapply(strsplit(as.character(df_res$Guide[df_res$GeneSymbol %in% tophitsVolcano]),"-"), "[", 2)), avoidPoints = TRUE,
+                  unlist(lapply(strsplit(as.character(df_res$sgRNA[df_res$GeneSymbol %in% tophitsVolcano]),"-"), "[", 2)), avoidPoints = TRUE,
                   keepLabelsInside = TRUE, col.label="black", cex.label=1, col.background = "white")
   }
   
@@ -192,7 +202,11 @@ for (file in filesVOL) {
   # Read DESeq2 data
   df_genes<- read.csv(file, stringsAsFactors = FALSE)
   df_genes<- df_genes[df_genes$GeneSymbol!="NonTargetingControlGuideForHuman",]
-  df_genes$l2mfc<- log2(df_genes$MedianFoldChange)
+  if (GeneScore==0){
+    df_genes$l2mfc<- df_genes$Log2FoldChangeMLE
+  } else if (GeneScore==1){
+      df_genes$l2mfc<- log2(df_genes$MedianFoldChange)
+    }
   
   # Give NA a number
   df_genes$l2mfc[is.na(df_genes$l2mfc)]<- 0
@@ -249,7 +263,7 @@ for (file in filesVOL) {
   # Plot axes
   plot(0, pch = '', 
        main= Titles[f], 
-       xlab= "Log2 median fold change",
+       xlab= if (GeneScore==0){"MLE log2 fold change"} else if (GeneScore==1){{"Log2 median fold change"}},
        ylab= "RRA score",
        cex.lab=1, cex.axis=1, las=1, xlim=xrangeVOL, ylim=yrangeVOL, xaxt = "n", yaxt = "n")
   
