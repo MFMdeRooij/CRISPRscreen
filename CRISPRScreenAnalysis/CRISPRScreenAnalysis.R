@@ -1,11 +1,10 @@
 ## CRISPR Screen analysis:
-# - We used the screen design of Jastrzebski et al Methods Mol Biol 2016
-# - Nextera PCR primers can be found in 'PCR design Nextera-NovaSeq.xlsx'
-# - Make count tables from FASTQ files with the Perl script FastqToCountTable.pl and a LibraryX.csv file
-# - Analyze the count tables with this script and the CRISPRScreenAnalysisLibraries.csv file
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019, info: m.f.derooij@amsterdamumc.nl
-# A small part (aRRA) is adapted from Thomas Kuilman PhD, NKI Amsterdam, Peeper Lab (https://github.com/PeeperLab?tab=repositories)
-# The random seeds are different in Windows and Linux R versions, so the p-values on gene level can be different
+# We used the screen design of Jastrzebski et al Methods Mol Biol 2016
+# Nextera PCR primers can be found in 'PCR design Nextera-NovaSeq.xlsx'
+# Make count tables from FASTQ files with the Perl script FastqToCountTable.pl and a LibraryX.csv file
+# Analyze the count tables with this script and the CRISPRScreenAnalysisLibraries.csv file
+# The random seeds are different in Windows and Linux R versions, so the p-values on gene level can be a little bit different
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2019-2026, info: m.f.derooij@amsterdamumc.nl
 ######################################################################################
 ## Install DESeq2 and other packages
 
@@ -14,13 +13,15 @@
 ## libjpeg-dev build-essential libcurl4-openssl-dev libxml2-dev libssl-dev libfontconfig1-dev
 
 #install.packages(c("BiocManager", "devtools", "rstudioapi", "pheatmap", "RColorBrewer", "scales"))
-#BiocManager::install("DESeq2")
+#BiocManager::install(c("DESeq2", "apeglm")
 #devtools::install_github("JosephCrispell/basicPlotteR")
 library("DESeq2")
+library("apeglm")
 library("pheatmap")
 library("RColorBrewer")
 library("scales")
 library("basicPlotteR")
+library("MASS")
 ######################################################################################
 #                                     SETTINGS
 
@@ -34,14 +35,14 @@ Data<- 1
 # If custom, which count tables?
 Filenames<- c("CountTable_test.fastq.gz.csv") # or "CountTable_test.fastq.csv"
 
-# Round numbers in output tables: 0 = Yes, 1 = No
+# Round numbers in output tables: 0 = No, 1 = Yes
 RoundNumbers<- 0
 
 # Data selection (T0/T1/T2 - replicate 1/2/3) (If a replicate is not present, fill in 
 # an existing one, and exclude it in the next option)
-# If you have 1 replicate per arm, DESeq2 will not run, but aRRA will
+# If you have 1 replicate per arm, DESeq2 will not run, but aRRA will do
 # Fill in the column names of the count table
-Guide<- "sgRNA"
+sgRNA<- "sgRNA"
 T0Rep1<- "CGTGAT"
 T0Rep2<- "ACATCG"
 T0Rep3<- "GCCTAA"
@@ -52,23 +53,27 @@ T2Rep1<- "GATCTG"
 T2Rep2<- "TCAAGT"
 T2Rep3<- "CTGATC"
 
-# Exclude replicates: 0 = Include, 1 = Exclude (you cannot exclude T0 or T1 completely -> change your design)
-T0_Rep1<- 0
-T0_Rep2<- 0
-T0_Rep3<- 0
-T1_Rep1<- 0
-T1_Rep2<- 0
-T1_Rep3<- 0
-T2_Rep1<- 0
-T2_Rep2<- 0
-T2_Rep3<- 0
+# Exclude replicates: 0 = Exclude, 1 = Include (you cannot exclude T0 or T1 completely -> change your design)
+T0_Rep1<- 1
+T0_Rep2<- 1
+T0_Rep3<- 1
+T1_Rep1<- 1
+T1_Rep2<- 1
+T1_Rep3<- 1
+T2_Rep1<- 1
+T2_Rep2<- 1
+T2_Rep3<- 1
 
 # If there are no replicates:
 # Number of pseudocounts to calculate fold change (to reduce noise at low counts, minimum = 1)
 pseudocounts <- 10
 
-# Paired replicates: 0 = Paired, 1 = Unpaired
-Paired<- 0
+# Paired replicates: 0 = Unpaired, 1 = Paired
+Paired<- 1
+
+# Use shrinkage of fold changes of noninformative sgRNAs by apeglm: 0 = No, 1 = Yes 
+Shrinkage<- 1
+# You can manually change the shrinkage method to normal which represents the old betaPrior, or ashr, in the lfcShrink functions
 
 # Library: 0: In countTable (1st column = sgRNA, 2nd = Gene), 1 = Brunello-Kinome, 2 = Brunello-WholeGenome, 
 # 3 = New1, 4 = New2 (add to CRISPRScreenAnalysisLibraries.csv file)
@@ -78,22 +83,15 @@ Library<- 0
 ControlsP<- 0
 # Negative controls: 0 = Non-Essential (Hart et al 2014 Mol Sys Biol), 1 = Non-Targeting
 ControlsN<- 0
-# Even it is not a lethality screen, it is still worth to look how cell viability 
-# affect your screen (separation of Essential-Non-Essential)
+# Even it is not a lethality screen, it is still worth to look how cell viability affect your screen (separation of Essential-Non-Essential)
 
-# Statistics of Essential/Non-Essential genes (only for lethality screens): 0 = With, 1 Without
-ConStat<- 0
-
-# Use shrinkage of fold changes noninformative guides: 0 = Yes, 1 = No
-Shrinkage<- 0
-
-# Exclude noninformative guides for DESEq2-FDR & aRRA: 0 = Yes, 1 = No
-ExclNonInf<- 0
+# Add statistics of Essential/Non-Essential control genes (only relevant for lethality screens): 0 = No, 1 Yes
+ConStat<- 1
 
 # Type of Screen: 0 = Drop out, 1 = Resistance (Just for ranking of the genes)
 Type_of_Screen<- 0
 
-# Minimal fold change of guides to be a hit: 1 = No minimal fold change,  >1: The minimal fold change (linear scale, 2^abs(l2fc))
+# Minimal fold change of sgRNAs to be a hit: 1 = No minimal fold change,  >1: The minimal fold change (linear scale, 2^abs(l2fc))
 minimalFoldChange<- 1
 
 # Number of permutation for aRRA (0 = 250 times the number of genes, 1 = Custom)
@@ -114,7 +112,7 @@ if (MA_all_genes==3){
   )
 }
 
-# Colors Correlation & MA plots (All guides, positive and negative controls, hits):
+# Colors Correlation & MA plots (All sgRNAs, positive and negative controls, hits):
 ColAll<- "lightgray"
 ColP<- "lightpink1"
 #ColP<- "red"
@@ -122,8 +120,8 @@ ColN<- "lightskyblue"
 #ColN<- "blue"
 ColH<- "black"
 
-# Correlation plots of all samples: 0 = Yes, 1 = No (Only recommended when the replicates are messed up) 
-pairs<- 1
+# Correlation plots of all samples: 0 = No, 1 = Yes (Only recommended when the replicates are messed up) 
+pairs<- 0
 
 ######################################################################################
 setwd(Workdirectory)
@@ -137,28 +135,26 @@ if (Data==1){
 
 for (Filename in Filenames) {
   # Make a data folder
-  dirname2<- paste0(Filename,Sys.time())
-  dirname1<-gsub("[[:punct:]]", "", dirname2) 
-  dirname<- gsub("\\s", "", dirname1) 
+  dirname<- paste0(Filename, "_", format(Sys.time(), "%Y%m%d_%H%M.%S"))
   dir.create(dirname)
   
   # Read count table
-  df_raw<- read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALSE)
+  df_raw<- read.csv(file=Filename, sep=",", header=TRUE)
   
   # Select replicates
-  if(T2_Rep1+T2_Rep2+T2_Rep3 < 3) {
-    df_sel<-data.frame(Guide=df_raw[[Guide]], T0R1=df_raw[[T0Rep1]], T0R2=df_raw[[T0Rep2]],T0R3=df_raw[[T0Rep3]], 
+  if(T2_Rep1+T2_Rep2+T2_Rep3 > 0) {
+    df_sel<-data.frame(sgRNA=df_raw[[sgRNA]], T0R1=df_raw[[T0Rep1]], T0R2=df_raw[[T0Rep2]],T0R3=df_raw[[T0Rep3]], 
                        T1R1=df_raw[[T1Rep1]], T1R2=df_raw[[T1Rep2]], T1R3=df_raw[[T1Rep3]],
-                       T2R1=df_raw[[T2Rep1]], T2R2=df_raw[[T2Rep2]], T2R3=df_raw[[T2Rep3]], stringsAsFactors = F)
+                       T2R1=df_raw[[T2Rep1]], T2R2=df_raw[[T2Rep2]], T2R3=df_raw[[T2Rep3]])
   } else {
-    df_sel<-data.frame(Guide=df_raw[[Guide]], T0R1=df_raw[[T0Rep1]], T0R2=df_raw[[T0Rep2]],T0R3=df_raw[[T0Rep3]], 
-                       T1R1=df_raw[[T1Rep1]], T1R2=df_raw[[T1Rep2]], T1R3=df_raw[[T1Rep3]], stringsAsFactors = F)
+    df_sel<-data.frame(sgRNA=df_raw[[sgRNA]], T0R1=df_raw[[T0Rep1]], T0R2=df_raw[[T0Rep2]],T0R3=df_raw[[T0Rep3]], 
+                       T1R1=df_raw[[T1Rep1]], T1R2=df_raw[[T1Rep2]], T1R3=df_raw[[T1Rep3]])
   }
   
   # Load library info
-  df_Gene_IDX<- read.csv("CRISPRScreenAnalysisLibraries.csv", sep=',', header=TRUE, stringsAsFactors = FALSE)
+  df_Gene_IDX<- read.csv("CRISPRScreenAnalysisLibraries.csv", sep=',', header=TRUE)
   if (Library == 0) {
-    df_Gene_ID<- df_raw[,1:2]
+    df_Gene_ID<- df_raw[,c("sgRNA", "Gene")]
   } 
   if (Library == 1) {
     df_Gene_ID<- df_Gene_IDX[,c(5,6)]
@@ -172,7 +168,7 @@ for (Filename in Filenames) {
   if (Library == 4) {
     df_Gene_ID<- df_Gene_IDX[,c(14,15)]
   }
-  colnames(df_Gene_ID)<- c("Guide", "GeneSymbol")
+  colnames(df_Gene_ID)<- c("sgRNA", "GeneSymbol")
   
   # Controls
   df_Control<- df_Gene_IDX[1:927,1:3]
@@ -186,65 +182,64 @@ for (Filename in Filenames) {
     NC<- "NonTargeting"
   }
   
-  if (T0_Rep2+T0_Rep3+T1_Rep2+T1_Rep3 < 4){
-    replicates<- 0
-  }else{
+  if (T0_Rep2+T0_Rep3+T1_Rep2+T1_Rep3 > 0){
     replicates<- 1
+  }else{
+    replicates<- 0
   }
   
   # Count table for DESEq2
   counts<- df_sel[,c(
-    if (T0_Rep1==0) {2},
-    if (T0_Rep2==0) {3},
-    if (T0_Rep3==0) {4},
-    if (T1_Rep1==0) {5},
-    if (T1_Rep2==0) {6},
-    if (T1_Rep3==0) {7},
-    if (T2_Rep1==0) {8},
-    if (T2_Rep2==0) {9},
-    if (T2_Rep3==0) {10})]
+    if (T0_Rep1==1) {2},
+    if (T0_Rep2==1) {3},
+    if (T0_Rep3==1) {4},
+    if (T1_Rep1==1) {5},
+    if (T1_Rep2==1) {6},
+    if (T1_Rep3==1) {7},
+    if (T2_Rep1==1) {8},
+    if (T2_Rep2==1) {9},
+    if (T2_Rep3==1) {10})]
   rownames(counts)<- df_sel[,1]
   
   # Sample metadata
-  time<- c(if (T0_Rep1==0) {"T0"},
-           if (T0_Rep2==0) {"T0"},
-           if (T0_Rep3==0) {"T0"},
-           if (T1_Rep1==0) {"T1"},
-           if (T1_Rep2==0) {"T1"},
-           if (T1_Rep3==0) {"T1"},
-           if (T2_Rep1==0) {"T2"},
-           if (T2_Rep2==0) {"T2"},
-           if (T2_Rep3==0) {"T2"})
+  time<- c(if (T0_Rep1==1) {"T0"},
+           if (T0_Rep2==1) {"T0"},
+           if (T0_Rep3==1) {"T0"},
+           if (T1_Rep1==1) {"T1"},
+           if (T1_Rep2==1) {"T1"},
+           if (T1_Rep3==1) {"T1"},
+           if (T2_Rep1==1) {"T2"},
+           if (T2_Rep2==1) {"T2"},
+           if (T2_Rep3==1) {"T2"})
   
-  rep<- c(if (T0_Rep1==0) {"R1"},
-          if (T0_Rep2==0) {"R2"},
-          if (T0_Rep3==0) {"R3"},
-          if (T1_Rep1==0) {"R1"},
-          if (T1_Rep2==0) {"R2"},
-          if (T1_Rep3==0) {"R3"},
-          if (T2_Rep1==0) {"R1"},
-          if (T2_Rep2==0) {"R2"},
-          if (T2_Rep3==0) {"R3"})
+  rep<- c(if (T0_Rep1==1) {"R1"},
+          if (T0_Rep2==1) {"R2"},
+          if (T0_Rep3==1) {"R3"},
+          if (T1_Rep1==1) {"R1"},
+          if (T1_Rep2==1) {"R2"},
+          if (T1_Rep3==1) {"R3"},
+          if (T2_Rep1==1) {"R1"},
+          if (T2_Rep2==1) {"R2"},
+          if (T2_Rep3==1) {"R3"})
   
   df_colData<- data.frame(Time=time, Rep=rep) 
   df_colData$Time<- as.factor(df_colData$Time)
   df_colData$Rep<- as.factor(df_colData$Rep)
   
-  if (replicates==0){
+  if (replicates==1){
     # DESeq2 pipeline
-    if (Paired==0) {
+    if (Paired==1) {
       dds<- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Rep + Time)
     }
-    if (Paired==1) {
+    if (Paired==0) {
       dds<- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Time)
     }  
-    dds$Time<- relevel(dds$Time, "T0")
-    dds<- DESeq(dds, fitType = 'local', betaPrior = TRUE)
-    # fitType, default is parametric, for CRISPR screens local is better (parametric is in most cases not possible; 
-    # betaPrior=TRUE is for shrinkage of noninformative fold changes)
+    dds$Time<- relevel(dds$Time, ref="T0")
+    # fitType, default is parametric, for CRISPR screens local is better (parametric is in most cases not possible) 
+    dds<- DESeq(dds, fitType = 'local')
   }
   
-  if (replicates==1){
+  if (replicates==0){
     sf<- estimateSizeFactorsForMatrix(counts)
     CountTableNor<- as.data.frame(t(t(counts)/sf))
   }
@@ -254,38 +249,47 @@ for (Filename in Filenames) {
   if ("T2" %in% time) {nr=3}
   
   for (r in 1:nr) {
-    if (replicates==0) {
-      if (ExclNonInf == 0) {
+    # Conditions
+    if (r==1){
+      con<- "T0vsT1"
+    }
+    if (r==2){
+      con<- "T0vsT2"
+    }
+    if (r==3){
+      con<- "T1vsT2"
+    }
+    if (replicates==1) {
+      if (Shrinkage==1) {
+        # You can add independentFiltering = FALSE to the lfcShrink functions if you don't want NA values in the p values
+        # You can also add lfcThreshold = log2(minimalFoldChange), but then the p-values are lost, causing parts of this script to stop working
+        # resultsNames(dds) # to check coefs
         if (r==1){
-          res<- results(dds, contrast=c("Time","T1","T0"), addMLE=TRUE)
+          res<- lfcShrink(dds, coef = "Time_T1_vs_T0", type = "apeglm", apeMethod = "nbinomC")
         }
         if (r==2){
-          res<- results(dds, contrast=c("Time","T2","T0"), addMLE=TRUE)
+          res<- lfcShrink(dds, coef = "Time_T2_vs_T0", type = "apeglm", apeMethod = "nbinomC")
         }
         if (r==3){
-          res<- results(dds, contrast=c("Time","T2","T1"), addMLE=TRUE)
+          dds$Time<- relevel(dds$Time, ref="T1")
+          dds<- nbinomWaldTest(dds)
+          res<- lfcShrink(dds, coef = "Time_T2_vs_T1", type = "apeglm", apeMethod = "nbinomC")
         }
-      } else {
-        if (ExclNonInf == 1) {
-          # To don't have NA in padj: add independentFiltering=FALSE:
-          if (r==1){
-            res<- results(dds, contrast=c("Time","T1","T0"), addMLE=TRUE, independentFiltering=FALSE)
-          }
-          if (r==2){
-            res<- results(dds, contrast=c("Time","T2","T0"), addMLE=TRUE, independentFiltering=FALSE)
-          }
-          if (r==3){
-            res<- results(dds, contrast=c("Time","T2","T1"), addMLE=TRUE, independentFiltering=FALSE)
-          }
+      }
+      if (Shrinkage==0) {
+        if (r==1){
+          res<- results(dds, contrast=c("Time","T1","T0"))
         }
-      } 
-      
+        if (r==2){
+          res<- results(dds, contrast=c("Time","T2","T0"))
+        }
+        if (r==3){
+          res<- results(dds, contrast=c("Time","T2","T1"))
+        }
+      }
       # DESeq2 data table
       df_res<- as.data.frame(res)
       
-      if (Shrinkage==1) {
-        df_res$log2FoldChange<- df_res$lfcMLE
-      }
       df_baseMeanPerLvl<- as.data.frame(sapply(levels(dds$Time), 
                                                function(lvl) rowMeans(counts(dds, normalized=TRUE)[,dds$Time==lvl])))
       if (r==1){
@@ -305,8 +309,8 @@ for (Filename in Filenames) {
       } 
     }
     
-    if (replicates==1){
-      df_res<- data.frame(Guide=rownames(CountTableNor), stringsAsFactors = F)
+    if (replicates==0){
+      df_res<- data.frame(sgRNA=rownames(CountTableNor))
       if (r==1){
         df_res$BaseMeanA<- CountTableNor$T0R1
         df_res$logBaseMeanA<- log(df_res$BaseMeanA+1)/log(10)
@@ -327,16 +331,16 @@ for (Filename in Filenames) {
       df_res$log2FoldChange[is.na(df_res$log2FoldChange)]<- 0
       df_res$pvalue<- 1
       df_res$padj<- 1
-      rownames(df_res)<- df_res$Guide
+      rownames(df_res)<- df_res$sgRNA
     }
     
-    # Guide IDs
-    df_res$Guide<-rownames(df_res)
-    df_res<- merge(df_Gene_ID, df_res, by='Guide', all.y=T)
+    # sgRNA IDs
+    df_res$sgRNA<-rownames(df_res)
+    df_res<- merge(df_Gene_ID, df_res, by='sgRNA', all.y=T)
     df_res$log2FoldChange[is.na(df_res$log2FoldChange)]<-0
     df_res$FoldChange<- 2^df_res$log2FoldChange
     
-    # Exclude noninformative guides from aRRA
+    # Exclude noninformative sgRNAs from aRRA
     df_res2<-df_res
     df_res2<-df_res2[!is.na(df_res2$padj),]
     
@@ -355,10 +359,10 @@ for (Filename in Filenames) {
     df_hits_total<- df_res[which(df_res$padj < 0.1),]
     df_res$count<- 1
     df_hits_A<-aggregate(df_res$count, by=list(df_res$GeneSymbol), FUN=sum)
-    colnames(df_hits_A)<- c("GeneSymbol", "TotalGuides")
+    colnames(df_hits_A)<- c("GeneSymbol", "TotalsgRNAs")
     if (nrow(df_hits_total)>0) {
-      df_hits_down<-df_hits_total[df_hits_total$log2FoldChange<median(df_res$log2FoldChange,na.rm=TRUE),]
-      df_hits_up<-df_hits_total[df_hits_total$log2FoldChange>median(df_res$log2FoldChange,na.rm=TRUE),]
+      df_hits_down<-df_hits_total[df_hits_total$log2FoldChange < median(df_res$log2FoldChange,na.rm=TRUE),]
+      df_hits_up<-df_hits_total[df_hits_total$log2FoldChange > median(df_res$log2FoldChange,na.rm=TRUE),]
       df_hits_down$GeneSymbol[is.na(df_hits_down$GeneSymbol)]<- 0
       df_hits_up$GeneSymbol[is.na(df_hits_up$GeneSymbol)]<- 0
       if (nrow(df_hits_down)>0) {
@@ -401,73 +405,77 @@ for (Filename in Filenames) {
     df_hits_A<-merge(df_hits_A, df_hits_E, by="GeneSymbol")
     df_hits_A<-merge(df_hits_A, df_hits_F, by="GeneSymbol")
     
-    if (replicates==0){
-      # AlphaRRA (from guide to gene statistics)
+    # Calculate MLE, which might be more representative than median fold change
+    MLEgene <- as.data.frame(tapply(df_res$log2FoldChange, df_res$GeneSymbol, function(x) {
+      as.numeric(MASS::rlm(x ~ 1, maxit = 100)$coefficients)
+    }))
+    MLEgene$GeneSymbol<- rownames(MLEgene)
+    colnames(MLEgene)[1]<- "Log2FoldChangeMLE"
+    df_hits_A<-merge(df_hits_A, MLEgene, by="GeneSymbol")
+    
+    # AlphaRRA (from sgRNA to gene statistics)
+    if (replicates==1){
       if (r==1){
-        resDepleted<- results(dds, contrast=c("Time","T1","T0"), altHypothesis = "less", addMLE=TRUE)
-        resEnriched<- results(dds, contrast=c("Time","T1","T0"), altHypothesis = "greater", addMLE=TRUE)
-        con<- "T0vsT1"
+        resDepleted<- results(dds,contrast = c("Time", "T1", "T0"), altHypothesis = "less")
+        if (Shrinkage==1) {
+          resDepleted<- lfcShrink(dds,coef="Time_T1_vs_T0", type="apeglm", res=resDepleted, apeMethod = "nbinomC")
+        }
+        resEnriched<- results(dds,contrast = c("Time", "T1", "T0"), altHypothesis = "greater")
+        if (Shrinkage==1) {
+          resEnriched<- lfcShrink(dds,coef="Time_T1_vs_T0", type="apeglm", res=resEnriched, apeMethod = "nbinomC")
+        }
       }
       if (r==2){
-        resDepleted<- results(dds, contrast=c("Time","T2","T0"), altHypothesis = "less", addMLE=TRUE)
-        resEnriched<- results(dds, contrast=c("Time","T2","T0"), altHypothesis = "greater", addMLE=TRUE)
-        con<- "T0vsT2"
+        resDepleted<- results(dds,contrast = c("Time", "T2", "T0"), altHypothesis = "less")
+        if (Shrinkage==1) {
+          resDepleted<- lfcShrink(dds,coef="Time_T2_vs_T0", type="apeglm", res=resDepleted, apeMethod = "nbinomC")
+        }
+        resEnriched<- results(dds,contrast = c("Time", "T2", "T0"), altHypothesis = "greater")
+        if (Shrinkage==1) {
+          resEnriched<- lfcShrink(dds,coef="Time_T2_vs_T0", type="apeglm", res=resEnriched, apeMethod = "nbinomC")
+        }
       }
       if (r==3){
-        resDepleted<- results(dds, contrast=c("Time","T2","T1"), altHypothesis = "less", addMLE=TRUE)
-        resEnriched<- results(dds, contrast=c("Time","T2","T1"), altHypothesis = "greater", addMLE=TRUE)
-        con<- "T1vsT2"
+        resDepleted<- results(dds,contrast = c("Time", "T2", "T1"), altHypothesis = "less")
+        if (Shrinkage==1) {
+          resDepleted<- lfcShrink(dds,coef="Time_T2_vs_T1", type="apeglm", res=resDepleted, apeMethod = "nbinomC")
+        }
+        resEnriched<- results(dds,contrast = c("Time", "T2", "T1"), altHypothesis = "greater")
+        if (Shrinkage==1) {
+          resEnriched<- lfcShrink(dds,coef="Time_T2_vs_T1", type="apeglm", res=resEnriched, apeMethod = "nbinomC")
+        }
       }
-      
-      resDepleted<- resDepleted[order(rownames(resDepleted)), ]
-      resEnriched<- resEnriched[order(rownames(resEnriched)), ]
-      if(Shrinkage==0) {
-        df_RRA<- data.frame(log2fc = resDepleted$log2FoldChange,
-                            pvalueDepleted = resDepleted$pvalue,
-                            pvalueEnriched = resEnriched$pvalue,
-                            row.names = rownames(resDepleted))
-      }
-      if(Shrinkage==1) {
-        df_RRA<- data.frame(log2fc = resDepleted$lfcMLE,
-                            pvalueDepleted = resDepleted$pvalue,
-                            pvalueEnriched = resEnriched$pvalue,
-                            row.names = rownames(resDepleted))
-      }
-      df_RRA$Guide<-rownames(df_RRA)
-      df_RRA<- merge(df_Gene_ID, df_RRA, by='Guide', all.y=T)
-      df_RRA<- df_RRA[df_RRA$Guide %in% df_res2$Guide,]
+      resDepleted<- resDepleted[order(rownames(resDepleted)),]
+      resEnriched<- resEnriched[order(rownames(resEnriched)),]
+ 
+      df_RRA<- data.frame(log2fc = resDepleted$log2FoldChange,
+                          pvalueDepleted = resDepleted$pvalue,
+                          pvalueEnriched = resEnriched$pvalue,
+                          row.names = rownames(resDepleted))
+  
+      df_RRA$sgRNA<-rownames(df_RRA)
+      df_RRA<- merge(df_Gene_ID, df_RRA, by='sgRNA', all.y=T)
+      df_RRA<- df_RRA[df_RRA$sgRNA %in% df_res2$sgRNA,]
     }
-    if (replicates==1){
+    if (replicates==0){
       df_RRA <- data.frame(GeneSymbol=df_res$GeneSymbol,
                            BaseMeanB = df_res$BaseMeanB,
                            log2fc = df_res$log2FoldChange,
                            pvalueDepleted = 1,
                            pvalueEnriched = 1,
-                           row.names = df_res$Guide)
-      
-      if (r==1){
-        con<- "T0vsT1"
-      }
-      if (r==2){
-        con<- "T0vsT2"
-      }
-      if (r==3){
-        con<- "T1vsT2"
-      }
+                           row.names = df_res$sgRNA)
     }
-    
-    # aRRA in R
-    
+
     # Rank by fold change
     df_RRA$scoreDepleted<- rank(df_RRA$log2fc) / nrow(df_RRA)
     df_RRA$scoreEnriched<- rank(-df_RRA$log2fc) / nrow(df_RRA)
     
-    if (replicates==0){
+    if (replicates==1){
       # Apply alpha criterion based on pvalues
       df_RRA$scoreDepleted[df_RRA$pvalueDepleted > 0.25]<- 1
       df_RRA$scoreEnriched[df_RRA$pvalueEnriched > 0.25]<- 1
     }
-    if (replicates==1){
+    if (replicates==0){
       # Apply alpha criterion based on rank
       df_RRA$scoreDepleted[df_RRA$scoreDepleted > 0.25]<- 1
       df_RRA$scoreEnriched[df_RRA$scoreEnriched > 0.25]<- 1
@@ -483,26 +491,7 @@ for (Filename in Filenames) {
     }
     
     # Perform RRA
-    alphaBeta<- function(p.in) {
-      p.in<- sort(p.in)
-      n<- length(p.in)
-      return(min(pbeta(p.in, 1:n, n - (1:n) + 1)))
-    }
-    
-    # Calculate rho per gene
-    df_RRA$rhoDepleted<- unsplit(sapply(split(df_RRA$scoreDepleted,
-                                              df_RRA$GeneSymbol), alphaBeta), df_RRA$GeneSymbol)
-    df_RRA$rhoEnriched<- unsplit(sapply(split(df_RRA$scoreEnriched,
-                                              df_RRA$GeneSymbol), alphaBeta), df_RRA$GeneSymbol)
-    
-    # Make a null distribution and calculate pvalues per gene
-    n.guides<- sort(unique(table(df_RRA$GeneSymbol)))
-    makeRhoNull<- function(n, p, nperm) {
-      sapply(1:nperm, function(x) {
-        p.in<- sort.int(sample(p, n, replace = FALSE))
-        alphaBeta(p.in)
-      })
-    }
+    NumsgRNAsPerGene <- sort(unique(table(df_RRA$GeneSymbol)))
     if (numPer==0){
       permutations<- 250*nrow(df_hits_A)
     }
@@ -510,37 +499,64 @@ for (Filename in Filenames) {
       permutations<- numOfPer
     }
     
+    BetaDist <- function(sgRNAScores) {
+      sgRNAScores<- sort(sgRNAScores)
+      n<- length(sgRNAScores)
+      return(min(pbeta(sgRNAScores, 1:n, n - (1:n) + 1)))
+    }
+
+    # Calculate rho per gene
+    df_RRA$rhoDepleted<- unsplit(sapply(split(df_RRA$scoreDepleted, df_RRA$GeneSymbol), BetaDist), df_RRA$GeneSymbol)
+    df_RRA$rhoEnriched<- unsplit(sapply(split(df_RRA$scoreEnriched, df_RRA$GeneSymbol), BetaDist), df_RRA$GeneSymbol)
+
+    RhoNullDist<- function(n, p, permutations) {
+      sapply(1:permutations, function(x) {
+        sgRNAScores<- sort.int(sample(p, n, replace = FALSE))
+        BetaDist(sgRNAScores)
+      })
+    }
+    
     # Depletion
-    set.seed(12345)
-    rho.nulls<- lapply(n.guides, makeRhoNull, df_RRA$scoreDepleted, permutations)
-    names(rho.nulls)<- as.character(n.guides)
-    # Prevent pvalues of 0
-    for (i in 1:length(rho.nulls)){
-      rho.nulls[[i]][[1]]<-0
+    set.seed(21101981)
+    print("aRRA Depletion finished in:")
+    start_time <- proc.time()
+    NullDistDep<- lapply(NumsgRNAsPerGene, RhoNullDist, df_RRA$scoreDepleted, permutations)
+    names(NullDistDep) <- as.character(NumsgRNAsPerGene)
+    # Prevent pvalues of 0, by making 1 value 0 (just adding a pseudocount)
+    for (i in 1:length(NullDistDep)){
+      NullDistDep[[i]][[1]]<-0
     }
+    # P value calculation
     df_RRA$pvalueDepleted<- unsplit(sapply(split(df_RRA$rhoDepleted, df_RRA$GeneSymbol), function(x) {
-      mean(rho.nulls[[as.character(length(x))]] <= x[1])
-    }), df_RRA$GeneSymbol)
-    # Enrichment
-    set.seed(12345)
-    rho.nulls<- lapply(n.guides, makeRhoNull, df_RRA$scoreEnriched, permutations)
-    names(rho.nulls)<- as.character(n.guides)
-    # Prevent pvalues of 0
-    for (i in 1:length(rho.nulls)){
-      rho.nulls[[i]][[1]]<-0
-    }
-    df_RRA$pvalueEnriched<- unsplit(sapply(split(df_RRA$rhoEnriched,df_RRA$GeneSymbol), function(x) {
-      mean(rho.nulls[[as.character(length(x))]] <= x[1])
+      mean(NullDistDep[[as.character(length(x))]] <= x[1])
     }), df_RRA$GeneSymbol)
     
+    run_time_dep <- proc.time() - start_time
+    print(run_time_dep)
+    
+    # Enrichment
+    print("aRRA Enrichment finished in:")
+    start_time <- proc.time()
+    set.seed(21101981)
+    NullDistEnr <- lapply(NumsgRNAsPerGene, RhoNullDist, df_RRA$scoreEnriched, permutations)
+    names(NullDistEnr) <- as.character(NumsgRNAsPerGene)
+    
+    # Prevent pvalues of 0, by making 1 value 0 (just adding a pseudocount)
+    df_RRA$pvalueEnriched<- unsplit(sapply(split(df_RRA$rhoEnriched, df_RRA$GeneSymbol), function(x) {
+      mean(NullDistEnr[[as.character(length(x))]] <= x[1])
+    }), df_RRA$GeneSymbol)
+    
+    run_time <- proc.time() - start_time
+    print(run_time)
+    
     # Select aRRA data and calculate fdr
-    df_resultsRRA<- data.frame(GeneSymbol=as.character(df_RRA$GeneSymbol), rhoDepleted=df_RRA$rhoDepleted, pvalueDepleted=df_RRA$pvalueDepleted, 
-                               rhoEnriched=df_RRA$rhoEnriched, pvalueEnriched=df_RRA$pvalueEnriched, stringsAsFactors = F)
+    df_resultsRRA<- data.frame(GeneSymbol=as.character(df_RRA$GeneSymbol), rhoDepleted=df_RRA$rhoDepleted, pvalueDepleted=df_RRA$pvalueDepleted,
+                               rhoEnriched=df_RRA$rhoEnriched, pvalueEnriched=df_RRA$pvalueEnriched)
     df_resultsRRA<-unique(df_resultsRRA)
     df_resultsRRA$fdrDepleted<-p.adjust(df_resultsRRA$pvalueDepleted, method='fdr')
     df_resultsRRA$fdrEnriched<-p.adjust(df_resultsRRA$pvalueEnriched, method='fdr')
-    
-    # Merge to DESEq2 data 
+
+    # Merge to DESEq2 data
     df_geneRRA<-merge(df_resultsRRA, df_hits_A, by="GeneSymbol", all.y=T)
     
     # Order genes
@@ -551,20 +567,20 @@ for (Filename in Filenames) {
       df_geneRRA<-df_geneRRA[order(df_geneRRA$rhoEnriched),]
     }  
     
-    # Write guide and gene tables
+    # Write sgRNA and gene tables
     
-    # Guide Table
-    df_res_print<- df_res[,c("GeneSymbol","Guide","Type","BaseMeanA","BaseMeanB","FoldChange","pvalue","padj")]
+    # sgRNA Table
+    df_res_print<- df_res[,c("GeneSymbol","sgRNA","Type","BaseMeanA","BaseMeanB","FoldChange","pvalue","padj")]
     df_res_print<- df_res_print[order(df_res_print$Type),]
-    if (RoundNumbers==0){
+    if (RoundNumbers==1){
       df_res_print[,c("BaseMeanA","BaseMeanB")]<-round(df_res_print[,c("BaseMeanA","BaseMeanB")],0)
       df_res_print[,c("FoldChange","pvalue","padj")]<-signif(df_res_print[,c("FoldChange","pvalue","padj")],4)
     }
     write.csv(df_res_print, paste0(dirname,"/DESeq2 ",con," Guides.csv"), row.names = FALSE, quote = F)
     # Gene Table
-    df_geneRRA_print<-df_geneRRA[,c("GeneSymbol", "Type", "TotalGuides", "HitsDown","HitsUp","MinFoldChange",
-                                    "MedianFoldChange","MaxFoldChange", "rhoDepleted",	"pvalueDepleted",	"fdrDepleted",	"rhoEnriched",	"pvalueEnriched", "fdrEnriched")] 
-    if (RoundNumbers==0){
+    df_geneRRA_print<-df_geneRRA[,c("GeneSymbol", "Type", "TotalsgRNAs", "HitsDown","HitsUp","MinFoldChange",
+                                    "MedianFoldChange","MaxFoldChange", "Log2FoldChangeMLE", "rhoDepleted",	"pvalueDepleted",	"fdrDepleted",	"rhoEnriched",	"pvalueEnriched", "fdrEnriched")] 
+    if (RoundNumbers==1){
       df_geneRRA_print[,c("MinFoldChange","MedianFoldChange","MaxFoldChange", "rhoDepleted",	"pvalueDepleted",	"fdrDepleted",	"rhoEnriched",	"pvalueEnriched", 
                           "fdrEnriched")]<-signif(df_geneRRA_print[,c("MinFoldChange","MedianFoldChange","MaxFoldChange", "rhoDepleted", "pvalueDepleted",	"fdrDepleted",	
                                                                       "rhoEnriched",	"pvalueEnriched", "fdrEnriched")],4)
@@ -574,48 +590,48 @@ for (Filename in Filenames) {
     
     # Prepare plot data
     
-    if (replicates==0){
+    if (replicates==1){
       # Correlation plots
       df_normCounts<- as.data.frame(counts(dds, normalized=TRUE))
       xyrangeMA<-c(0, max(df_res$BaseMeanA, na.rm=TRUE))
-      repx<-c(if (T0_Rep1==0 && T0_Rep2==0) {"T0R1"},
-              if (T0_Rep1==0 && T0_Rep3==0) {"T0R1"},
-              if (T0_Rep2==0 && T0_Rep3==0) {"T0R2"}, 
-              if (T1_Rep1==0 && T1_Rep2==0) {"T1R1"},
-              if (T1_Rep1==0 && T1_Rep3==0) {"T1R1"},
-              if (T1_Rep2==0 && T1_Rep3==0) {"T1R2"},
-              if (T2_Rep1==0 && T2_Rep2==0) {"T2R1"},
-              if (T2_Rep1==0 && T2_Rep3==0) {"T2R1"},
-              if (T2_Rep2==0 && T2_Rep3==0) {"T2R2"})
+      repx<-c(if (T0_Rep1==1 && T0_Rep2==1) {"T0R1"},
+              if (T0_Rep1==1 && T0_Rep3==1) {"T0R1"},
+              if (T0_Rep2==1 && T0_Rep3==1) {"T0R2"}, 
+              if (T1_Rep1==1 && T1_Rep2==1) {"T1R1"},
+              if (T1_Rep1==1 && T1_Rep3==1) {"T1R1"},
+              if (T1_Rep2==1 && T1_Rep3==1) {"T1R2"},
+              if (T2_Rep1==1 && T2_Rep2==1) {"T2R1"},
+              if (T2_Rep1==1 && T2_Rep3==1) {"T2R1"},
+              if (T2_Rep2==1 && T2_Rep3==1) {"T2R2"})
       
-      repy<-c(if (T0_Rep1==0 && T0_Rep2==0) {"T0R2"}, 
-              if (T0_Rep1==0 && T0_Rep3==0) {"T0R3"},
-              if (T0_Rep2==0 && T0_Rep3==0) {"T0R3"},
-              if (T1_Rep1==0 && T1_Rep2==0) {"T1R2"}, 
-              if (T1_Rep1==0 && T1_Rep3==0) {"T1R3"},
-              if (T1_Rep2==0 && T1_Rep3==0) {"T1R3"},
-              if (T2_Rep1==0 && T2_Rep2==0) {"T2R2"}, 
-              if (T2_Rep1==0 && T2_Rep3==0) {"T2R3"},
-              if (T2_Rep2==0 && T2_Rep3==0) {"T2R3"}) 
-      df_rep<-data.frame(repx, repy, stringsAsFactors = FALSE)
+      repy<-c(if (T0_Rep1==1 && T0_Rep2==1) {"T0R2"}, 
+              if (T0_Rep1==1 && T0_Rep3==1) {"T0R3"},
+              if (T0_Rep2==1 && T0_Rep3==1) {"T0R3"},
+              if (T1_Rep1==1 && T1_Rep2==1) {"T1R2"}, 
+              if (T1_Rep1==1 && T1_Rep3==1) {"T1R3"},
+              if (T1_Rep2==1 && T1_Rep3==1) {"T1R3"},
+              if (T2_Rep1==1 && T2_Rep2==1) {"T2R2"}, 
+              if (T2_Rep1==1 && T2_Rep3==1) {"T2R3"},
+              if (T2_Rep2==1 && T2_Rep3==1) {"T2R3"}) 
+      df_rep<-data.frame(repx, repy)
       
-      df_normCounts$Guide<-rownames(df_normCounts)
+      df_normCounts$sgRNA<-rownames(df_normCounts)
       if (r==1){
         # Write count table with the normalized counts
         write.csv(df_normCounts[,c(ncol(df_normCounts),1:ncol(df_normCounts)-1)], paste0(dirname,"/NormalizedCounts.csv"), row.names = F, quote = F)
       }
-      df_normCounts<-merge(df_Gene_ID, df_normCounts, by='Guide', all.y=T)
-      df_normCounts$Guide<-NULL
+      df_normCounts<-merge(df_Gene_ID, df_normCounts, by='sgRNA', all.y=T)
+      df_normCounts$sgRNA<-NULL
       df_normCountsP<- df_normCounts[df_normCounts$GeneSymbol %in% df_Control[[PC]][nchar(df_Control[[PC]])>0],]
       df_normCountsN<- df_normCounts[df_normCounts$GeneSymbol %in% df_Control[[NC]][nchar(df_Control[[NC]])>0],]
       df_normCounts$GeneSymbol<-NULL
       df_normCountsP$GeneSymbol<-NULL
       df_normCountsN$GeneSymbol<-NULL
     }
-    if (replicates==1 & r==1){
+    if (replicates==0 & r==1){
       # Write count table with the normalized counts
       df_normCounts<- CountTableNor
-      df_normCounts$Guide<-rownames(df_normCounts)
+      df_normCounts$sgRNA<-rownames(df_normCounts)
       write.csv(df_normCounts[,c(ncol(df_normCounts),1:ncol(df_normCounts)-1)], paste0(dirname,"/NormalizedCounts.csv"), row.names = F, quote = F)
     }
     # Tophits
@@ -625,8 +641,8 @@ for (Filename in Filenames) {
     
     # Volcano plot
     
-    # Median log2 fold change
-    df_geneRRA$ml2fc<- log2(df_geneRRA$MedianFoldChange)
+    # MLE log2 fold change
+    df_geneRRA$ml2fc<- df_geneRRA$Log2FoldChangeMLE
     df_geneRRA$ml2fc[is.na(df_geneRRA$ml2fc)]<-0
     
     # Take rho/fdr depleted/enriched dependent on fold change
@@ -652,11 +668,11 @@ for (Filename in Filenames) {
     # Mix essential and non-essential randomly
     df_geneRRAx<- df_geneRRA[df_geneRRA$Type=="x",]
     df_geneRRAc<- df_geneRRA[df_geneRRA$Type!="x",]
-    set.seed(101)
+    set.seed(21101981)
     df_geneRRAc<- df_geneRRAc[sample(1:nrow(df_geneRRAc)),]
     df_geneRRA<-rbind(df_geneRRAx,df_geneRRAc)
     
-    if (ConStat==0) {
+    if (ConStat==1) {
       # F measure (with cutoff the intersection), harmonic mean of precision and recall
       truePosGene<- nrow(df_geneRRA[!is.na(df_geneRRA$fdrDepleted) & df_geneRRA$fdrDepleted<0.1 & df_geneRRA$Type=='p',])
       posPredictGene<- nrow(df_geneRRA[!is.na(df_geneRRA$fdrDepleted) & df_geneRRA$fdrDepleted<0.1 & df_geneRRA$Type=='p',])+
@@ -667,7 +683,7 @@ for (Filename in Filenames) {
       F1Gene<- 2/(1/precisionGene + 1/recallGene)
     }
     
-    # Prevent a log-bug when Rho is 0, and remove non-targeting (due to high number of NT-guides, extreme statictical values)
+    # Prevent a log-bug when Rho is 0, and remove non-targeting (due to high number of NT-guides, extreme statistical values)
     df_geneRRA<- df_geneRRA[df_geneRRA$GeneSymbol!="NonTargetingControlGuideForHuman",]
     df_geneRRA$rho[df_geneRRA$rho==0]<- min(df_geneRRA$rho[df_geneRRA$rho!=0])/10
     
@@ -691,7 +707,7 @@ for (Filename in Filenames) {
     # Mix essential and non-essential randomly
     df_resx<- df_res[df_res$Type=="x",]
     df_resc<- df_res[df_res$Type!="x",]
-    set.seed(101)
+    set.seed(21101981)
     df_resc<- df_resc[sample(1:nrow(df_resc)),]
     df_res<-rbind(df_resx,df_resc)
     
@@ -722,7 +738,7 @@ for (Filename in Filenames) {
     denX_NC$y[length(denX_NC$y)]<- 0
     denXMax<- max(c(denX_tot$y, denX_PC$y, denX_NC$y))
     
-    if (ConStat==0) {
+    if (ConStat==1) {
       # Robust Z prime (median and median absolute deviation)
       Mp<- median(df_PC$log2FoldChange,na.rm=TRUE)
       Mn<- median(df_NC$log2FoldChange, na.rm=TRUE)
@@ -735,7 +751,7 @@ for (Filename in Filenames) {
       intersection<- denY_PC$x[poi][denY_PC$x[poi]<0][which.min(abs(denY_PC$x[poi][denY_PC$x[poi]<0]))]
       
       # F measure (with cutoff the intersection), harmonic mean of precision and recall
-      if (replicates==0){
+      if (replicates==1){
         truePos<- nrow(df_PC[!is.na(df_PC$padj) & df_PC$padj<0.1 & df_PC$log2FoldChange<0,])
         posPredict<- nrow(df_PC[!is.na(df_PC$padj) & df_PC$padj<0.1 & df_PC$log2FoldChange<0,])+nrow(df_NC[!is.na(df_NC$padj) & df_NC$padj<0.1 & df_NC$log2FoldChange<0,])*nrow(df_PC)/nrow(df_NC)
         posControls<- nrow(df_PC)
@@ -743,7 +759,7 @@ for (Filename in Filenames) {
         recall<- truePos/posControls
         F1<- 2/(1/precision + 1/recall)
       }
-      if (replicates==1){
+      if (replicates==0){
         truePos<- nrow(df_PC[df_PC$log2FoldChange < intersection,])
         posPredict<- nrow(df_PC[df_PC$log2FoldChange < intersection,])+nrow(df_NC[df_NC$log2FoldChange < intersection,])*nrow(df_PC)/nrow(df_NC)
         posControls<- nrow(df_PC)
@@ -755,7 +771,7 @@ for (Filename in Filenames) {
     
     # Draw Plots in PDF 
     pdf(paste0(dirname,"/DESeq2 ",con," Plots.pdf"), width=7, height=7)
-    if (replicates==0){
+    if (replicates==1){
       # DESEq2 plots
       plotDispEsts(dds, main="Dispersion plot")
       
@@ -773,7 +789,7 @@ for (Filename in Filenames) {
       
       print(plotPCA(rld, intgroup=c("Time", "Rep")))
     }  
-    if (pairs==0) {
+    if (pairs==1) {
       pairs(df_sel[-1], cex=0.1)
       pairs(df_normCounts, cex=0.1)
     }
@@ -781,7 +797,7 @@ for (Filename in Filenames) {
     # Home made plots
     
     # Correlation plots
-    if (replicates==0){
+    if (replicates==1){
       par(mfrow=c(3,3))
       for (i in c(1:length(repx))) {
         e1<- df_rep[i,1]
@@ -813,10 +829,10 @@ for (Filename in Filenames) {
     # Plot axes
     plot(0, pch = '', 
          main= "Volcano plot",
-         xlab= "Log2 median fold change",
+         xlab= "MLE log2 fold change",
          ylab= "RRA score",
          cex.lab=1, cex.axis=1, las=1, xlim=xrangeVOL, ylim=yrangeVOL, xaxt = "n", yaxt = "n")
-    if (ConStat==0) {
+    if (ConStat==1) {
       mtext(side=3, line=0.5, at=mean(xrangeVOL), cex=0.7, 
             paste0("(F1: ", format(round(F1Gene,2),nsmall = 2), " (Pre: ", format(round(precisionGene,2),nsmall = 2), 
                    " Rec: ", format(round(recallGene,2),nsmall = 2), "))"))
@@ -863,17 +879,17 @@ for (Filename in Filenames) {
       plot(df_res$logBaseMeanA, df_res$log2FoldChange, type="p", col=df_res$col, bg=df_res$col, cex=1, pch=df_res$pch, xlab="Log10 Average Read Counts (Control)", 
            ylab="Log2 Fold Change", cex.lab=1, cex.axis=1, xlim=xrangeMA, ylim=yrangeMA)
       if (Gene=="Hitlist"&& nrow(df_hits_total)>=1){
-        df_hits_total<-df_res[df_res$Guide %in% df_hits_total$Guide,]
+        df_hits_total<-df_res[df_res$sgRNA %in% df_hits_total$sgRNA,]
         points(df_hits_total$logBaseMeanA, df_hits_total$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1, pch=df_hits_total$pch)
       }
       if (nrow(df_GOI)>=1){
         points(df_GOI$logBaseMeanA, df_GOI$log2FoldChange, type="p", col=ColH, bg=ColH, cex=1.5, pch=df_GOI$pch)
       }
-      legend("bottomleft",legend=c( if (nchar(Gene)>1 && !is.na(Gene)) {Gene}, "All guides", "Essentials",if (ControlsN==0 | ControlsN==1){"Non-essentials"}, 
+      legend("bottomleft",legend=c( if (nchar(Gene)>1 && !is.na(Gene)) {Gene}, "All sgRNAs", "Essentials",if (ControlsN==0 | ControlsN==1){"Non-essentials"}, 
                                     if (ControlsN==2){"Non-targeting"}, 'Significantly enriched', 'Significantly depleted'), cex=0.8, pch=c(if (nchar(Gene)>1 && !is.na(Gene)) 
                                     {16},16,16,16, 24,25), col=c(if (nchar(Gene)>1 && !is.na(Gene)) {ColH}, ColAll,ColP,ColN, "black", "black"))
       abline(median(df_res$log2FoldChange, na.rm=TRUE),0, col=1, lty=3, untf=TRUE)
-      if (ConStat==0) {
+      if (ConStat==1) {
         text(median(xrangeMA), yrangeMA[2],cex=0.7, labels=paste0("(rZ': ", format(round(Zprime,2), nsmall=2), " NP50: ", format(round(intersection,2), nsmall=2), 
                                                                   " F1: ", format(round(F1,2),nsmall = 2), " (Pre: ", format(round(precision,2),nsmall = 2), " Rec: ", format(round(recall,2),nsmall = 2), "))"))
       }
