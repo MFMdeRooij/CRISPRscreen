@@ -272,7 +272,7 @@ for (Filename in Filenames) {
         }
         if (r==3){
           dds$Time<- relevel(dds$Time, ref="T1")
-          dds<- nbinomWaldTest(dds)
+          dds<- DESeq(dds, fitType = 'local')
           res<- lfcShrink(dds, coef = "Time_T2_vs_T1", type = "apeglm", apeMethod = "nbinomC")
         }
       }
