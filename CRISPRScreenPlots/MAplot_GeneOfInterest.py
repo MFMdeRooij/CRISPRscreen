@@ -2,13 +2,15 @@
 """
 Use the CRISPRScreenAnalysis.R output files, adjust the settings, and run the script in Spyder.
 This script plots all the guides of a particular gene in MA plots of all comparisons (T1/T0, T2/T0, and T2/T1).
-Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
+Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020-2026, info: m.f.derooij@amsterdamumc.nl
 """
 ##################################################################################################################################
+from pathlib import Path
 #                                                 SETTINGS
 
-# Copy-paste the required folder (use / instead of \ )
-folder = "C:/BioWin/CRISPRscreen/Namalwa"
+# Put this script in the same folder as the data, or copy-paste the required folder (use / instead of \ )
+folder = Path(__file__).resolve().parent.as_posix()
+#folder = "C:/BioWin/CRISPRscreen/Namalwa"
 
 # Which gene:
 gene = 'BTK'
@@ -16,10 +18,10 @@ gene = 'BTK'
 # Save plots as PDF (0=no, 1=yes)
 save = 1
 
-# Show significant guides as triangles (0=no, 1=yes)
+# Show significant sgRNAs as triangles (0=no, 1=yes)
 guidesignificant = 1
 
-# Show guide IDs (0=no, 1=yes)
+# Show sgRNA IDs (0=no, 1=yes)
 guideID = 1
 
 # Titles:
@@ -113,7 +115,7 @@ for file in files:
 
     if guideID==1:
         for i, row in df[df['GeneSymbol']==gene].iterrows(): 
-                label = "#"+row['Guide'].split("-")[1]
+                label = "#"+row['sgRNA'].split("-")[1]
                 label_pos_x = row['l10rc']
                 label_pos_y = row['l2fc']
                 plt.text(
@@ -149,14 +151,14 @@ for file in files:
     
     from matplotlib.lines import Line2D
     if guidesignificant==1:
-        legend_elements = [Line2D([0], [0], marker='o', markerfacecolor=call, color=(0,0,0,0), label='All guides', markersize=fs-5),
+        legend_elements = [Line2D([0], [0], marker='o', markerfacecolor=call, color=(0,0,0,0), label='All sgRNAs', markersize=fs-5),
                        Line2D([0], [0], marker='o', markerfacecolor=cpos, color=(0,0,0,0), label='Essentials', markersize=fs-5),
                        Line2D([0], [0], marker='o', markerfacecolor=cneg, color=(0,0,0,0), label='Non-essentials', markersize=fs-5),
                        Line2D([0], [0], marker='o', markerfacecolor=chit, color=(0,0,0,0), label=gene, markersize=fs-5),
                        Line2D([0], [0], marker='^', markerfacecolor='white', color=(0,0,0,0), label='Significantly enriched', markersize=fs-5),
                        Line2D([0], [0], marker='v', markerfacecolor='white', color=(0,0,0,0), label='Significantly depleted', markersize=fs-5)]
     elif guidesignificant==0: 
-        legend_elements = [Line2D([0], [0], marker='o', markerfacecolor=call, color=(0,0,0,0), label='All guides', markersize=fs-5),
+        legend_elements = [Line2D([0], [0], marker='o', markerfacecolor=call, color=(0,0,0,0), label='All sgRNAs', markersize=fs-5),
                        Line2D([0], [0], marker='o', markerfacecolor=cpos, color=(0,0,0,0), label='Essentials', markersize=fs-5),
                        Line2D([0], [0], marker='o', markerfacecolor=cneg, color=(0,0,0,0), label='Non-essentials', markersize=fs-5),
                        Line2D([0], [0], marker='o', markerfacecolor=chit, color=(0,0,0,0), label=gene, markersize=fs-5)]

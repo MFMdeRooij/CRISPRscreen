@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """
 Use the CRISPRScreenAnalysis.R output files, adjust the settings, and run the script in Spyder.
-This script plots the fold changes of the all the guides of particulare genes in all comparisons (T1/T0, T2/T0, and T2/T1).
-Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
+This script plots the fold changes of the all the sgRNAs of particulare genes in all comparisons (T1/T0, T2/T0, and T2/T1).
+Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020-2026, info: m.f.derooij@amsterdamumc.nl
 """
 ##################################################################################################################################
+from pathlib import Path
 #                                                      SETTINGS
 
-# Copy-paste the required folder (use / instead of \ )
-folder = "C:/BioWin/CRISPRscreen/Namalwa"
+# Put this script in the same folder as the data, or copy-paste the required folder (use / instead of \ )
+folder = Path(__file__).resolve().parent.as_posix()
+#folder = "C:/BioWin/CRISPRscreen/Namalwa"
 
 # Gene symbols (if there are subset, cluster the subsets)
 genes = ['BTK', 'SYK', 'PIK3R1', 'CSK', 'PRKCE', 'PRKCB', 'ACTR2', 'GUK1', 'MAP2K1', 'MAP2K2', 'AKT1', 'AKT2', 'AKT3', 'LYN']
@@ -49,7 +51,7 @@ xmin, xmax, xticks = -1.25, 1.1, 0.25
 # Font size of X- and Y-axis titles (the main title is 10 bigger)
 fs = 15
 
-# Essentials or significant guides in density plot (apart from All guides and non-essentials)  0 = Essentials, 1 = Significant guides
+# Essentials or significant sgRNAs in density plot (apart from All sgRNAs and non-essentials)  0 = Essentials, 1 = Significant sgRNAs
 essOrSig = 1
 
 # RRA score: 0=depletion, 1=enrichment
@@ -108,7 +110,7 @@ for df,dfrra in [(dfP,dfPrra),(dfM,dfMrra),(dfC,dfCrra)]:
     plt.figure(1, figsize=(35,7))
     ax = plt.subplot2grid((5,24), (0,i*8), colspan=6, rowspan=1) 
     if i==0:
-        sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label='All guides')
+        sns.kdeplot(df['l2fc'], linewidth= 2, color='magenta', label='All sgRNAs')
         sns.kdeplot(df[df['Type']=='n']['l2fc'], linewidth= 2, color='orange', label='Non-essential genes') 
         if essOrSig == 0:
              sns.kdeplot(df[df['Type']=='p']['l2fc'], linewidth= 2, color='royalblue', label='Essential genes')

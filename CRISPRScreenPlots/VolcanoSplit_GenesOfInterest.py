@@ -3,13 +3,15 @@
 Use the CRISPRScreenAnalysis.R output files, adjust the settings, and run the script in Spyder.
 This script plots particular genes in splitted Volcano plots of all comparisons (T1/T0, T2/T0, and T2/T1).
 If the gene symbols are overlapping, you can move them in Adobe Illustrator.
-Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020, info: m.f.derooij@amsterdamumc.nl
+Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2020-2026, info: m.f.derooij@amsterdamumc.nl
 """
 ##################################################################################################################################
-#                                                 SETTINGS
+from pathlib import Path
+#                                                      SETTINGS
 
-# Copy-paste the required folder (use / instead of \ )
-folder = "C:/BioWin/CRISPRscreen/Namalwa"
+# Put this script in the same folder as the data, or copy-paste the required folder (use / instead of \ )
+folder = Path(__file__).resolve().parent.as_posix()
+#folder = "C:/BioWin/CRISPRscreen/Namalwa"
 
 # Which genes to highlight:
 gene = ['BTK', 'SYK', 'PIK3R1']
@@ -23,9 +25,9 @@ genesignificant = 1
 # Titles:
 maintitle = 'NAMALWA'
 
-x1title = 'Log2 fold change (PMA/input)'
-x2title = r'Log2 fold change ($\alpha$IgM/input)'
-x3title = r'Log2 fold change ($\alpha$IgM/PMA)'
+x1title = 'Median log2 fold change (PMA/input)'
+x2title = r'Median log2 fold change ($\alpha$IgM/input)'
+x3title = r'Median log2 fold change ($\alpha$IgM/PMA)'
 
 # 2 superscript (dutch log style) and 0 and 1 subscript: '$^{2}$log fold change (t$_1$/t$_0$)'
 # greek alpha letter: r'$^{2}$log fold change ($\alpha$IgM/PMA)'   -> include the upstream r for greek letters 

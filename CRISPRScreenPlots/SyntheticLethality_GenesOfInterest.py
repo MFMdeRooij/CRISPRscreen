@@ -5,12 +5,15 @@
 # This script can normalize the median log2 fold change to the essential and non-essential genes of a synthetic lethality screen, and plots T1control/T0 against T1treated/T0. 
 # This normalization can improve the comparison treated - control if the treated arm did not have equal cell divisions, however the separation between the essentials and 
 # non-essentials will not be improved. Synthetic lethal genes will be located around the lower half of the vertical 0 axis.
-# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
+# Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023-2026, info: m.f.derooij@amsterdamumc.nl
 """
 ##############################################################################################################
+from pathlib import Path
+#                                                 SETTINGS
 
-# Folder screen data:
-folder = "C:/BioWin/CRISPRscreen/Z138"
+# Put this script in the same folder as the data, or copy-paste the required folder (use / instead of \ )
+folder = Path(__file__).resolve().parent.as_posix()
+#folder = "C:/BioWin/CRISPRscreen/Z138"
 
 # Cell line:
 cellID = "Z138"
@@ -33,8 +36,8 @@ if allsignif==1:
 GeneSymbol = 0
 
 # Axes labels:
-xlab = "Control (Relative log2 median fold change)"
-ylab = "Venetoclax (Relative log2 median fold change)"
+xlab = "Control (Relative median log2 fold change)"
+ylab = "Venetoclax (Relative median log2 fold change)"
 
 # # BCR-controlled adhesion screens:  
 # xlab = 'PMA (Log2 median fold change)'
@@ -161,7 +164,7 @@ if len(GenesOfInterest)>0:
         plt.annotate(txt, (dfhits['Control'][i]+(xmax-xmin)/100, dfhits['Treated'][i]), rotation=22.5, fontsize=7, color="black", ha='left')  
 
 lgnd = plt.legend(('All genes', 'Essentials', 'Non-essentials'), fontsize=8, loc=2)
-for handle in lgnd.legendHandles:
+for handle in lgnd.legend_handles:
     handle.set_sizes([10])
 
 plt.axvline(x=0, color=cneg, linestyle='--', linewidth=0.5)
