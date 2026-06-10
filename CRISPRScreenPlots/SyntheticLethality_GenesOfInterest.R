@@ -51,11 +51,11 @@ ylabel<- "Venetoclax"
 NormalizeX<- 1
 NormalizeY<- 1
 
-# Normalize to (log)mean or median of the (non-)essentials, 0: mean, 1: median
-meanOrmedian<- 0
+# Normalize to (log) mean or median of the (non-)essentials, 0: mean, 1: median
+meanOrmedian<- 1
 
 # Additionally normalize y by linear regression (so y=0+1x of the controls), 0: no, 1: yes
-NormalizeLR<- 1
+NormalizeLR<- 0
 
 # Add lineair regression line with 95% prediction interval based on (non)essentials: no, 1: yes
 LinReg<- 1
@@ -179,8 +179,8 @@ if (Axlim==0){
     xmax<- max(xmax,ymax)
     ymax<- max(xmax,ymax)
   }
-  xticks<- round((xmax-xmin)/5.1,0)
-  yticks<- round((ymax-ymin)/5.1,0)
+  xticks<- max(1,round((xmax-xmin)/5.1,0))
+  yticks<- max(1,round((ymax-ymin)/5.1,0))
 }
 
 pdf(paste0("CRISPR_SL_",cellID,"_R", allsignif,".pdf"),size,size)
