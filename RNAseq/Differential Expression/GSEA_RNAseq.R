@@ -58,7 +58,7 @@ for (com in comparisons) {
   for (g in unique(dataDupl$Hugo)){
     temp<- dataDupl[dataDupl$Hugo==g,]
     temp$counts<- temp$BaseMeanA+temp$BaseMeanB
-    idmax<- temp$ensembl_gene_id[temp$count==max(temp$count)][1]
+    idmax<- temp$ensembl_gene_id[temp$counts==max(temp$counts)][1]
     
     if (sum(temp$hgnc_symbol==g)==1){
       data<- rbind(data, dataDupl[dataDupl$hgnc_symbol==g,])
