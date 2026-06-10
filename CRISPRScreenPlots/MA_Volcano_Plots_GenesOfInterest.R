@@ -53,26 +53,26 @@ for (f in 1:length(filesVOL)){
     df_genes<- read.csv(filesVOL[f], stringsAsFactors = FALSE)
     df_genes<- df_genes[df_genes$GeneSymbol!="NonTargetingControlGuideForHuman",]
     if (GeneScore==0){
-      df_genes$l2mfc<- df_genes$Log2FoldChangeMLE
+      df_genes$ml2fc<- df_genes$Log2FoldChangeMLE
     } else if (GeneScore==1){
-      df_genes$l2mfc<- log2(df_genes$MedianFoldChange)
+      df_genes$ml2fc<- log2(df_genes$MedianFoldChange)
     }
     # Give NA a number
-    df_genes$l2mfc[is.na(df_genes$l2mfc)]<- 0
+    df_genes$ml2fc[is.na(df_genes$ml2fc)]<- 0
     df_genes$rhoDepleted[is.na(df_genes$rhoDepleted)]<- 1
     df_genes$rhoEnriched[is.na(df_genes$rhoEnriched)]<- 1
     df_genes$fdrDepleted[is.na(df_genes$fdrDepleted)]<- 1
     df_genes$fdrEnriched[is.na(df_genes$fdrEnriched)]<- 1
-    GenesDep<- df_genes[df_genes$l2mfc < 0,]
-    GenesEnr<- df_genes[df_genes$l2mfc > 0,]
+    GenesDep<- df_genes[df_genes$ml2fc < 0,]
+    GenesEnr<- df_genes[df_genes$ml2fc > 0,]
     
     GenesDep<- GenesDep[order(GenesDep$rhoDepleted),]
     GenesEnr<- GenesEnr[order(GenesEnr$rhoEnriched),]
     tophitsVolcano<- c(GenesEnr$GeneSymbol[1:5], rev(GenesDep$GeneSymbol[1:5]))
     
     # # Include best fold changes to tophits
-    # GenesDep<- GenesDep[order(GenesDep$l2mfc),]
-    # GenesEnr<- GenesEnr[order(GenesEnr$l2mfc, decreasing = T),]
+    # GenesDep<- GenesDep[order(GenesDep$ml2fc),]
+    # GenesEnr<- GenesEnr[order(GenesEnr$ml2fc, decreasing = T),]
     # tophitsVolcanoB<- c(GenesDep$GeneSymbol[1:5], GenesEnr$GeneSymbol[1:5])
     # tophitsVolcano<- unique(c(tophitsVolcano,tophitsVolcanoB))
   }
@@ -81,13 +81,13 @@ for (f in 1:length(filesVOL)){
     GenesHits<- read.csv(filesVOL[3], stringsAsFactors = FALSE)
     GenesHits<- GenesHits[GenesHits$GeneSymbol!="NonTargetingControlGuideForHuman",]
     if (GeneScore==0){
-      GenesHits$l2mfc<- GenesHits$Log2FoldChangeMLE
+      GenesHits$ml2fc<- GenesHits$Log2FoldChangeMLE
     } else if (GeneScore==1){
-        GenesHits$l2mfc<- log2(GenesHits$MedianFoldChange)
+        GenesHits$ml2fc<- log2(GenesHits$MedianFoldChange)
       }
    
     # Give NA a number
-    GenesHits$l2mfc[is.na(GenesHits$l2mfc)]<- 0
+    GenesHits$ml2fc[is.na(GenesHits$ml2fc)]<- 0
     GenesHits$rhoDepleted[is.na(GenesHits$rhoDepleted)]<- 1
     GenesHits$rhoEnriched[is.na(GenesHits$rhoEnriched)]<- 1
     GenesHits$fdrDepleted[is.na(GenesHits$fdrDepleted)]<- 1
@@ -203,13 +203,13 @@ for (file in filesVOL) {
   df_genes<- read.csv(file, stringsAsFactors = FALSE)
   df_genes<- df_genes[df_genes$GeneSymbol!="NonTargetingControlGuideForHuman",]
   if (GeneScore==0){
-    df_genes$l2mfc<- df_genes$Log2FoldChangeMLE
+    df_genes$ml2fc<- df_genes$Log2FoldChangeMLE
   } else if (GeneScore==1){
-      df_genes$l2mfc<- log2(df_genes$MedianFoldChange)
+      df_genes$ml2fc<- log2(df_genes$MedianFoldChange)
     }
   
   # Give NA a number
-  df_genes$l2mfc[is.na(df_genes$l2mfc)]<- 0
+  df_genes$ml2fc[is.na(df_genes$ml2fc)]<- 0
   df_genes$rhoDepleted[is.na(df_genes$rhoDepleted)]<- 1
   df_genes$rhoEnriched[is.na(df_genes$rhoEnriched)]<- 1
   df_genes$fdrDepleted[is.na(df_genes$fdrDepleted)]<- 1
@@ -217,9 +217,9 @@ for (file in filesVOL) {
   
   # RRA score and FDR dependent on depleted/enriched
   df_genes$rho<- df_genes$rhoDepleted
-  df_genes$rho[df_genes$l2mfc > 0]<- df_genes$rhoEnriched[df_genes$l2mfc > 0]
+  df_genes$rho[df_genes$ml2fc > 0]<- df_genes$rhoEnriched[df_genes$ml2fc > 0]
   df_genes$fdr<- df_genes$fdrDepleted
-  df_genes$fdr[df_genes$l2mfc > 0]<- df_genes$fdrEnriched[df_genes$l2mfc > 0]
+  df_genes$fdr[df_genes$ml2fc > 0]<- df_genes$fdrEnriched[df_genes$ml2fc > 0]
   
   # Colors
   df_genes$col<- ColAll
@@ -227,13 +227,13 @@ for (file in filesVOL) {
   df_genes$col[df_genes$Type=="n"]<- ColN
   df_genes$col2 <- df_genes$col
   df_genes$pch<- 21
-  df_genes$pch[df_genes$fdr < 0.1 & df_genes$l2mfc < 0]<- 25
-  df_genes$pch[df_genes$fdr < 0.1 & df_genes$l2mfc > 0]<- 24
+  df_genes$pch[df_genes$fdr < 0.1 & df_genes$ml2fc < 0]<- 25
+  df_genes$pch[df_genes$fdr < 0.1 & df_genes$ml2fc > 0]<- 24
   df_genes$alpha <- 0.7
   df_genes$cex <- 0.7
   
   # Axes limits
-  xrangeVOL<- c(floor(min(df_genes$l2mfc, na.rm=TRUE)), ceiling(max(df_genes$l2mfc, na.rm=TRUE)))
+  xrangeVOL<- c(floor(min(df_genes$ml2fc, na.rm=TRUE)), ceiling(max(df_genes$ml2fc, na.rm=TRUE)))
   yrangeVOL<- c(0, ceiling(max(-log10(df_genes$rho)*1.2, na.rm=TRUE)))
   
   # Mix essential and non-essential randomly
@@ -263,7 +263,7 @@ for (file in filesVOL) {
   # Plot axes
   plot(0, pch = '', 
        main= Titles[f], 
-       xlab= if (GeneScore==0){"MLE log2 fold change"} else if (GeneScore==1){{"Log2 median fold change"}},
+       xlab= if (GeneScore==0){"MLE log2 fold change"} else if (GeneScore==1){{"Median log2 fold change"}},
        ylab= "RRA score",
        cex.lab=1, cex.axis=1, las=1, xlim=xrangeVOL, ylim=yrangeVOL, xaxt = "n", yaxt = "n")
   
@@ -284,7 +284,7 @@ for (file in filesVOL) {
   abline(h=seq(yrangeVOL[1], yrangeVOL[2], by = yticks), lty=3, col="gray")
   
   # Actual points
-  points(df_genes$l2mfc, -log10(df_genes$rho), type="p", pch=df_genes$pch, bg=alpha(df_genes$col,df_genes$alpha), col=alpha(df_genes$col2,df_genes$alpha), cex=df_genes$cex, lwd=0.5)
+  points(df_genes$ml2fc, -log10(df_genes$rho), type="p", pch=df_genes$pch, bg=alpha(df_genes$col,df_genes$alpha), col=alpha(df_genes$col2,df_genes$alpha), cex=df_genes$cex, lwd=0.5)
   
   # 0 line
   abline(v=0, lty=2)
@@ -293,7 +293,7 @@ for (file in filesVOL) {
   text(0,yrangeVOL[2], substitute(paste(italic('Depleted    Enriched'))))
   
   # Show gene symbols of top hits
-  addTextLabels(df_genesh$l2mfc,-log10(df_genesh$rho),df_genesh$GeneSymbol, avoidPoints = TRUE,
+  addTextLabels(df_genesh$ml2fc,-log10(df_genesh$rho),df_genesh$GeneSymbol, avoidPoints = TRUE,
                 keepLabelsInside = TRUE, col.label="black", cex.label=1, col.background = "white")
   
   f<- f+1
