@@ -43,6 +43,7 @@ for (com in comparisons) {
   # Adjust gene symbols to recent hugo symbols
   Hugo <- checkGeneSymbols(data$hgnc_symbol, unmapped.as.na=T)
   data$Hugo <- Hugo$Suggested.Symbol
+  data$Hugo[is.na(data$Hugo)]<- data$hgnc_symbol[is.na(data$Hugo)]
   data$EntrezID <- as.character(mapIds(org.Hs.eg.db, keys = data$Hugo, column = "ENTREZID", keytype = "SYMBOL"))
   data<- data[!is.na(data$EntrezID),]
   data<- data[data$EntrezID!="NULL",]

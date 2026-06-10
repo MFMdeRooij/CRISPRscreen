@@ -48,6 +48,7 @@ data[is.na(data)]<- 0
 # Adjust gene symbols to recent hugo symbols
 Hugo <- checkGeneSymbols(data$hgnc_symbol, unmapped.as.na=T)
 data$Hugo <- Hugo$Suggested.Symbol
+data$Hugo[is.na(data$Hugo)]<- data$hgnc_symbol[is.na(data$Hugo)]
 
 # Remove duplicate Hugo symbols, take the one with highest average expression if the original is not there 
 duplicates<- data.frame(h=data$Hugo, n=1)
