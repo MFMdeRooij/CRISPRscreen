@@ -399,7 +399,8 @@ for (Filename in Filenames) {
     colnames(df_hits_D)<-c("GeneSymbol", "MinFoldChange")
     df_hits_E<- aggregate(df_res$FoldChange, by=list(df_res$GeneSymbol), FUN=max, na.rm=T)
     colnames(df_hits_E)<-c("GeneSymbol", "MaxFoldChange")
-    df_hits_F<- aggregate(df_res$FoldChange, by=list(df_res$GeneSymbol), FUN=median, na.rm=T)
+    df_hits_F<- aggregate(df_res$log2FoldChange, by=list(df_res$GeneSymbol), FUN=median, na.rm=T)
+    df_hits_F$x<- 2^df_hits_F$x
     colnames(df_hits_F)<-c("GeneSymbol", "MedianFoldChange")
     df_hits_A<-merge(df_hits_A, df_hits_D, by="GeneSymbol")
     df_hits_A<-merge(df_hits_A, df_hits_E, by="GeneSymbol")
