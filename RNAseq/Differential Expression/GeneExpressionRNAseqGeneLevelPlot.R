@@ -34,6 +34,9 @@ Title<- "B cell lines"
 # Start y axis of boxplot (gene expression) at 0: 0 = yes, 1 = no
 zero<- 0
 
+# Logaritmic or linear scale of boxplot: 0 = log, 1 = lin
+loglin <- 0
+
 # Use Group and Rep as combined factors (Like different cells (-> Group) and different drugs (-> Rep)): 0 = Yes, 1 = No
 GRC<- 1
 
@@ -95,8 +98,13 @@ for (gene in interestingGenes){
   
   pdf(paste0("GE_",gene,".pdf"), width=7, height=7)
   # Boxplot
-  g<- ggplot(df_pca, aes(x=Group, y=Gene, fill=Group)) + theme_classic() + scale_fill_manual(values = colorVec) + geom_boxplot(color="snow3", alpha=0.05, show.legend = FALSE) + 
-    geom_jitter(color=df_pca$Color, size=3, alpha=1, height = 0, show.legend = FALSE) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "", y=paste0(gene," expression (rlog)"))
+  if(loglin==0){
+    g<- ggplot(df_pca, aes(x=Group, y=Gene, fill=Group)) + theme_classic() + scale_fill_manual(values = colorVec) + geom_boxplot(color="snow3", alpha=0.05, show.legend = FALSE) + 
+      geom_jitter(color=df_pca$Color, size=3, alpha=1, height = 0, show.legend = FALSE) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "", y=paste0(gene," expression (rlog)"))
+  } else if (loglin==1){
+    g<- ggplot(df_pca, aes(x=Group, y=2^Gene, fill=Group)) + theme_classic() + scale_fill_manual(values = colorVec) + geom_boxplot(color="snow3", alpha=0.05, show.legend = FALSE) + 
+      geom_jitter(color=df_pca$Color, size=3, alpha=1, height = 0, show.legend = FALSE) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "", y=paste0(gene," expression (2^rlog)"))
+  }
   if(zero==0) {
     g<- g + expand_limits(y = 0)
   }
