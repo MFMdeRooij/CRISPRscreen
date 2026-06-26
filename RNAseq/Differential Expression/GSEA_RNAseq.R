@@ -15,6 +15,9 @@ folder<- dirname(rstudioapi::getActiveDocumentContext()$path)
 minGSSize<- 10
 pvalueCutoff<- 1
 
+# How to rank genes: 0: Fold change, 1: signed P value
+RankMetric <- 1
+
 ###########################################################################################################################
 library("clusterProfiler")
 library("msigdbr")
@@ -69,19 +72,27 @@ for (com in comparisons) {
   }
   
   # Gene list with gene symbols
-  geneList<- log2(data$FoldChange)
+  if (RankMetric==0){
+    geneList<- log2(data$FoldChange)
+  } else if (RankMetric==1){
+      geneList<- -log10(data$pvalue)*sign(log2(data$FoldChange))
+    }
   names(geneList)<- data$Hugo
   geneList<- geneList[order(geneList, decreasing=T)]
   # To prevent a bug
   geneList[geneList==0]<- 10^-10
   
   # Gene list with entrez ids
-  geneListID<- log2(data$FoldChange)
+  if (RankMetric==0){
+    geneListID<- log2(data$FoldChange)
+  } else if (RankMetric==1){
+      geneListID<- -log10(data$pvalue)*sign(log2(data$FoldChange))
+    }
   names(geneListID)<- data$EntrezID
   geneListID<- geneListID[order(geneListID, decreasing=T)]
   # To prevent a bug
   geneListID[geneListID==0]<- 10^-10
-  
+
   # STRING
   data$logFC<- log2(data$FoldChange)
   data$fdr<- data$padj
@@ -125,21 +136,21 @@ for (com in comparisons) {
   sheets[[paste0("GSEA_",cat)]]<- vector()
   try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gseKEGG(geneList=geneListID, organism='hsa', minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
 
-  # REACTOME
-  cat<- "REACTOME"
-  sheets[[paste0("GSEA_",cat)]]<- vector()
-  try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gsePathway(geneList=geneListID, organism = "human", minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
-
-  # WIKI
-  cat<- "WIKI"
-  sheets[[paste0("GSEA_",cat)]]<- vector()
-  try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gseWP(geneList=geneListID, organism="Homo sapiens", minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
-
-  # GO
-  for (cat in c("BP", "MF", "CC")) {
-    sheets[[paste0("GSEA_GO_",cat)]]<- vector()
-    try(sheets[[paste0("GSEA_GO_",cat)]] <- as.data.frame(gseGO(geneList=geneList, OrgDb=org.Hs.eg.db, ont=cat,minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T, keyType="SYMBOL")@result))
-  }
+  # # REACTOME
+  # cat<- "REACTOME"
+  # sheets[[paste0("GSEA_",cat)]]<- vector()
+  # try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gsePathway(geneList=geneListID, organism = "human", minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
+  # 
+  # # WIKI
+  # cat<- "WIKI"
+  # sheets[[paste0("GSEA_",cat)]]<- vector()
+  # try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gseWP(geneList=geneListID, organism="Homo sapiens", minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
+  # 
+  # # GO
+  # for (cat in c("BP", "MF", "CC")) {
+  #   sheets[[paste0("GSEA_GO_",cat)]]<- vector()
+  #   try(sheets[[paste0("GSEA_GO_",cat)]] <- as.data.frame(gseGO(geneList=geneList, OrgDb=org.Hs.eg.db, ont=cat,minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T, keyType="SYMBOL")@result))
+  # }
 
   # MSIGDB
   for (cat in c("H", "C1", "C2", "C3")) {
@@ -174,9 +185,13 @@ for (com in comparisons) {
     print(dotplot(GSEAplots, x = "NES", color = "p.adjust", size = "GeneRatio", orderBy = "NES", showCategory = 10, split = ".sign") +
             ggtitle("Dotplot") + theme(aspect.ratio = 2)#+ facet_grid(.~.sign)
     )
-
-    print(ridgeplot(GSEAplots, showCategory=20)+ggtitle("Ridgeplot")+xlab("Log2 fold change")+ theme(aspect.ratio = 2))
-
+    
+    if (RankMetric==0){
+      print(ridgeplot(GSEAplots, showCategory=20)+ggtitle("Ridgeplot")+xlab("Log2 fold change")+ theme(aspect.ratio = 2))
+    } else if (RankMetric==1){
+        print(ridgeplot(GSEAplots, showCategory=20)+ggtitle("Ridgeplot")+xlab("Significance score")+ theme(aspect.ratio = 2))
+      }
+    
     print(treeplot(pairwise_termsim(GSEAplots), cladelab_offset=8, tiplab_offset=.3, fontsize_cladelab=5)+hexpand(.1)+ggtitle("Treeplot"))
 
     print(emapplot(pairwise_termsim(GSEAplots))+ggtitle("Enrichment map"))
