@@ -46,7 +46,8 @@ data<- dataAll
 data[is.na(data)]<- 0
 
 # Adjust gene symbols to recent hugo symbols
-Hugo <- checkGeneSymbols(data$hgnc_symbol, unmapped.as.na=T)
+live_human_map <- getCurrentHumanMap()
+Hugo <- checkGeneSymbols(data$hgnc_symbol, unmapped.as.na=T, map = live_human_map)
 data$Hugo <- Hugo$Suggested.Symbol
 data$Hugo[is.na(data$Hugo)]<- data$hgnc_symbol[is.na(data$Hugo)]
 

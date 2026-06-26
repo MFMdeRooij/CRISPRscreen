@@ -41,7 +41,8 @@ for (com in comparisons) {
   data <- read.csv(paste0(com))
   
   # Adjust gene symbols to recent hugo symbols
-  Hugo <- checkGeneSymbols(data$hgnc_symbol, unmapped.as.na=T)
+  live_human_map <- getCurrentHumanMap()
+  Hugo <- checkGeneSymbols(data$hgnc_symbol, unmapped.as.na=T, map = live_human_map)
   data$Hugo <- Hugo$Suggested.Symbol
   data$Hugo[is.na(data$Hugo)]<- data$hgnc_symbol[is.na(data$Hugo)]
   data$EntrezID <- as.character(mapIds(org.Hs.eg.db, keys = data$Hugo, column = "ENTREZID", keytype = "SYMBOL"))
