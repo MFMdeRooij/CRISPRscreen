@@ -47,7 +47,8 @@ for (com in comparisons) {
     BrunelloHGNC$goodGeneSymbol[match(data$GeneSymbolHGNC[data$GeneSymbolHGNC %in% BrunelloHGNC$wrongGeneSymbol], BrunelloHGNC$wrongGeneSymbol)]  
   
   # Check if it is still up to date
-  Hugo <- checkGeneSymbols(data$GeneSymbolHGNC, unmapped.as.na=T)
+  live_human_map <- getCurrentHumanMap()
+  Hugo <- checkGeneSymbols(data$GeneSymbolHGNC, unmapped.as.na=T, map = live_human_map)
   data$Hugo <- Hugo$Suggested.Symbol
   data$Hugo[is.na(data$Hugo)]<- data$GeneSymbolHGNC[is.na(data$Hugo)]
   data$EntrezID <- as.character(mapIds(org.Hs.eg.db, keys = data$Hugo, column = "ENTREZID", keytype = "SYMBOL"))
