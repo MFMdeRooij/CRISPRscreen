@@ -136,21 +136,21 @@ for (com in comparisons) {
   sheets[[paste0("GSEA_",cat)]]<- vector()
   try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gseKEGG(geneList=geneListID, organism='hsa', minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
 
-  # # REACTOME
-  # cat<- "REACTOME"
-  # sheets[[paste0("GSEA_",cat)]]<- vector()
-  # try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gsePathway(geneList=geneListID, organism = "human", minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
-  # 
-  # # WIKI
-  # cat<- "WIKI"
-  # sheets[[paste0("GSEA_",cat)]]<- vector()
-  # try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gseWP(geneList=geneListID, organism="Homo sapiens", minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
-  # 
-  # # GO
-  # for (cat in c("BP", "MF", "CC")) {
-  #   sheets[[paste0("GSEA_GO_",cat)]]<- vector()
-  #   try(sheets[[paste0("GSEA_GO_",cat)]] <- as.data.frame(gseGO(geneList=geneList, OrgDb=org.Hs.eg.db, ont=cat,minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T, keyType="SYMBOL")@result))
-  # }
+  # REACTOME
+  cat<- "REACTOME"
+  sheets[[paste0("GSEA_",cat)]]<- vector()
+  try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gsePathway(geneList=geneListID, organism = "human", minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
+
+  # WIKI
+  cat<- "WIKI"
+  sheets[[paste0("GSEA_",cat)]]<- vector()
+  try(sheets[[paste0("GSEA_",cat)]] <- as.data.frame(setReadable(gseWP(geneList=geneListID, organism="Homo sapiens", minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T), 'org.Hs.eg.db', 'ENTREZID')@result))
+
+  # GO
+  for (cat in c("BP", "MF", "CC")) {
+    sheets[[paste0("GSEA_GO_",cat)]]<- vector()
+    try(sheets[[paste0("GSEA_GO_",cat)]] <- as.data.frame(gseGO(geneList=geneList, OrgDb=org.Hs.eg.db, ont=cat,minGSSize=minGSSize, pvalueCutoff=pvalueCutoff, seed=T, keyType="SYMBOL")@result))
+  }
 
   # MSIGDB
   for (cat in c("H", "C1", "C2", "C3")) {
