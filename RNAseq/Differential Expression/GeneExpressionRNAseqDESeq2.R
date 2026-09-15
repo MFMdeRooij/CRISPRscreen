@@ -9,9 +9,10 @@
 ######################################################################################
 ## Install DESeq2 and other packages
 #install.packages(c("BiocManager", "devtools", "pheatmap", "RColorBrewer", "gtools", "scales"))
-#BiocManager::install("DESeq2")
+#BiocManager::install("DESeq2", "apeglm")
 #devtools::install_github("JosephCrispell/basicPlotteR")
 library("DESeq2")
+library("apeglm")
 library("pheatmap")
 library("RColorBrewer")
 library("gtools")
@@ -64,9 +65,7 @@ ColH<- "black"
 setwd(Workdirectory)
 
 # Make a data folder
-dirname2<- paste0(Filename,Sys.time())
-dirname1<- gsub("[[:punct:]]", "", dirname2) 
-dirname<- gsub("\\s", "", dirname1) 
+dirname<- paste0(Filename, "_", format(Sys.time(), "%Y%m%d_%H%M.%S"))
 dir.create(dirname)
 
 # Read count table
@@ -97,13 +96,13 @@ if (Paired==1) {
 GroupLevels<- unique(dds$Group)
 for (gl in GroupLevels){
   dds$Group<- relevel(dds$Group, ref=gl)
-  if (gl==GroupLevels[1]){
-    dds<- DESeq(dds)
-  }else{
-    dds<- nbinomWaldTest(dds)
-  }
-  resultsNames<- resultsNames(dds) 
-  resultsNames<- resultsNames[grep("Group", resultsNames)]
+  dds<- DESeq(dds)
+  # if (gl==GroupLevels[1]){
+  #   dds<- DESeq(dds)
+  # }else{
+  #   dds<- nbinomWaldTest(dds)
+  # }
+  resultsNames<- resultsNames(dds)[grep("Group", resultsNames(dds))]
   # Analyse comparisons
   for (rN in resultsNames){
     con<- sub("^Group_", "", rN)
@@ -184,7 +183,7 @@ for (gl in GroupLevels){
     
     rld<-rlog(dds, blind=FALSE)
     
-    if(rN==resultsNames[1] & gl==GroupLevels[1]){
+    if(rN==resultsNames[2] & gl==GroupLevels[1]){
       rlog<- as.data.frame(assay(rld))
       rlog$ensembl_gene_id<- rownames(rlog)
       rlog<- merge(df_Gene_ID, rlog, by="ensembl_gene_id", all.y=T)
