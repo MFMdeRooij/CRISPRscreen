@@ -97,12 +97,8 @@ GroupLevels<- unique(dds$Group)
 for (gl in GroupLevels){
   dds$Group<- relevel(dds$Group, ref=gl)
   dds<- DESeq(dds)
-  # if (gl==GroupLevels[1]){
-  #   dds<- DESeq(dds)
-  # }else{
-  #   dds<- nbinomWaldTest(dds)
-  # }
   resultsNames<- resultsNames(dds)[grep("Group", resultsNames(dds))]
+  
   # Analyse comparisons
   for (rN in resultsNames){
     con<- sub("^Group_", "", rN)
@@ -183,7 +179,7 @@ for (gl in GroupLevels){
     
     rld<-rlog(dds, blind=FALSE)
     
-    if(rN==resultsNames[2] & gl==GroupLevels[1]){
+    if(rN==resultsNames[1] & gl==GroupLevels[1]){
       rlog<- as.data.frame(assay(rld))
       rlog$ensembl_gene_id<- rownames(rlog)
       rlog<- merge(df_Gene_ID, rlog, by="ensembl_gene_id", all.y=T)
