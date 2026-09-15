@@ -26,15 +26,15 @@ Workdirectory<- dirname(rstudioapi::getActiveDocumentContext()$path)
 #Workdirectory<- "C:/BioWin/RNAseq/"
 
 # Which count table?
-Filename<- "RawCounty.csv"
+Filename<- "RNAseqCountTableRawProteinCoding.csv"
 
 # Fill in the table in RNAseqDesign.csv (Group = tumor-subtypes, Rep = replicates (when paired, this should be matched))
 
-# Round numbers in output table: 0 = Yes, 1 = No
-RoundNumbers<- 0
+# Round numbers in output table: 0 = No, 1 = Yes
+RoundNumbers<- 1
 
-# Paired replicates: 0 = Paired, 1 = Unpaired
-Paired<- 0
+# Paired replicates: 0 = Unpaired, 1 = Paired
+Paired<- 1
 
 # Minimal fold change of guides to be a hit: 1 = No minimal fold change,  >1: The minimal fold change (linear scale, 2^abs(l2fc))
 minimalFoldChange<- 1
@@ -76,7 +76,7 @@ df_raw<- read.csv(file=Filename, sep=",", header=TRUE, stringsAsFactors = FALSE)
 df_Gene_ID<- df_raw[,1:2]  
 
 # Sample metadata
-df_design<- read.csv("RNAseqDesign2.csv")
+df_design<- read.csv("RNAseqDesign.csv")
 df_colData<- data.frame(Group=df_design$Group, Rep=df_design$Rep) 
 df_colData$Group<- as.factor(df_colData$Group)
 df_colData$Rep<- as.factor(df_colData$Rep)
@@ -88,11 +88,11 @@ counts<-counts[,df_design$Sample]
 
 # DESeq2 pipeline
 if (Paired==0) {
-  dds<- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Rep + Group)
+  dds<- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Group)
 }
 if (Paired==1) {
-  dds<- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Group)
-}  
+  dds<- DESeqDataSetFromMatrix(countData = counts, colData = df_colData, design = ~ Rep + Group)
+}
 
 GroupLevels<- unique(dds$Group)
 for (gl in GroupLevels){
@@ -170,7 +170,7 @@ for (gl in GroupLevels){
     # Guide Table
     df_res_print<- df_res[,c("hgnc_symbol","ensembl_gene_id","Type","BaseMeanA","BaseMeanB","FoldChange","pvalue","padj")]
     df_res_print<- df_res_print[order(df_res_print$FoldChange),]
-    if (RoundNumbers==0){
+    if (RoundNumbers==1){
       df_res_print[,c("BaseMeanA","BaseMeanB")]<- round(df_res_print[,c("BaseMeanA","BaseMeanB")],0)
       df_res_print[,c("FoldChange","pvalue","padj")]<- signif(df_res_print[,c("FoldChange","pvalue","padj")],4)
     }                                                                                       
