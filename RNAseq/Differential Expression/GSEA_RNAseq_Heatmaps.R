@@ -42,7 +42,7 @@ if (PadjCutoff < 1){
 ###########################################################################################################################
 dir.create("GSEA_STRING/Heatmaps")
 
-data<- dataAll
+data<- dataAll[,colnames(dataAll) %in% c("ensembl_gene_id", "hgnc_symbol",RNAseqDesign$Sample)]
 data[is.na(data)]<- 0
 
 # Adjust gene symbols to recent hugo symbols
@@ -146,10 +146,10 @@ for (Pathway in GSEApathways){
   df_heatmap$Hugo<- NULL
   df_heatmap<-df_heatmap[,RNAseqDesign$Sample]
   
-  mat_scaled = as.data.frame(t(scale(t(df_heatmap))))
+  mat_scaled <- as.data.frame(t(scale(t(df_heatmap))))
   mat_scaled<- mat_scaled[!is.na(mat_scaled[[1]]),]
  
-  pdf(paste0("GSEA_STRING/Heatmaps/Heatmap_", PathSet, "_", sub("/", "-",Pathway),".pdf"), width=2+ncol(mat_scaled)/3, height=5+nrow(mat_scaled)/8)
+  pdf(paste0("GSEA_STRING/Heatmaps/Heatmap_", PathSet, "_", sub("/", "-",Pathway),".pdf"), width=4+ncol(mat_scaled)/3, height=5+nrow(mat_scaled)/8)
         ht<-Heatmap(as.matrix(mat_scaled), column_labels = colLabels, cluster_columns = F, show_row_dend = T, row_dend_side = "right", col = col_fun,
                       row_names_side = "left", column_names_side = "top", clustering_distance_rows = "euclidean", 
                 heatmap_legend_param = list(title = "rlog normalized counts (z-scores)", 
