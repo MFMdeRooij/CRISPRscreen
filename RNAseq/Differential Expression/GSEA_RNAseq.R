@@ -16,7 +16,7 @@ minGSSize<- 10
 pvalueCutoff<- 1
 
 # How to rank genes: 0: Fold change, 1: signed P value
-RankMetric <- 1
+RankMetric <- 0
 
 ###########################################################################################################################
 library("clusterProfiler")
@@ -70,6 +70,10 @@ for (com in comparisons) {
       data<- rbind(data, dataDupl[dataDupl$ensembl_gene_id==idmax,])
     }
   }
+  
+  # Adjust pvalues of NA and 0
+  data$pvalue[is.na(data$pvalue)]<-1
+  data$pvalue[data$pvalue==0]<- min(data$pvalue[data$pvalue!=0])/10
   
   # Gene list with gene symbols
   if (RankMetric==0){
