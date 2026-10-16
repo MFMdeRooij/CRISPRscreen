@@ -111,7 +111,7 @@ def viewGenes(headDir, dirs, gene, tumortype=0, numberCor=10, MAorVul=1, scale=1
                                 )
                     if legend==1:
                         plt.legend(('All Guides', 'Essentials', 'Non-Essentials', gene), loc=3)
-                    plt.text(xmin+(xmax-xmin)/2, ymax-0.05*(ymax-ymin), '$\it{P}$$_{adj}$ = '+padjD2+ r' ($\alpha$RRA$_{dep}$) / $\it{P}$$_{adj}$ = '+padjE2+ r' ($\alpha$RRA$_{enr}$)', fontsize=6, horizontalalignment='center')
+                    plt.text(xmin+(xmax-xmin)/2, ymax-0.05*(ymax-ymin), r'$\it{P}$$_{adj}$ = '+padjD2+ r'($\alpha$RRA$_{dep}$) / $\it{P}$$_{adj}$ = '+padjE2+ r' ($\alpha$RRA$_{enr}$)', fontsize=6, horizontalalignment='center')
                     plt.axhline(0, color='black', linewidth=1)
                     plt.subplot2grid((3,16), (0,(rep-1)*4+2) if rep < 5 else (1,(rep-5)*4+2) if rep < 9 else (2,(rep-9)*4+2))
                     sns.kdeplot(y=df['l2fc'], linewidth=1, fill=True, color='silver')
