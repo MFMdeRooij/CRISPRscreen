@@ -1,10 +1,10 @@
 # Plot RNAseq data from DepMap.org (Broad Institute)
-# Download RNAseq data (25q2) OmicsExpressionProteinCodingGenesTPMLogp1.csv, and model.csv from https://depmap.org/portal/data_page/?tab=allData
+# Download RNAseq data (26q3) OmicsExpressionTPMLogp1HumanProteinCodingGenes.csv, and model.csv from https://depmap.org/portal/data_page/?tab=allData
 # All cell lines are plotted on page 1, and the lymphoid ones are plotted including labels on page 2
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################
 # Workdirectory (folder where "OmicsExpressionProteinCodingGenesTPMLogp1.csv" and "model.csv" are located)
-setwd("G:/divg/Pathologie-ADHESIE/ALL/G_ScreeningTeam/DepMap/")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Genes of interest (add to line 15)
 q <- function(...) {
@@ -16,7 +16,8 @@ interestingGenes <- toupper(q(
 ))
 ##################################################################################
 # # R packages
-#install.packages(c("ggplot2", "factoextra", "ggrepel", "RColorBrewer"))
+#install.packages(c("data.table", "ggplot2", "factoextra", "ggrepel", "RColorBrewer"))
+library("data.table")
 library("ggplot2")
 library("factoextra")
 library("ggrepel")
@@ -25,10 +26,10 @@ library("RColorBrewer")
 #devtools::install_github("JosephCrispell/basicPlotteR")
 library("basicPlotteR")
 if (!exists("dataDepMap")) {
-  dataDepMap<-read.csv("OmicsExpressionProteinCodingGenesTPMLogp1.csv",stringsAsFactors = F)
-  RNAseq<-as.data.frame(t(dataDepMap[,2:ncol(dataDepMap)]))
-  colnames(RNAseq)<- dataDepMap$X
-  rownames(RNAseq)<- unlist(lapply(strsplit(as.character(rownames(RNAseq)),"\\.\\."), "[", 1))
+  dataDepMap<-fread("OmicsExpressionTPMLogp1HumanProteinCodingGenes.csv",stringsAsFactors = F)
+  RNAseq<-as.data.frame(t(dataDepMap[,7:ncol(dataDepMap)]))
+  colnames(RNAseq)<- dataDepMap$ModelID
+  rownames(RNAseq)<- unlist(lapply(strsplit(as.character(rownames(RNAseq))," "), "[", 1))
   cells<- read.csv("Model.csv",stringsAsFactors = F)
   UsedIDs<- cells[match(colnames(RNAseq), cells$ModelID),]
   colnames(RNAseq)<- UsedIDs$StrippedCellLineName

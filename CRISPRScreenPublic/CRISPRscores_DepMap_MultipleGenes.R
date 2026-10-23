@@ -1,10 +1,10 @@
 # Plot CRISPR scores of the public CRISPR screens from DepMap.org (Broad Institute)
-# Download CRISPR data (25q2) "CRISPRGeneEffect.csv, and model.csv from https://depmap.org/portal/data_page/?tab=allData
+# Download CRISPR data (26q3) "CRISPRGeneEffect.csv, and model.csv from https://depmap.org/portal/data_page/?tab=allData
 # All cell lines are plotted on page 1, and the lymphoid ones are plotted including labels on page 2
 # Author: M.F.M. de Rooij PhD, Amsterdam UMC, Spaargaren Lab, 2023, info: m.f.derooij@amsterdamumc.nl
 ##################################################################################
 # Workdirectory (folder where "CRISPRGeneEffect.csv" and "model.csv" are located)
-setwd("G:/divg/Pathologie-ADHESIE/ALL/G_ScreeningTeam/DepMap/")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Genes of interest (add to line 15)
 q <- function(...) {
@@ -18,7 +18,8 @@ interestingGenes <- toupper(q(
 disease<- "Plasma Cell Myeloma"
 ##################################################################################
 # # R packages
-#install.packages(c("ggplot2", "factoextra", "ggrepel", "RColorBrewer"))
+#install.packages(c("data.table", "ggplot2", "factoextra", "ggrepel", "RColorBrewer"))
+library("data.table")
 library("ggplot2")
 library("factoextra")
 library("ggrepel")
@@ -27,10 +28,10 @@ library("RColorBrewer")
 #devtools::install_github("JosephCrispell/basicPlotteR")
 library("basicPlotteR")
 if (!exists("dataDepMap")) {
-  dataDepMap<-read.csv("CRISPRGeneEffect.csv",stringsAsFactors = F)
+  dataDepMap<-fread("CRISPRGeneEffect.csv",stringsAsFactors = F)
   chronos<-as.data.frame(t(dataDepMap[,2:ncol(dataDepMap)]))
-  colnames(chronos)<- dataDepMap$X
-  rownames(chronos)<- unlist(lapply(strsplit(as.character(rownames(chronos)),"\\.\\."), "[", 1))
+  colnames(chronos)<- dataDepMap$V1
+  rownames(chronos)<- unlist(lapply(strsplit(as.character(rownames(chronos))," "), "[", 1))
   cells<- read.csv("Model.csv",stringsAsFactors = F)
   UsedIDs<- cells[match(colnames(chronos), cells$ModelID),]
   colnames(chronos)<- UsedIDs$StrippedCellLineName
